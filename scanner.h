@@ -218,6 +218,7 @@ extern char *yytext;
 #define INITIAL 0
 #define BLOCK_COMMENT 1
 #define LINE_COMMENT 2
+#define STRING 3
 
 #endif
 
@@ -471,9 +472,9 @@ extern int yylex (void);
 #undef yyTABLES_NAME
 #endif
 
-#line 103 "scanner.l"
+#line 108 "scanner.l"
 
 
-#line 478 "scanner.h"
+#line 479 "scanner.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

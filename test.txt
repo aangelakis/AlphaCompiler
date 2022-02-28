@@ -1,7 +1,7 @@
 this_is_an_id
 
 
-"this_is_a_string"
+"this_is_\na_string"
 
 // inside LINE_COMMENT
 outside_LineComment

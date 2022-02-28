@@ -3,6 +3,7 @@
 extern int  num_chars, num_token;
 int total_comments = 0;
 int start_comments = 0;
+int string_flag = 0;
 %}
 
 %option header-file="scanner.h"
@@ -17,6 +18,7 @@ string          \"[^\n"]*\"
 
 %x BLOCK_COMMENT
 %x LINE_COMMENT
+%x STRING
 %%
 
 \n                   {};
@@ -99,5 +101,10 @@ string          \"[^\n"]*\"
 {indentifier}           { printf("found token#%d IDENTIFIER in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext); }
 
 
-.
+{string}                {
+   printf("found token#%d STRING in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);
+   }
+
+
+<*>. {}
 %%
