@@ -1,0 +1,15 @@
+--------------LEXICAL ANALYSIS--------------
+found token#1 IDENTIFIER in line 1 with value: 'int'
+found token#2 IDENTIFIER in line 1 with value: 'main'
+found token#3 IDENTIFIER in line 1 with value: 'void'
+found token#4 IDENTIFIER in line 2 with value: 'int'
+found token#5 IDENTIFIER in line 2 with value: 'c'
+found token#6 IDENTIFIER in line 4 with value: 'c'
+found token#7 KEYWORD in line 6 with value: 'if'
+found token#8 IDENTIFIER in line 6 with value: 'c'
+found token#9 IDENTIFIER in line 7 with value: 'c'
+found token#10 KEYWORD in line 9 with value: 'return'
+found token#11 IDENTIFIER in line 9 with value: 'c'
+found token#12 IDENTIFIER in line 11 with value: 'teo'
+found token#13 IDENTIFIER in line 11 with value: 'nteo'
+error: unclosed comment in line 17

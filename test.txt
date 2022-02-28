@@ -1,0 +1,21 @@
+int main(void) {
+    int c;
+
+    c = 0;
+
+    if ( c == 0)
+        c = 1;
+    
+    return c;
+}
+teo\nteo
+
+/* 
+
+comment test
+
+/* mono comments re savidi /* kai triplo re mouni, saresei???? */ */
+
+*/
+
+/* naocneo
