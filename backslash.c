@@ -36,8 +36,11 @@ void backslash(char **s) {
                 *s = replace_bs_with(*s, '\t', first_time);
                 first_time = 0;
             }
-            else if(*(iter+1) == 'b') {
-                *s = replace_bs_with(*s, '\b', first_time);
+            else if(*(iter+1) == '\\') {
+                *s = replace_bs_with(*s, '\\', first_time);
+                first_time = 0;
+            }else if(*(iter+1) == '\"') {
+                *s = replace_bs_with(*s, '\"', first_time);
                 first_time = 0;
             }
         }
@@ -46,7 +49,7 @@ void backslash(char **s) {
 }
 
 int main(void) {
-    char *s="This is\\na string\\n\\tmy\\t\\tbrotha";
+    char *s="th\tis_\\is_\na_string";
     printf("Replacing in string '%s'\n", s);
 
     backslash(&s);
