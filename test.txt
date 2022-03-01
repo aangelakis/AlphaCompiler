@@ -1,21 +1,29 @@
-int main(void) {
-    int c;
+this_is_an_id
 
-    c = 0;
 
-    if ( c == 0)
-        c = 1;
-    
-    return c;
-}
-teo\nteo
+"this_is_\na_string"
 
-/* 
+// inside LINE_COMMENT
+outside_LineComment
 
-comment test
+/*
 
-/* mono comments re savidi /* kai triplo re mouni, saresei???? */ */
+inside BLOCK_COMMENT
+
 
 */
+5
+-2.13
 
-/* naocneo
++-++--
+if{}else;
+function
+
+
+//kati edw/*kati allo
+
+pame katwme enter */
+
+/*kati//kati allo*/
+
+{}[]();,:::.
