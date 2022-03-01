@@ -27,3 +27,7 @@ pame katwme enter */
 /*kati//kati allo*/
 
 {}[]();,:::.
+
+A_0
+
+0_A
