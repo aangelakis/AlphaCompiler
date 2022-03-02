@@ -189,6 +189,13 @@ void backslash(char **s) {
                 chars--;
                 first_time = 0;
             }
+            
+            /* START FIX */
+            if(*iter == '\\') {
+                chars++;
+                iter++;
+            }
+            /* END FIX */
         }
         chars++;
         iter++;
