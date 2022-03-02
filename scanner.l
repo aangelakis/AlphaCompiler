@@ -6,9 +6,10 @@
 alpha_token_t *tail = NULL;
 
 extern int  num_chars, num_token;
-int total_comments = 0;
 int start_comments = 0;
+int nested_comments = 0;
 int string_flag = 0;
+int nested_comment_starting_line[1024];
 
 char* replace_bs_with(char*, int, char, int);
 void backslash(char **);
@@ -90,24 +91,32 @@ string          \"(\\.|[^"\\])*\"
   return 1;
 }
 
-"/*"                    {BEGIN(BLOCK_COMMENT);total_comments++;start_comments=yylineno;}
-<BLOCK_COMMENT>"/*"           {total_comments++;}
-<BLOCK_COMMENT>[^*]*          {}
-<BLOCK_COMMENT>"*"+[^*/]*   {total_comments++;}
+"/*"                    {BEGIN(BLOCK_COMMENT);start_comments=yylineno;}
+<BLOCK_COMMENT>"/*"           {nested_comment_starting_line[nested_comments]=yylineno,nested_comments++;}
+
 <BLOCK_COMMENT>"*"+"/"        {
   
-  if((--total_comments)==0){
+  if(nested_comments==0){
+    
     char str_final[1024];
     sprintf(str_final, "%d%s%d",start_comments," - ",yylineno);
     
-    insert_data(yylineno, ++num_token, str_final, COMMENT, yylval,"BLOCK_COMMENT");
+    insert_data(start_comments, ++num_token, str_final, COMMENT, yylval,"BLOCK_COMMENT");
     BEGIN(INITIAL);
   }else{
-    insert_data(yylineno, ++num_token, " ", COMMENT, yylval,"NESTED_COMMENT");
+    nested_comments--;
+    char str_final[1024];
+    sprintf(str_final, "%d%s%d",nested_comment_starting_line[nested_comments]," - ",yylineno);
+    nested_comment_starting_line[nested_comments] = 0;
+    insert_data(yylineno, ++num_token, str_final, COMMENT, yylval,"NESTED_COMMENT");
   }
   return 1;
 
 }
+<BLOCK_COMMENT>"*"+           {}
+<BLOCK_COMMENT>[^/*\n]+       {}
+<BLOCK_COMMENT>[/]            {}
+<BLOCK_COMMENT>\n             {}
 <BLOCK_COMMENT><<EOF>>        { printf("\033[1;31mERROR\033[0m: unclosed comment in line %d\n", start_comments); return -1;}
 
 
