@@ -59,9 +59,9 @@ string          \"(\\.|[^"\\])*\"
 "="                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"ASSIGN"); return 1;}
 "+"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"PLUS"); return 1;}
 "-"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MINUS"); return 1;}
-"*"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"ASTERISK"); return 1;}
+"*"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MULTIPLICATION"); return 1;}
 "/"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"SLASH"); return 1;}
-"%"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"PERCENT"); return 1;}
+"%"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MODULO"); return 1;}
 ">"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"GREATER_THAN"); return 1;}
 "<"                     { insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"LESS_THAN"); return 1;}
 
@@ -108,7 +108,7 @@ string          \"(\\.|[^"\\])*\"
   return 1;
 
 }
-<BLOCK_COMMENT><<EOF>>        { printf("error: unclosed comment in line %d\n", start_comments); exit(-1);}
+<BLOCK_COMMENT><<EOF>>        { printf("\033[1;31mERROR\033[0m: unclosed comment in line %d\n", start_comments); return -1;}
 
 
 {real}                  {   insert_data(yylineno, ++num_token, yytext, DOUBLE, yylval,NULL); return 1; }
@@ -119,8 +119,10 @@ string          \"(\\.|[^"\\])*\"
 {string}                {
     
     //printf("testing before removing things string :\n %s\n\n",yytext);
-
+    
     backslash(&yytext);
+
+    
 
     //printf("testing string :\n %s\n\n",yytext);
 
@@ -128,15 +130,25 @@ string          \"(\\.|[^"\\])*\"
 }
 
 
-([0-9]+)([a-zA-Z_]+)          {printf("Error in line %d token: %s not accepted\n",yylineno,yytext);}
+([0-9]+)([a-zA-Z_]+)          {printf("\033[1;31mERROR\033[0m: not accepted token -> \033[0;35m \'%s\'\033[0m in line %d\n",yytext,yylineno);}
 
 
 <<EOF>> {return -1;}
 
+{space} {}
+
 <*>. {
   if(strcmp(yytext,"\"") == 0){
-    printf("unclosed string starting in line %d\n",yylineno);
-    exit(0);
+    printf("\033[1;31m");
+    printf("ERROR:");
+    printf("\033[0m");
+    printf(" unclosed string starting in line %d\n",yylineno);
+    return -1;
+  }else{
+    printf("\033[1;31m");
+    printf("ERROR");
+    printf("\033[0m");
+    printf(": not accepted character -> \033[0;35m \'%s\'\033[0m in line %d\n", yytext,yylineno);
   }  
 }
 
@@ -163,8 +175,10 @@ char* replace_bs_with(char* s, int stop, char c, int first_time) {
 }
 
 void backslash(char **s) {
-    char *iter = *s;
+    int bad_string_flag = 0;
+    char *iter = *s, *old = *s;
     int first_time = 1, chars = 0, count=0;
+    char bad_character[1];
 
     while(*iter) {
         if(*iter == '\\') {
@@ -188,6 +202,9 @@ void backslash(char **s) {
                 *s = replace_bs_with(*s, chars, '\"', first_time);
                 chars--;
                 first_time = 0;
+            }else{
+              bad_character[0] = *(iter+1);
+              bad_string_flag=1;
             }
             
             /* START FIX */
@@ -199,6 +216,12 @@ void backslash(char **s) {
         }
         chars++;
         iter++;
+    }
+    if(bad_string_flag){
+      printf("\033[1;35m");
+      printf("WARNING");
+      printf("\033[0m");
+      printf(": not accepted escape character -> \033[0;35m \'\\%c\'\033[0m, in string\033[0;35m %s\033[0m in line %d\n", bad_character[0],old,yylineno);
     }
 }
 
@@ -216,6 +239,15 @@ void insert_data(int numline, int numToken, char *content, char *type, alpha_tok
       yylval->specialty = yylval->content;
     }else{
       yylval->specialty = specialty;
+    }
+    if(type==STRING_ || type==IDENTIFIER){
+      yylval->category = "char*";
+    }else if(type==INTEGER){
+      yylval->category = "integer";
+    }else if(type==DOUBLE){
+      yylval->category = "double";
+    }else{
+      yylval->category = "enumerated";
     }
     
 }

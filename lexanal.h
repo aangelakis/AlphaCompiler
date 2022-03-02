@@ -14,6 +14,7 @@ struct alpha_token_t
     char *type;
     struct alpha_token_t *next;
     char *specialty;
+    char *category;
 
 };
 

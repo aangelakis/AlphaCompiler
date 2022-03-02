@@ -1,7 +1,7 @@
 #include "scanner.h"
 #include "lexanal.h"
 
-int num_lines = 1, num_token = 0;
+int num_token = 0;
 
 struct token_list
 {
@@ -29,21 +29,21 @@ void print_all()
 {
     alpha_token_t *iter = tokens.head;
     printf("------------------- Lexical Analysis ----------------------\n");
-    printf("line\tnumofToken\tContent\tType\tSpecialty\n");
+    //printf("line\tnumofToken\tContent\tType\tSpecialty\tCategory\n");
     while (iter)
     {
         if (strcmp(iter->type, STRING_) == 0)
         {
-            printf("%u:\t#%u\t%s\t%s\t%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty);
+            printf("%u:\t#%u\t%s\t%s\t%s\t<--%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty, iter->category);
         }
         else if (strcmp(iter->type, COMMENT) == 0)
         {
 
-            printf("%u:\t#%u\t\"%s\"\t%s\t%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty);
+            printf("%u:\t#%u\t\"%s\"\t%s\t%s\t<--%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty, iter->category);
         }
         else
         {
-            printf("%u:\t#%u\t\"%s\"\t%s\t%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty);
+            printf("%u:\t#%u\t\"%s\"\t%s\t%s\t<--%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty, iter->category);
         }
 
         iter = iter->next;
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
         else
             insert_token(curr);
     }
-    printf("# of lines = %d, # of tokens = %d\n", num_lines, num_token);
+    printf("# of tokens = %d\n", num_token);
 
     print_all();
     free_all();
