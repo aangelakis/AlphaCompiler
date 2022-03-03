@@ -42,6 +42,8 @@
 #define TRUE            31
 #define FALSE           32
 #define NIL             33
+
+/* SHMEIA STIKSIS */
 #define LEFT_BRACE          34
 #define RIGHT_BRACE         35
 #define LEFT_BRACKET        36
@@ -55,7 +57,9 @@
 #define STOP                44
 #define DOUBLE_STOP         45
 
-#define MAX_STATE 14
+#define STRING              46
+
+#define MAX_STATE 16
 #define TOKEN_SHIFT (MAX_STATE+1)
 #define TOKEN(t)    TOKEN_SHIFT+(t)
 #define STATE(s)    s
@@ -63,13 +67,13 @@
 
 int sf0(char c); int sf1(char c); int sf2(char c); int sf3(char c); int sf4(char c); int sf5(char c);
 int sf6(char c); int sf7(char c); int sf8(char c); int sf9(char c); int sf10(char c);  int sf11(char c);
-int sf12(char c);  int sf13(char c);  int sf14(char c);
+int sf12(char c);  int sf13(char c);  int sf14(char c); int sf15(char c); int sf16(char c);
 
-int (*stateFuncs[MAX_STATE+1])(char) = { &sf0, &sf1, &sf2, &sf3, &sf4, &sf5, &sf6, &sf7, &sf8, &sf9, &sf10, &sf11, &sf12, &sf13, &sf14};
+int (*stateFuncs[MAX_STATE+1])(char) = { &sf0, &sf1, &sf2, &sf3, &sf4, &sf5, &sf6, &sf7, &sf8, &sf9, &sf10, &sf11, &sf12, &sf13, &sf14, &sf15, &sf16};
 
 unsigned gettoken(void);
 
-char names[45][20] = {
+char names[46][20] = {
     "LessEqual",
     "LessThan",
     "NotEqual",
@@ -114,7 +118,8 @@ char names[45][20] = {
     "COLON",
     "DOUBLE_COLON",
     "STOP",
-    "DOUBLE_STOP"
+    "DOUBLE_STOP",
+    "STRING"
 };
 
 int iskeyword(char *s){
@@ -197,27 +202,19 @@ int main(int argc, char *argv[]) {
 unsigned gettoken() {
     int state = 0;
     ResetLexeme();
-    //if(useLookAhead)
-        //printf("Lookahead=%c and curr=%d\n", lookAhead, curr);
 
     while(1) {
         if(feof(inputFile))
             return END_OF_FILE;
 
-        //if(useLookAhead)
-            //puts("USING LOOKAHEAD NOW!");
         char c = GetNextChar();
-        //printf("c=%c and curr=%d\n", c, curr);
 
         state = (*stateFuncs[state])(c);
-        //if(state == 12)
-            //printf("c=%c", c);
 
         if(state == -1)
             return UNKNOWN_TOKEN;
         else if(istoken(state)) {
             printf("Found token \'%s\' with type ", GetLexeme());
-            //printf("Found token of type %d\n", state-TOKEN_SHIFT);
             return state - TOKEN_SHIFT;
         }
         else if(!isspace(c) && !useLookAhead)
@@ -245,10 +242,11 @@ int sf0(char c) {
         return TOKEN(MOD);
     }
     if(isPunctuation(c)) {
-        //printf("c=%c", c);
         Retract(c);
         return STATE(12);
     }
+    if(c == '\"')
+        return STATE(15);
     if(isalpha(c))
         return STATE(5);
     if(isspace(c)) { 
@@ -371,7 +369,6 @@ int sf11(char c){
 }
 
 int sf12(char c){
-    printf("c=%c %d\n", c, c);
     if(c=='{'){
         ExtendLexeme(c);
         return TOKEN(LEFT_BRACE);
@@ -428,4 +425,22 @@ int sf14(char c){
     }
     Retract(c);
     return TOKEN(STOP);
+}
+
+int sf15(char c) {
+    if(c == '\\')
+        return STATE(16);
+    if(c == '\"') {
+        ExtendLexeme(c);
+        return TOKEN(STRING);
+    }
+
+    if(isspace(c))
+        ExtendLexeme(c);
+
+    return STATE(15);
+}
+
+int sf16(char c) {
+    return STATE(15);
 }
