@@ -93,7 +93,12 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 }
 
 "/*"                    {BEGIN(BLOCK_COMMENT);start_comments=yylineno;}
-<BLOCK_COMMENT>"/*"           {nested_comment_starting_line[nested_comments]=yylineno,nested_comments++;}
+<BLOCK_COMMENT>"/*"     {nested_comment_starting_line[nested_comments]=yylineno; 
+                        if(nested_comments > 1024){ 
+                            printf("\033[1;31mERROR\033[0m: exceeded amount of nested comments.\n"); return -1;
+                        }
+                        nested_comments++;}
+
 
 <BLOCK_COMMENT>"*"+"/"        {
   
