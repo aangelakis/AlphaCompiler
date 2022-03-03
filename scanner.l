@@ -7,6 +7,7 @@ alpha_token_t *tail = NULL;
 
 extern int  num_chars, num_token;
 int start_comments = 0;
+int start_string = 0;
 int nested_comments = 0;
 int string_flag = 0;
 int nested_comment_starting_line[1024];
@@ -25,7 +26,7 @@ indentifier		  [a-zA-Z][a-zA-Z_0-9]*
 integer         (0[xX][0-9A-Fa-f]+)|([0-9]+)
 real            [0-9]*\.[0-9](e|E)?[0-9]*
 space           [\r\n \t\v]
-string          \"(\\.|[^"\\])*\"
+string         	\"(\\.|\\\n|[^"\\])*\" 
 
 %x BLOCK_COMMENT
 %x LINE_COMMENT
@@ -124,7 +125,6 @@ string          \"(\\.|[^"\\])*\"
 {integer}               {   insert_data(yylineno, ++num_token, yytext, INTEGER, yylval,NULL); return 1; }
 {indentifier}           {   insert_data(yylineno, ++num_token, yytext, IDENTIFIER, yylval,NULL); return 1; }
 
-
 {string}                {
     
     //printf("testing before removing things string :\n %s\n\n",yytext);
@@ -192,8 +192,6 @@ void backslash(char **s) {
 
     while(*iter) {
         if(*iter == '\\') {
-            //printf("count=%d, ", count++);
-            //puts(*s);
             if(*(iter+1) == 'n') {
                 *s = replace_bs_with(*s, chars, '\n', first_time);
                 chars--;
