@@ -138,6 +138,13 @@ string          \"(\\.|[^"\\])*\"
     insert_data(yylineno, ++num_token, yytext, STRING_, yylval,NULL); return 1;
 }
 
+[\"][^"]*                     { 
+                                printf("\033[1;31m");
+                                printf("ERROR:");
+                                printf("\033[0m");
+                                printf(" unclosed string starting in line %d\n",yylineno);
+                                return -1;
+                              }
 
 ([0-9]+)([a-zA-Z_]+)          {printf("\033[1;31mERROR\033[0m: not accepted token -> \033[0;35m \'%s\'\033[0m in line %d\n",yytext,yylineno);}
 
@@ -147,18 +154,12 @@ string          \"(\\.|[^"\\])*\"
 {space} {}
 
 <*>. {
-  if(strcmp(yytext,"\"") == 0){
-    printf("\033[1;31m");
-    printf("ERROR:");
-    printf("\033[0m");
-    printf(" unclosed string starting in line %d\n",yylineno);
-    return -1;
-  }else{
+ 
     printf("\033[1;31m");
     printf("ERROR");
     printf("\033[0m");
     printf(": not accepted character -> \033[0;35m \'%s\'\033[0m in line %d\n", yytext,yylineno);
-  }  
+    
 }
 
 %%
