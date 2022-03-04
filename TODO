@@ -1,10 +1,11 @@
-COMMENT BUFFER OVERFLOW PRINT ERROR AND EXIT
+
 
 BONUS:
-  na kratame se poio line eimaste
-  flag gia to oti den ekleise string
-  comments
+  1)  implement tin lista gia apothikeusi 
+  2)  opote briskume error aplo print f
+  3)  sta comments na kratame se pinaka to opening line kai prin ta
+      balume lista na apothikeuoume kai to opening kai to closing line
+  
+ 
 
 
-ston scanner.l stin insert_data:
-  opu exoume if(type==CONST_CHAR_*_LITERAL) na to kanume if(!strcmp(type,CONST_CHAR_*_LITERAL))
