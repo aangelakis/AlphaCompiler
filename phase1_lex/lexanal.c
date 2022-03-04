@@ -9,6 +9,7 @@ struct token_list
     alpha_token_t *tail;
 } tokens;
 
+/* Inserts a token in the struct token list. */
 void insert_token(alpha_token_t *new_token)
 {
     if (tokens.head == NULL)
@@ -25,6 +26,7 @@ void insert_token(alpha_token_t *new_token)
     }
 }
 
+/* Prints the struct token list. */
 void print_all()
 {
     alpha_token_t *iter = tokens.head;
@@ -50,6 +52,7 @@ void print_all()
     }
 }
 
+/* Frees the struct token list. */
 void free_all()
 {
     alpha_token_t *iter = tokens.head, *tmp;
@@ -62,6 +65,7 @@ void free_all()
     }
 }
 
+/* Main function */
 int main(int argc, char **argv)
 {
     alpha_token_t *curr = NULL;

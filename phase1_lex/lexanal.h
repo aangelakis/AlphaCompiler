@@ -6,6 +6,7 @@
 #define KEYWORD "KEYWORD"
 #define PUNCTUATION "PUNCTUATION"
 #define DOUBLE "CONST_DOUBLE"
+
 struct alpha_token_t
 {
     unsigned int numline;
