@@ -315,6 +315,7 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 {string}                {
                             int new_lines = find_new_lines(yytext);
                             backslash(&yytext);
+                            remove_quotes(yytext);
                             insert_data(yylineno - new_lines, ++num_token, yytext, STRING_, yylval,NULL); return 1;
                         }
 
@@ -442,7 +443,6 @@ void insert_data(int numline, int numToken, char *content, char *type, alpha_tok
     yylval->numToken = numToken;
     yylval->content = (char *) malloc(strlen(content) * sizeof(char));
     strcpy(yylval->content, content);
-    remove_quotes(yylval->content);
     yylval->type = type;
     yylval->next = NULL;
 
@@ -451,12 +451,12 @@ void insert_data(int numline, int numToken, char *content, char *type, alpha_tok
       yylval->specialty = yylval->content;
     }else{
       yylval->specialty = specialty;
-    }
-    if(type==STRING_ || type==IDENTIFIER){
+    }    
+    if((strcmp(type,STRING_) == 0) || (strcmp(type,IDENTIFIER) == 0)){
       yylval->category = "char*";
-    }else if(type==INTEGER){
+    }else if(strcmp(type,INTEGER) == 0){
       yylval->category = "integer";
-    }else if(type==DOUBLE){
+    }else if(strcmp(type,DOUBLE) == 0){
       yylval->category = "double";
     }else{
       yylval->category = "enumerated";
