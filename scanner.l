@@ -14,6 +14,7 @@ int nested_comment_starting_line[1024];
 
 char* replace_bs_with(char*, int, char, int);
 void backslash(char **);
+int find_new_lines(char *);
 
 void insert_data(int numline, int numToken, char *content, char *type, alpha_token_t* yylval, char* specialty);
 %}
@@ -93,12 +94,11 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 }
 
 "/*"                    {BEGIN(BLOCK_COMMENT);start_comments=yylineno;}
-<BLOCK_COMMENT>"/*"     {nested_comment_starting_line[nested_comments]=yylineno; 
-                        if(nested_comments > 1024){ 
+<BLOCK_COMMENT>"/*"     {nested_comment_starting_line[nested_comments]=yylineno;
+			if(nested_comments > 1024){ 
                             printf("\033[1;31mERROR\033[0m: exceeded amount of nested comments.\n"); return -1;
-                        }
-                        nested_comments++;}
-
+                        }	
+			nested_comments++;}
 
 <BLOCK_COMMENT>"*"+"/"        {
   
@@ -133,14 +133,16 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 {string}                {
     
     //printf("testing before removing things string :\n %s\n\n",yytext);
-    
+
+    int new_lines = find_new_lines(yytext);
+
     backslash(&yytext);
 
     
 
     //printf("testing string :\n %s\n\n",yytext);
 
-    insert_data(yylineno, ++num_token, yytext, STRING_, yylval,NULL); return 1;
+    insert_data(yylineno - new_lines, ++num_token, yytext, STRING_, yylval,NULL); return 1;
 }
 
 [\"][^"]*                     { 
@@ -237,6 +239,22 @@ void backslash(char **s) {
       printf(": not accepted escape character -> \033[0;35m \'\\%c\'\033[0m, in string\033[0;35m %s\033[0m in line %d\n", bad_character[0],old,yylineno);
     }
 }
+
+
+int find_new_lines(char *s){
+  char *iter = s;
+  int new_lines = 0;
+
+  while(*iter){
+    if(*iter == '\n'){
+      new_lines++;
+    }
+    iter++;
+  }
+
+  return new_lines;
+}
+
 
 void insert_data(int numline, int numToken, char *content, char *type, alpha_token_t* yylval, char* specialty)
 {
