@@ -15,7 +15,7 @@ int nested_comment_starting_line[1024];
 char* replace_bs_with(char*, int, char, int);
 void backslash(char **);
 int find_new_lines(char *);
-
+void remove_quotes(char* s);
 void insert_data(int numline, int numToken, char *content, char *type, alpha_token_t* yylval, char* specialty);
 %}
 
@@ -442,6 +442,7 @@ void insert_data(int numline, int numToken, char *content, char *type, alpha_tok
     yylval->numToken = numToken;
     yylval->content = (char *) malloc(strlen(content) * sizeof(char));
     strcpy(yylval->content, content);
+    remove_quotes(yylval->content);
     yylval->type = type;
     yylval->next = NULL;
 
@@ -460,4 +461,28 @@ void insert_data(int numline, int numToken, char *content, char *type, alpha_tok
     }else{
       yylval->category = "enumerated";
     }  
+}
+
+/* Removes first and last quote from a string */
+void remove_quotes(char* s){
+    char * tmp = s;
+
+    //find the end and one before it
+    while(*(tmp+1)!='\0'){
+        tmp++;
+    }
+    //make the last " in a string \0
+    *tmp='\0';
+
+    //reseting the pointer
+    tmp = s ;
+
+    //left shift everyting
+    while(*tmp!='\0'){
+        *tmp = *(tmp+1);
+        tmp++;
+    }
+
+
+
 }

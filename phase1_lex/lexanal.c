@@ -36,7 +36,7 @@ void print_all()
     {
         if (strcmp(iter->type, STRING_) == 0)
         {
-            printf("%u:\t#%u\t%s\t%s\t%s\t<--%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty, iter->category);
+            printf("%u:\t#%u\t\"%s\"\t%s\t\"%s\"\t<--%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty, iter->category);
         }
         else if (strcmp(iter->type, COMMENT) == 0)
         {
