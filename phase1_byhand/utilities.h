@@ -5,7 +5,7 @@ int         useLookAhead = 0;
 FILE*       inputFile = (FILE *) 0;
 char        lexeme[MAX_LEXEME];
 unsigned    curr = 0;
-unsigned    lineNo;
+unsigned    lineNo = 1;
 
 void ResetLexeme() {
     curr = 0;
@@ -29,7 +29,7 @@ char GetNextChar(void) {
         return lookAhead;
     }
     else {
-        assert(!feof(inputFile));
+        //assert(!feof(inputFile));
         return fgetc(inputFile);
     }
 }

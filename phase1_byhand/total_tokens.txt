@@ -11,7 +11,19 @@ x1 yy zZ w_ q_q qW__e10
 "newline \n here"
 "tt\t\t\ttt"
 "tab\t\there"
-"My name is \"Zarkos\" "
-_alex
-90iwiufbwi
-0.5#5.5. 
+"My name is \"Manos\" "
+
+/*
+lalalalalala
+/*
+{}[]
+*/
+55555
+// a
+*/
+// this is comment
+
+// lalala/*lalala*/
+
+haha/****/after
+

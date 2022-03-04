@@ -59,21 +59,26 @@
 
 #define STRING              46
 
-#define MAX_STATE 16
+#define LINE_COMMENT        47
+#define BLOCK_COMMENT       48
+#define UNCLOSED_COMMENT    49
+
+#define MAX_STATE 19
 #define TOKEN_SHIFT (MAX_STATE+1)
 #define TOKEN(t)    TOKEN_SHIFT+(t)
 #define STATE(s)    s
 #define istoken(s)  ((s)>MAX_STATE)
 
-int sf0(char c); int sf1(char c); int sf2(char c); int sf3(char c); int sf4(char c); int sf5(char c);
-int sf6(char c); int sf7(char c); int sf8(char c); int sf9(char c); int sf10(char c);  int sf11(char c);
-int sf12(char c);  int sf13(char c);  int sf14(char c); int sf15(char c); int sf16(char c);
+int sf0(char c);   int sf1(char c);   int sf2(char c); int sf3(char c);   int sf4(char c);   int sf5(char c);
+int sf6(char c);   int sf7(char c);   int sf8(char c); int sf9(char c);   int sf10(char c);  int sf11(char c);
+int sf12(char c);  int sf13(char c);  int sf14(char c); int sf15(char c); int sf16(char c);  int sf17(char c);
+int sf18(char c);  int sf19(char c);
 
-int (*stateFuncs[MAX_STATE+1])(char) = { &sf0, &sf1, &sf2, &sf3, &sf4, &sf5, &sf6, &sf7, &sf8, &sf9, &sf10, &sf11, &sf12, &sf13, &sf14, &sf15, &sf16};
+int (*stateFuncs[MAX_STATE+1])(char) = { &sf0, &sf1, &sf2, &sf3, &sf4, &sf5, &sf6, &sf7, &sf8, &sf9, &sf10, &sf11, &sf12, &sf13, &sf14, &sf15, &sf16, &sf17, &sf18, &sf19};
 
 unsigned gettoken(void);
 
-char names[46][20] = {
+char names[49][20] = {
     "LessEqual",
     "LessThan",
     "NotEqual",
@@ -119,7 +124,10 @@ char names[46][20] = {
     "DOUBLE_COLON",
     "STOP",
     "DOUBLE_STOP",
-    "STRING"
+    "STRING",
+    "LINE_COMMENT",
+    "BLOCk_COMMENT",
+    "UNCLOSED_COMMENT"
 };
 
 int iskeyword(char *s){
@@ -188,12 +196,13 @@ int main(int argc, char *argv[]) {
     int isk;
     unsigned return_token;
     while((return_token = gettoken()) != END_OF_FILE) {
-        if(return_token == UNKNOWN_TOKEN)
+        if(return_token == UNKNOWN_TOKEN){
             printf("UNKNOWN_TOKEN: \'%s\'\n", GetLexeme());
+        }
         else if((isk = iskeyword(lexeme)) > 0)
-            printf("%s which is a KEYWORD\n", names[isk-TOKEN_SHIFT-1]);
+            printf("%s which is a KEYWORD in line %d\n", names[isk-TOKEN_SHIFT-1], lineNo);
         else
-            printf("%s\n", names[return_token-1]);
+            printf("%s in line %d\n", names[return_token-1], lineNo);
     }
 
     return 0;
@@ -204,8 +213,9 @@ unsigned gettoken() {
     ResetLexeme();
 
     while(1) {
-        if(feof(inputFile))
+        if(feof(inputFile)){
             return END_OF_FILE;
+        }
 
         char c = GetNextChar();
 
@@ -220,7 +230,7 @@ unsigned gettoken() {
             printf("Found token \'%s\' with type ", GetLexeme());
             return state - TOKEN_SHIFT;
         }
-        else if(!isspace(c) && !useLookAhead)
+        else if(!isspace(c) && !useLookAhead && c != '\"')
             ExtendLexeme(c);
     }
 }
@@ -232,14 +242,12 @@ int sf0(char c) {
     if(c == '>')    return STATE(4);
     if(c == '+')    return STATE(7);
     if(c == '-')    return STATE(8);
+    // Could be either DIV or COMMENT, will see in state17
+    if(c == '/')    return STATE(17);
     if(c == '*'){
         ExtendLexeme(c);
         return TOKEN(MULT);
     }    
-    if(c == '/'){
-        ExtendLexeme(c);
-        return TOKEN(DIV);
-    }
     if(c == '%') {
         ExtendLexeme(c);
         return TOKEN(MOD);
@@ -436,12 +444,13 @@ int sf15(char c) {
         return STATE(16);
     }
     if(c == '\"') {
-        ExtendLexeme(c);
         return TOKEN(STRING);
     }
 
-    if(isspace(c))
+    if(isspace(c)) {
+        CheckLine(c);
         ExtendLexeme(c);
+    }
 
     return STATE(15);
 }
@@ -465,4 +474,66 @@ int sf16(char c) {
 
     Retract(GetNextChar());
     return STATE(15);
+}
+
+int inside_block=0;
+int nested_comments = 0;
+
+// prwto / brethike
+int sf17(char c){
+  if(c=='/')                        return STATE(18);   //arxise line comment
+  if(c=='*'){ nested_comments=0;    return STATE(19);}  //arxise block comment
+
+  //ExtendLexeme(c);
+
+  //edw mporei na einai kai to operand slash
+  return TOKEN(DIV);
+  
+}
+
+//mesa se line comment
+int sf18(char c){
+    while(c != '\n')
+      c = GetNextChar();
+    //CheckLine(c);
+    //if(c!='\n') return STATE(21);
+
+    Retract(c);
+    //ExtendLexeme(c);
+    return TOKEN(LINE_COMMENT);
+}
+
+// sigoura mesa se block comment
+int sf19(char c){
+    int total_comments = 1;
+    CheckLine(c);
+
+    while(total_comments != 0){
+        if(c == '/'){
+            c = GetNextChar();
+            CheckLine(c);
+            if(c == '*'){
+                total_comments++;
+            }
+        }
+        if(c == '*'){
+            c = GetNextChar();
+            CheckLine(c);
+            if(c == '/'){
+                total_comments--;
+                if(total_comments != 0)
+                    printf("Found token of type NESTED_COMMENT in line %d\n", lineNo);
+            }
+        }
+        c = GetNextChar();
+        if(c == EOF)
+            return TOKEN(UNCLOSED_COMMENT);
+        CheckLine(c);
+    }
+
+    Retract(c);
+    if(c == '\n')
+        lineNo--;
+
+    return TOKEN(BLOCK_COMMENT);
 }

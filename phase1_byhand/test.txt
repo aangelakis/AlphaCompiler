@@ -1,0 +1,99 @@
+12.2
+
+8.0
+
+.123 .889
+
+.7700
+
+0.423
+
+0012.123
+
+
+the
+
+brown fox is extra_heavy
+
+tNrAin
+
+go4_sky_diving___
+12
+
+13 7700
+
+00912
+
+00
+
+
+if else
+
+while for
+
+function return
+
+break continue
+
+and not or
+
+local true false nil
+
+
++ = -
+
+* / %
+
+++ --
+
+!= ==
+
+< >
+
+<= >=
+
++++-====!==<-*
+
+
+{ } []
+
+( ) ; ,
+
+: .
+
+: : . .
+
+:: ..
+
+::: ...
+
+
+"String 01" // this is a comment
+
+"2nd string"
+
+"3rd" "4rth"
+
+"\tTab test, test backslash: \\\nAnd new line test"
+
+"Double quotes test: \""
+
+"Multi line
+string test"
+
+/* This is a comment */
+
+/* 
+    This is another comment 
+*/
+
+/* 
+/* 
+
+    This is a nested comment
+
+*/
+*/
+/*
+/*
+
