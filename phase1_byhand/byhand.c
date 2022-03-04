@@ -211,8 +211,11 @@ unsigned gettoken() {
 
         state = (*stateFuncs[state])(c);
 
-        if(state == -1)
+        if(state == -1) {
+            if(curr == 0)
+                ExtendLexeme(c);
             return UNKNOWN_TOKEN;
+        }
         else if(istoken(state)) {
             printf("Found token \'%s\' with type ", GetLexeme());
             return state - TOKEN_SHIFT;
@@ -297,7 +300,7 @@ int sf4(char c) {
 
 int sf5(char c) {
     //printf("c=%c and curr=%d\n", c, curr);
-    if(isalpha(c) || isdigit(c))
+    if(isalpha(c) || isdigit(c) || c == '_')
         return STATE(5);
     Retract(c);
 
@@ -428,8 +431,10 @@ int sf14(char c){
 }
 
 int sf15(char c) {
-    if(c == '\\')
+    if(c == '\\'){
+        Retract(c);
         return STATE(16);
+    }
     if(c == '\"') {
         ExtendLexeme(c);
         return TOKEN(STRING);
@@ -442,5 +447,22 @@ int sf15(char c) {
 }
 
 int sf16(char c) {
+    int c2 = GetNextChar();
+    //printf("c=%c and c2=%c\n",c, c2);
+    assert(c == '\\');
+    if(c2 == 'n')
+        ExtendLexeme('\n');
+    else if(c2 == 't')
+        ExtendLexeme('\t');
+    else if(c2 == '\\')
+        ExtendLexeme('\\');
+    else if(c2 == '\"')
+        ExtendLexeme('\"');
+    else {
+        ExtendLexeme(c);
+        puts("WARNING: unrecognized escape character");
+    }
+
+    Retract(GetNextChar());
     return STATE(15);
 }
