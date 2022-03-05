@@ -117,6 +117,8 @@ int main(int argc, char *argv[]) {
         if(return_token == UNKNOWN_TOKEN){
             printf("\033[1;31mERROR\033[0m: not accepted token -> \033[0;35m \'%s\'\033[0m in line %d\n", GetLexeme(), lineNo);
         }
+        else if(return_token == 49)
+            printf("\033[1;31mERROR\033[0m: UNCLOSED_COMMENT in line %d\n", lineNo);  
         else if(return_token == 50)
             printf("\033[1;31mERROR\033[0m: UNCLOSED_STRING in line %d\n", lineNo);  
         else {
@@ -139,7 +141,7 @@ int main(int argc, char *argv[]) {
                 insert_data(lineNo, ++num_tokens, GetLexeme(), "OPERATOR", curr, names[return_token-1]);
             else if(return_token > 33 && return_token < 46)
                 insert_data(lineNo, ++num_tokens, GetLexeme(), "PUNCTUATION", curr, names[return_token-1]);
-            else if(return_token > 46 && return_token < 50){
+            else if(return_token > 46 && return_token < 49){
                 char str_final[1024]="";
                 if(return_token != 47){
                     sprintf(str_final, "%d%s%d",nested_comment_starting_line[0]," - ",lineNo);
