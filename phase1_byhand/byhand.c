@@ -430,10 +430,10 @@ int sf16(char c) {
         ExtendLexeme('\"');
     else {
         ExtendLexeme(c);
+        ExtendLexeme(c2);
         puts("WARNING: unrecognized escape character");
     }
 
-    ExtendLexeme(c2);
     return STATE(15);
 }
 
