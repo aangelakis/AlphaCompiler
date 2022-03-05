@@ -2,6 +2,7 @@
 #include "lexanal.h"
 
 int num_token = 0;
+int alpha_yylex(void *);
 
 struct token_list
 {
