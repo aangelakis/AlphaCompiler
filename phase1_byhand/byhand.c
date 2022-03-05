@@ -138,8 +138,11 @@ int main(int argc, char *argv[]) {
             else if(return_token > 33 && return_token < 46)
                 insert_data(lineNo, ++num_tokens, GetLexeme(), "PUNCTUATION", curr, names[return_token-1]);
             else if(return_token > 46 && return_token < 50){
-                char str_final[1024];
-                sprintf(str_final, "%d%s%d",nested_comment_starting_line[0]," - ",lineNo);
+                char str_final[1024]="";
+                if(return_token != 47){
+                    sprintf(str_final, "%d%s%d",nested_comment_starting_line[0]," - ",lineNo);
+                }
+                
                 insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, names[return_token-1]);
             }
                 
@@ -452,10 +455,15 @@ int sf19(char c){
     CheckLine(c);
 
     while(total_comments != 0){
+        
         if(c == '/'){
             c = GetNextChar();
             CheckLine(c);
             if(c == '*'){
+                if(total_comments>1023){
+                    printf("ERROR : too many nested comments too handle \n");
+                    exit(0);
+                }
                 nested_comment_starting_line[total_comments] = lineNo ;
                 total_comments++;
             }
@@ -464,6 +472,7 @@ int sf19(char c){
             c = GetNextChar();
             CheckLine(c);
             if(c == '/'){
+                printf("%d <---\n",total_comments);
                 total_comments--;
                 int tmp = nested_comment_starting_line[total_comments];
 
@@ -475,6 +484,12 @@ int sf19(char c){
                     alpha_token_t* curr = malloc(sizeof(alpha_token_t));
                     insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, "NESTED_COMMENT");
                     insert_token(curr);
+                }else{
+                    
+    if(c == '\n')
+        lineNo--;
+
+    return TOKEN(BLOCK_COMMENT);
                 }
             }
         }
