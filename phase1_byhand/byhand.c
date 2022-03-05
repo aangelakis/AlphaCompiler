@@ -102,6 +102,9 @@ void insert_data(int numline, int numToken, char *content, char *type, alpha_tok
     }  
 }
 
+int inside_block=0;
+int nested_comments = 0;
+int nested_comment_starting_line[1024];
 int num_tokens=0;
 
 int main(int argc, char *argv[]) {
@@ -134,8 +137,12 @@ int main(int argc, char *argv[]) {
                 insert_data(lineNo, ++num_tokens, GetLexeme(), "OPERATOR", curr, names[return_token-1]);
             else if(return_token > 33 && return_token < 46)
                 insert_data(lineNo, ++num_tokens, GetLexeme(), "PUNCTUATION", curr, names[return_token-1]);
-            else if(return_token > 46 && return_token < 50)
-                insert_data(lineNo, ++num_tokens, GetLexeme(), "COMMENT", curr, names[return_token-1]);
+            else if(return_token > 46 && return_token < 50){
+                char str_final[1024];
+                sprintf(str_final, "%d%s%d",nested_comment_starting_line[0]," - ",lineNo);
+                insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, names[return_token-1]);
+            }
+                
             
             insert_token(curr);
         }
@@ -414,13 +421,11 @@ int sf16(char c) {
     return STATE(15);
 }
 
-int inside_block=0;
-int nested_comments = 0;
 
 // prwto / brethike
 int sf17(char c){
   if(c=='/')                        return STATE(18);   //arxise line comment
-  if(c=='*'){ nested_comments=0;    return STATE(19);}  //arxise block comment
+  if(c=='*'){ nested_comments=0; nested_comment_starting_line[0]=lineNo;    return STATE(19);}  //arxise block comment
 
   //ExtendLexeme(c);
 
@@ -451,6 +456,7 @@ int sf19(char c){
             c = GetNextChar();
             CheckLine(c);
             if(c == '*'){
+                nested_comment_starting_line[total_comments] = lineNo ;
                 total_comments++;
             }
         }
@@ -459,10 +465,15 @@ int sf19(char c){
             CheckLine(c);
             if(c == '/'){
                 total_comments--;
+                int tmp = nested_comment_starting_line[total_comments];
+
+                char str_final[1024];
+                sprintf(str_final, "%d%s%d",tmp," - ",lineNo);
+
                 if(total_comments != 0){
-                    printf("Found token of type NESTED_COMMENT in line %d\n", lineNo);
+                    //printf("Found token of type NESTED_COMMENT from line %d till line %d\n",tmp, lineNo);
                     alpha_token_t* curr = malloc(sizeof(alpha_token_t));
-                    insert_data(lineNo, ++num_tokens, GetLexeme(), "COMMENT", curr, "NESTED_COMMENT");
+                    insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, "NESTED_COMMENT");
                     insert_token(curr);
                 }
             }
