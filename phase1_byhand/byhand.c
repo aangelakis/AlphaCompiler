@@ -184,6 +184,7 @@ unsigned gettoken() {
     }
 }
 
+/* start state */
 int sf0(char c) {
     if(c == '<')    return STATE(1);
     if(c == '!')    return STATE(2);
@@ -219,6 +220,7 @@ int sf0(char c) {
     return STATE(-1);
 }
 
+/* '>' state */
 int sf1(char c) {
     if(c == '=') { 
         ExtendLexeme(c);
@@ -228,6 +230,7 @@ int sf1(char c) {
     return TOKEN(LT);
 }
 
+/* '!' state */
 int sf2(char c) {
     if(c == '=') { 
         ExtendLexeme(c);
@@ -237,6 +240,7 @@ int sf2(char c) {
     return UNKNOWN_TOKEN;
 }
 
+/* '=' state */
 int sf3(char c) {
     if(c == '=') { 
         ExtendLexeme(c);
@@ -246,6 +250,7 @@ int sf3(char c) {
     return TOKEN(ASSIGN);
 }
 
+/* '<' state */
 int sf4(char c) {
     if(c == '=') { 
         ExtendLexeme(c);
@@ -255,6 +260,7 @@ int sf4(char c) {
     return TOKEN(GT);
 }
 
+/* IDENTIFIER state */
 int sf5(char c) {
     //printf("c=%c and curr=%d\n", c, curr);
     if(isalpha(c) || isdigit(c) || c == '_')
@@ -264,6 +270,7 @@ int sf5(char c) {
     return TOKEN(IDENTIFIER);
 }
 
+/* whitespace state */
 int sf6(char c) {
     if(isspace(c)) {
         CheckLine(c);
@@ -274,6 +281,7 @@ int sf6(char c) {
     return STATE(0);
 }
 
+/* '+' state */
 int sf7(char c) {
     if(c == '+') {
         ExtendLexeme(c);
@@ -283,6 +291,7 @@ int sf7(char c) {
     return TOKEN(PLUS);
 }
 
+/* '-' state */
 int sf8(char c) {
     if(c == '-') {
         ExtendLexeme(c);
@@ -292,11 +301,7 @@ int sf8(char c) {
     return TOKEN(MINUS);
 }
 
-/*  
-state 9 integer state
-state 10 double state
-state 11 not accepted state (morfi tu stil 10a i 14.5o)
-*/
+/* CONST_INT state */
 int sf9(char c) {
     if(isdigit(c))        return STATE(9);
     if(c == '.')          return STATE(10);
@@ -307,6 +312,7 @@ int sf9(char c) {
     return TOKEN(INT);
 }
 
+/* CONST_DOUBLE state */
 int sf10(char c) {
     if(isdigit(c))        return STATE(10);
     if(isalpha(c))        return STATE(11);
@@ -317,6 +323,7 @@ int sf10(char c) {
     return TOKEN(DOUBLE);
 }
 
+/* wrong_identifier state (morfi tu stil 10a i 14.5o) */
 int sf11(char c){
     if(isalpha(c))          return STATE(11);
     if(isdigit(c))          return STATE(11);
@@ -367,7 +374,7 @@ int sf12(char c){
     return STATE(UNKNOWN_TOKEN);
 }
 
-//inside colon state
+/* ":" state */
 int sf13(char c){
     if(c==':'){ 
         ExtendLexeme(c);
@@ -377,7 +384,7 @@ int sf13(char c){
     return TOKEN(COLON);
 }
 
-//inside stop state
+/* "." state */
 int sf14(char c){
     if(c=='.'){ 
         ExtendLexeme(c);
@@ -387,6 +394,7 @@ int sf14(char c){
     return TOKEN(STOP);
 }
 
+/* STRING state */
 int sf15(char c) {
     if(c == '\\'){
         Retract(c);
@@ -402,12 +410,12 @@ int sf15(char c) {
     }
 
     if(c == EOF){
-        puts("UNCLOSED STRING");
         return TOKEN(UNCLOSED_STRING);
     }
     return STATE(15);
 }
 
+/* '\' in STRING state */
 int sf16(char c) {
     int c2 = GetNextChar();
     //printf("c=%c and c2=%c\n",c, c2);
@@ -429,7 +437,7 @@ int sf16(char c) {
     return STATE(15);
 }
 
-// prwto / brethike
+/* "/" state */
 int sf17(char c){
   if(c=='/')                        return STATE(18);   //arxise line comment
   if(c=='*'){ nested_comments=0; nested_comment_starting_line[0]=lineNo;    return STATE(19);}  //arxise block comment
@@ -440,7 +448,7 @@ int sf17(char c){
   return TOKEN(DIV);
 }
 
-//mesa se line comment
+/* "LINE_COMMENT" state */
 int sf18(char c){
     while(c != '\n')
       c = GetNextChar();
@@ -452,7 +460,7 @@ int sf18(char c){
     return TOKEN(LINE_COMMENT);
 }
 
-// sigoura mesa se block comment
+/* "BLOCK_COMMENT" state */
 int sf19(char c){
     int total_comments = 1;
     CheckLine(c);
