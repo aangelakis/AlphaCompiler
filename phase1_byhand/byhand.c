@@ -405,6 +405,8 @@ int sf15(char c) {
     }
 
     if(isspace(c)) {
+        if(c == '\n')
+            printf("Found new line in line %d\n", lineNo);
         CheckLine(c);
         ExtendLexeme(c);
     }
@@ -420,8 +422,10 @@ int sf16(char c) {
     int c2 = GetNextChar();
     //printf("c=%c and c2=%c\n",c, c2);
     assert(c == '\\');
-    if(c2 == 'n')
+    if(c2 == 'n'){
         ExtendLexeme('\n');
+
+    }
     else if(c2 == 't')
         ExtendLexeme('\t');
     else if(c2 == '\\')
