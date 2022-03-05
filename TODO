@@ -1,11 +1,14 @@
 
 
 BONUS:
-  1)  implement tin lista gia apothikeusi 
-  2)  opote briskume error aplo print f
+  1)  implement tin lista gia apothikeusi (done by czark)
+  2)  opote briskume error aplo print f (done by czark, yphrxe hdh auto)
   3)  sta comments na kratame se pinaka to opening line kai prin ta
       balume lista na apothikeuoume kai to opening kai to closing line
+      (#3 WILL BE DONE BY DODOS OR ELSE I SHALL DESTROY HIM)
   
- 
-
-
+LEX:
+  1) Assignment of string literal to 'char *' pointers in function 'insert_data'
+     That is read-only memory, if there are changes to be made then use 'strdup()' or 'malloc()' + 'strcpy()' 
+     If you use 'strdup' the memory the 'char *' pointer points to needs to be freed afterwards.
+  2) Change the define for the prefix so that we don't get a warning
