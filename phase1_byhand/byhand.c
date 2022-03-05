@@ -421,7 +421,7 @@ int sf16(char c) {
     else if(c2 == '\"')
         ExtendLexeme('\"');
     else {
-        ExtendLexeme(c);
+        ExtendLexeme(c2);
         puts("WARNING: unrecognized escape character");
     }
 
