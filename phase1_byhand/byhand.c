@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
     unsigned return_token;
     while((return_token = gettoken()) != END_OF_FILE) {
         if(return_token == UNKNOWN_TOKEN){
-            printf("\033[1;31mERROR\033[0m: not accepted character -> \033[0;35m \'%s\'\033[0m in line %d\n", GetLexeme(), lineNo);
+            printf("\033[1;31mERROR\033[0m: not accepted token -> \033[0;35m \'%s\'\033[0m in line %d\n", GetLexeme(), lineNo);
         }
         else if(return_token == 50)
             printf("\033[1;31mERROR\033[0m: UNCLOSED_STRING in line %d\n", lineNo);  
