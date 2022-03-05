@@ -434,7 +434,7 @@ int sf16(char c) {
     else {
         ExtendLexeme(c);
         if(isspace(c2))
-            CheckLine(c2)
+            CheckLine(c2);
         ExtendLexeme(c2);
         puts("WARNING: unrecognized escape character");
     }
