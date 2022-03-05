@@ -115,10 +115,10 @@ int main(int argc, char *argv[]) {
     unsigned return_token;
     while((return_token = gettoken()) != END_OF_FILE) {
         if(return_token == UNKNOWN_TOKEN){
-            printf("ERROR: UNKNOWN_TOKEN: \'%s\' in line %d\n", GetLexeme(), lineNo);
+            printf("\033[1;31mERROR\033[0m: not accepted character -> \033[0;35m \'%s\'\033[0m in line %d\n", GetLexeme(), lineNo);
         }
         else if(return_token == 50)
-            printf("ERROR: UNCLOSED_STRING in line %d\n", lineNo);  
+            printf("\033[1;31mERROR\033[0m: UNCLOSED_STRING in line %d\n", lineNo);  
         else {
             alpha_token_t* curr = malloc(sizeof(alpha_token_t));
             
@@ -440,7 +440,7 @@ int sf16(char c) {
         if(isspace(c2))
             CheckLine(c2);
         ExtendLexeme(c2);
-        printf("WARNING: unrecognized escape character in line %d\n", lineNo);
+        printf("\033[1;35mWARNING\033[0m: not accepted escape character -> \033[0;35m \'%c%c\'\033[0m, in line %d\n", c,c2, lineNo);
     }
 
     // We are already using retract because of '\'
@@ -486,7 +486,7 @@ int sf19(char c){
             CheckLine(c);
             if(c == '*'){
                 if(total_comments>1023){
-                    printf("ERROR : too many nested comments too handle \n");
+                    printf("\033[1;31mERROR\033[0m: exceeded amount of nested comments. \n");
                     exit(0);
                 }
                 nested_comment_starting_line[total_comments] = lineNo ;

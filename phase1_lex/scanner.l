@@ -146,7 +146,7 @@ string         	\"(\\.|\\\n|[^"\\])*\"
                         }
 
 "="                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"ASSIGN"); 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"ASSIGNMENT"); 
                             return 1;
                         }
 
@@ -166,7 +166,7 @@ string         	\"(\\.|\\\n|[^"\\])*\"
                         }
 
 "/"                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"SLASH"); 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"DIVISION"); 
                             return 1;
                         }
 
@@ -252,7 +252,7 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 <LINE_COMMENT>.         {}
 
 <LINE_COMMENT>\n        {
-                            insert_data(yylineno-1, ++num_token, " ", COMMENT, yylval,"LINE_COMMENT");
+                            insert_data(yylineno-1, ++num_token, "", COMMENT, yylval,"LINE_COMMENT");
                             BEGIN(INITIAL);
                             return 1;
                         }
@@ -482,7 +482,4 @@ void remove_quotes(char* s){
         *tmp = *(tmp+1);
         tmp++;
     }
-
-
-
 }
