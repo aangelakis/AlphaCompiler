@@ -427,7 +427,6 @@ int sf16(char c) {
     else if(c2 == '\\')
         ExtendLexeme('\\');
     else if(c2 == '\"'){
-        puts("I AM HERE");
         ExtendLexeme('\"');
     }
     else {
@@ -436,6 +435,7 @@ int sf16(char c) {
         puts("WARNING: unrecognized escape character");
     }
 
+    Retract(GetNextChar());
     return STATE(15);
 }
 
