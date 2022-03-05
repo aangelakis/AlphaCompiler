@@ -390,7 +390,9 @@ int sf14(char c){
         ExtendLexeme(c);
         return TOKEN(DOUBLE_STOP);
     }
-    Retract(c);
+    if(isdigit(c)){
+        return STATE(10);
+    }    Retract(c);
     return TOKEN(STOP);
 }
 
