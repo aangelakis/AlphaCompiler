@@ -397,6 +397,7 @@ int sf14(char c){
 /* STRING state */
 int sf15(char c) {
     if(c == '\\'){
+        // Retract '\' to find it in state 16
         Retract(c);
         return STATE(16);
     }
@@ -433,12 +434,17 @@ int sf16(char c) {
     }
     else {
         ExtendLexeme(c);
+        // if c2 is '\n' you have to count it in the lines
         if(isspace(c2))
             CheckLine(c2);
         ExtendLexeme(c2);
-        puts("WARNING: unrecognized escape character");
+        printf("WARNING: unrecognized escape character in line %d\n", lineNo);
     }
 
+    // We are already using retract because of '\'
+    // but '\' is now useless and because it is retracted it will be falsly
+    // added to the lexeme
+    // so we just retract the next character of the file to use it in state15
     Retract(GetNextChar());
     return STATE(15);
 }
