@@ -145,7 +145,8 @@ int main(int argc, char *argv[]) {
                 
                 insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, names[return_token-1]);
             }
-                
+            else if(return_token == 50)
+                puts("ERROR: UNCLOSED_STRING in line %d\n", lineNo);    
             
             insert_token(curr);
         }
@@ -402,7 +403,7 @@ int sf15(char c) {
 
     if(c == EOF){
         puts("UNCLOSED STRING");
-        return TOKEN(UNCLOSED_COMMENT);
+        return TOKEN(UNCLOSED_STRING);
     }
     return STATE(15);
 }
@@ -424,7 +425,7 @@ int sf16(char c) {
         puts("WARNING: unrecognized escape character");
     }
 
-    //Retract(GetNextChar());
+    Retract(GetNextChar());
     return STATE(15);
 }
 

@@ -67,7 +67,10 @@
 /* COMMENT */
 #define LINE_COMMENT        47
 #define BLOCK_COMMENT       48
+
+/* UNCLOSED */
 #define UNCLOSED_COMMENT    49
+#define UNCLOSED_STRING     50
 
 #define MAX_STATE 19
 #define TOKEN_SHIFT (MAX_STATE+1)
@@ -87,7 +90,7 @@ int (*stateFuncs[MAX_STATE+1])(char) = { &sf0, &sf1, &sf2, &sf3, &sf4, &sf5, &sf
 
 unsigned gettoken(void);
 
-char names[49][20] = {
+char names[50][20] = {
     "LessEqual",
     "LessThan",
     "NotEqual",
@@ -136,7 +139,8 @@ char names[49][20] = {
     "STRING",
     "LINE_COMMENT",
     "BLOCK_COMMENT",
-    "UNCLOSED_COMMENT"
+    "UNCLOSED_COMMENT",
+    "UNCLOSED_STRING"
 };
 
 int iskeyword(char *s){
