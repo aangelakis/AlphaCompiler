@@ -374,8 +374,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 56
-#define YY_END_OF_BUFFER 57
+#define YY_NUM_RULES 61
+#define YY_END_OF_BUFFER 62
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -383,40 +383,41 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[131] =
+static const flex_int16_t yy_accept[136] =
     {   0,
-        0,    0,   48,   48,    0,    0,    0,    0,   57,   55,
-        1,   55,   55,   28,   35,   36,   26,   24,   38,   25,
-       41,   27,   52,   52,   39,   37,   30,   23,   29,   53,
-       33,   34,   53,   53,   53,   53,   53,   53,   53,   53,
-       53,   53,   53,   53,   31,   32,   48,   48,   49,   48,
-       44,   45,   56,   18,    0,   54,   19,   20,   42,    0,
-       46,   43,    0,   52,    0,   40,   22,   17,   21,   53,
-       53,   53,   53,   53,   53,   53,   53,    2,   53,   53,
-       53,   12,   53,   53,   53,   48,   49,   49,   50,   47,
-       51,    0,   52,   10,   53,   53,   53,   53,    5,   53,
+        0,    0,    0,    0,    0,    0,    0,    0,   62,   60,
+       59,    1,   60,   57,   28,   35,   36,   26,   24,   38,
+       25,   41,   27,   54,   54,   39,   37,   30,   23,   29,
+       55,   33,   34,   55,   55,   55,   55,   55,   55,   55,
+       55,   55,   55,   55,   55,   31,   32,   50,   52,   49,
+       51,   44,   45,   61,   18,   57,   56,   57,   19,   20,
+       42,   53,   46,   43,    0,   54,   58,   58,   40,   22,
+       17,   21,   55,   55,   55,   55,   55,   55,   55,   55,
+        2,   55,   55,   55,   12,   55,   55,   55,   50,   49,
+       48,   47,    0,   53,   53,   54,   54,   10,   55,   55,
 
-       53,   16,   11,   53,   53,   53,   53,   53,    3,   53,
-       53,   53,   53,   14,   53,    8,   53,   15,   53,   13,
-       53,    4,   53,   53,    7,   53,   53,    9,    6,    0
+       55,   55,    5,   55,   55,   16,   11,   55,   55,   55,
+        0,   55,   55,    3,   55,   55,   55,   55,   14,   55,
+        8,   55,   15,   55,   13,   55,    4,   55,   55,    7,
+       55,   55,    9,    6,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
+        1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
+        2,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    3,    4,    1,    1,    5,    1,    1,    6,
-        7,    8,    9,   10,   11,   12,   13,   14,   15,   15,
-       15,   15,   15,   15,   15,   15,   15,   16,   17,   18,
-       19,   20,    1,    1,   21,   21,   21,   21,   22,   21,
-       23,   23,   23,   23,   23,   23,   23,   23,   23,   23,
-       23,   23,   23,   23,   23,   23,   23,   24,   23,   23,
-       25,    1,   26,    1,   27,    1,   28,   29,   30,   31,
+        1,    2,    4,    5,    1,    1,    6,    1,    1,    7,
+        8,    9,   10,   11,   12,   13,   14,   15,   16,   16,
+       16,   16,   16,   16,   16,   16,   16,   17,   18,   19,
+       20,   21,    1,    1,   22,   22,   22,   22,   23,   22,
+       24,   24,   24,   24,   24,   24,   24,   24,   24,   24,
+       24,   24,   24,   24,   24,   24,   24,   25,   24,   24,
+       26,   27,   28,    1,   29,    1,   30,   31,   32,   33,
 
-       32,   33,   23,   34,   35,   23,   36,   37,   23,   38,
-       39,   23,   23,   40,   41,   42,   43,   23,   44,   24,
-       23,   23,   45,    1,   46,    1,    1,    1,    1,    1,
+       34,   35,   24,   36,   37,   24,   38,   39,   24,   40,
+       41,   24,   24,   42,   43,   44,   45,   24,   46,   25,
+       24,   24,   47,    1,   48,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -433,117 +434,126 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[47] =
+static const YY_CHAR yy_meta[49] =
     {   0,
-        1,    2,    1,    1,    1,    1,    1,    3,    1,    1,
-        1,    1,    1,    4,    4,    1,    1,    1,    1,    1,
-        4,    4,    5,    5,    1,    1,    5,    4,    4,    4,
-        4,    4,    4,    5,    5,    5,    5,    5,    5,    5,
-        5,    5,    5,    5,    1,    1
+        1,    1,    2,    1,    1,    1,    1,    1,    2,    1,
+        1,    1,    3,    2,    4,    4,    1,    1,    1,    1,
+        1,    4,    4,    5,    5,    1,    1,    1,    5,    4,
+        4,    4,    4,    4,    4,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    1,    1
     } ;
 
-static const flex_int16_t yy_base[139] =
+static const flex_int16_t yy_base[145] =
     {   0,
-        0,    0,   45,   46,  176,  175,  174,  173,  174,  179,
-      179,  154,  168,  179,  179,  179,  179,  162,  179,  159,
-       37,   42,   48,   52,  153,  179,  149,  148,  147,    0,
-      179,  179,  127,  124,  124,  125,   37,  128,  121,   22,
-      119,  126,  117,  122,  179,  179,    0,    0,   60,  147,
-      179,  179,  179,  179,  150,  179,  179,  179,  179,   55,
-      179,  179,   60,   67,    0,  179,  179,  179,  179,    0,
-      122,  120,  113,  109,  112,  108,  109,    0,  116,  108,
-      102,    0,  101,   99,  106,    0,   70,   76,  179,  179,
-      179,   71,    0,    0,  112,   97,  106,   96,    0,  106,
+        0,    0,   46,   47,  200,  199,  198,  197,  199,  204,
+      204,  204,  178,   46,  204,  204,  204,  204,  187,  204,
+      184,   49,   43,   53,   59,  178,  204,  174,  173,  172,
+        0,  204,  204,  151,  148,  148,  149,   40,  152,  145,
+       17,  143,  150,  141,  146,  204,  204,    0,  204,   62,
+      172,  204,  204,  204,  204,   62,  204,  175,  204,  204,
+      204,   64,  204,  204,   67,   75,   79,   86,  204,  204,
+      204,  204,    0,  146,  144,  137,  133,  136,  132,  133,
+        0,  140,  132,  126,    0,  125,  123,  130,    0,   91,
+      204,  204,   79,   81,   88,    0,    0,    0,  136,  121,
 
-      107,    0,    0,   91,  101,   95,   95,   95,    0,   97,
-       86,   90,   86,    0,   93,    0,   86,    0,   88,    0,
-       84,    0,   71,   67,    0,   56,   33,    0,    0,  179,
-       89,   94,   99,  104,  106,  111,  116,   52
+      130,  120,    0,  130,  131,    0,    0,  115,  125,  119,
+        0,  119,  111,    0,   81,   70,   74,   70,    0,   77,
+        0,   70,    0,   70,    0,   53,    0,   41,   36,    0,
+       29,   19,    0,    0,  204,  121,  126,  131,  136,  139,
+      141,  146,  151,   49
     } ;
 
-static const flex_int16_t yy_def[139] =
+static const flex_int16_t yy_def[145] =
     {   0,
-      130,    1,  131,  131,  132,  132,  133,  133,  130,  130,
-      130,  130,  134,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  135,
-      130,  130,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  130,  130,  136,  136,  137,  136,
-      130,  130,  130,  130,  134,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  138,  130,  130,  130,  130,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  136,  137,  137,  130,  130,
-      130,  130,  138,  135,  135,  135,  135,  135,  135,  135,
+      135,    1,  136,  136,  137,  137,  138,  138,  135,  135,
+      135,  135,  135,  139,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  140,  140,  135,  135,  135,  135,  135,
+      141,  135,  135,  141,  141,  141,  141,  141,  141,  141,
+      141,  141,  141,  141,  141,  135,  135,  142,  135,  135,
+      135,  135,  135,  135,  135,  139,  135,  139,  135,  135,
+      135,  135,  135,  135,  135,  140,  140,  140,  135,  135,
+      135,  135,  141,  141,  141,  141,  141,  141,  141,  141,
+      141,  141,  141,  141,  141,  141,  141,  141,  142,  135,
+      135,  135,  143,  135,  135,  144,   68,  141,  141,  141,
 
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,    0,
-      130,  130,  130,  130,  130,  130,  130,  130
+      141,  141,  141,  141,  141,  141,  141,  141,  141,  141,
+      143,  141,  141,  141,  141,  141,  141,  141,  141,  141,
+      141,  141,  141,  141,  141,  141,  141,  141,  141,  141,
+      141,  141,  141,  141,    0,  135,  135,  135,  135,  135,
+      135,  135,  135,  135
     } ;
 
-static const flex_int16_t yy_nxt[226] =
+static const flex_int16_t yy_nxt[253] =
     {   0,
        10,   11,   12,   13,   14,   15,   16,   17,   18,   19,
        20,   21,   22,   23,   24,   25,   26,   27,   28,   29,
-       30,   30,   30,   30,   31,   32,   10,   33,   34,   35,
-       30,   36,   37,   30,   38,   30,   39,   40,   41,   42,
-       30,   43,   30,   44,   45,   46,   48,   48,   59,   61,
-       60,   60,   49,   49,   62,   93,   80,   50,   50,   63,
-       81,   64,   64,   63,   75,   64,   64,   88,   91,   91,
-      129,   65,   89,   60,   60,   76,   92,  130,   63,   77,
-       64,   64,  130,   88,   91,   91,   92,  128,   89,   47,
-       47,   47,   47,   47,   51,   51,   51,   51,   51,   10,
+       30,   31,   31,   31,   31,   32,   10,   33,   10,   34,
+       35,   36,   31,   37,   38,   31,   39,   31,   40,   41,
+       42,   43,   31,   44,   31,   45,   46,   47,   49,   49,
+       57,   63,   96,   83,   50,   50,   64,   84,  134,   51,
+       51,   61,  133,   62,   62,   65,   57,   66,   66,   78,
+       90,   65,   58,   66,   66,   91,  132,   68,   94,   94,
+       79,   62,   62,   57,   80,  131,   95,   65,   58,   66,
+       66,  135,  130,  135,  135,   94,   94,   95,  135,   90,
 
-       10,   10,   10,   10,   55,  127,   55,   55,   55,   70,
-       70,   86,   86,  126,   86,   86,   87,   87,   87,   87,
-       87,  125,  124,  123,  122,  121,  120,  119,  118,  117,
-      116,  115,  114,  113,  112,  111,  110,  109,  108,  107,
-      106,  105,  104,  103,  102,  101,  100,   99,   98,   97,
-       96,   95,   94,   56,   90,   85,   84,   83,   82,   79,
-       78,   74,   73,   72,   71,   69,   68,   67,   66,   58,
-       57,   56,   54,  130,   53,   53,   52,   52,    9,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
+       96,   96,   94,   94,   91,  111,  129,   97,   97,  128,
+      127,  126,  125,  124,  123,   97,   97,   97,   97,   97,
+       97,   48,   48,   48,   48,   48,   52,   52,   52,   52,
+       52,   10,   10,   10,   10,   10,   56,   56,   56,   56,
+       56,   67,   67,   67,   73,   73,   89,  122,   89,   89,
+       89,   93,   93,   93,   93,   93,  121,  120,  119,  118,
+      117,  116,  115,  114,  113,  112,  110,  109,  108,  107,
+      106,  105,  104,  103,  102,  101,  100,   99,   98,   93,
+       92,   88,   87,   86,   85,   82,   81,   77,   76,   75,
+       74,   72,   71,   70,   69,   60,   59,   55,  135,   54,
 
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130
+       54,   53,   53,    9,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      135,  135
     } ;
 
-static const flex_int16_t yy_chk[226] =
+static const flex_int16_t yy_chk[253] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    3,    4,   21,   22,
-       21,   21,    3,    4,   22,  138,   40,    3,    4,   23,
-       40,   23,   23,   24,   37,   24,   24,   49,   60,   60,
-      127,   23,   49,   63,   63,   37,   60,   87,   64,   37,
-       64,   64,   87,   88,   92,   92,   60,  126,   88,  131,
-      131,  131,  131,  131,  132,  132,  132,  132,  132,  133,
+        1,    1,    1,    1,    1,    1,    1,    1,    3,    4,
+       14,   23,  144,   41,    3,    4,   23,   41,  132,    3,
+        4,   22,  131,   22,   22,   24,   56,   24,   24,   38,
+       50,   25,   14,   25,   25,   50,  129,   24,   62,   62,
+       38,   65,   65,   93,   38,  128,   62,   66,   56,   66,
+       66,   67,  126,   67,   67,   94,   94,   62,   68,   90,
 
-      133,  133,  133,  133,  134,  124,  134,  134,  134,  135,
-      135,  136,  136,  123,  136,  136,  137,  137,  137,  137,
-      137,  121,  119,  117,  115,  113,  112,  111,  110,  108,
-      107,  106,  105,  104,  101,  100,   98,   97,   96,   95,
-       85,   84,   83,   81,   80,   79,   77,   76,   75,   74,
-       73,   72,   71,   55,   50,   44,   43,   42,   41,   39,
-       38,   36,   35,   34,   33,   29,   28,   27,   25,   20,
-       18,   13,   12,    9,    8,    7,    6,    5,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
+       68,   68,   95,   95,   90,   93,  124,   68,   68,  122,
+      120,  118,  117,  116,  115,   68,   68,   68,   68,   68,
+       68,  136,  136,  136,  136,  136,  137,  137,  137,  137,
+      137,  138,  138,  138,  138,  138,  139,  139,  139,  139,
+      139,  140,  140,  140,  141,  141,  142,  113,  142,  142,
+      142,  143,  143,  143,  143,  143,  112,  110,  109,  108,
+      105,  104,  102,  101,  100,   99,   88,   87,   86,   84,
+       83,   82,   80,   79,   78,   77,   76,   75,   74,   58,
+       51,   45,   44,   43,   42,   40,   39,   37,   36,   35,
+       34,   30,   29,   28,   26,   21,   19,   13,    9,    8,
 
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130,  130,  130,  130,  130,  130,
-      130,  130,  130,  130,  130
+        7,    6,    5,  135,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      135,  135
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[57] =
+static const flex_int32_t yy_rule_can_match_eol[62] =
     {   0,
 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,     };
+    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 
+    0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -560,15 +570,30 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "scanner.l"
-#line 2 "scanner.l"
+/* Definition Section */
+#line 3 "scanner.l"
+#include"lexanal.h"
 
-extern int  num_chars, num_token;
-int total_comments = 0;
+#define YY_DECL int alpha_yylex(void* yylval)
+
+alpha_token_t *tail = NULL;
+
+extern int num_token;
 int start_comments = 0;
+int nested_comments = 0;
 int string_flag = 0;
-#line 570 "scanner.c"
+int nested_comment_starting_line[1024];
 
-#line 572 "scanner.c"
+char* replace_bs_with(char*, int, char, int);
+void backslash(char **);
+int find_new_lines(char *);
+
+void insert_data(int numline, int numToken, char *content, char *type, alpha_token_t* yylval, char* specialty);
+#line 593 "scanner.c"
+/* FLEX Options */
+/* FLEX Macros */
+
+#line 597 "scanner.c"
 
 #define INITIAL 0
 #define BLOCK_COMMENT 1
@@ -788,10 +813,10 @@ YY_DECL
 		}
 
 	{
-#line 22 "scanner.l"
+#line 38 "scanner.l"
 
 
-#line 795 "scanner.c"
+#line 820 "scanner.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -818,13 +843,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 131 )
+				if ( yy_current_state >= 136 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 179 );
+		while ( yy_base[yy_current_state] != 204 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -861,306 +886,504 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 24 "scanner.l"
+#line 40 "scanner.l"
 {};
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 27 "scanner.l"
-{ printf("found token#%d IF in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 42 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"IF"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 28 "scanner.l"
-{ printf("found token#%d ELSE in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 47 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"ELSE"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 29 "scanner.l"
-{ printf("found token#%d WHILE in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 52 "scanner.l"
+{
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"WHILE"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 30 "scanner.l"
-{ printf("found token#%d FOR in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 57 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"FOR"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 31 "scanner.l"
-{ printf("found token#%d FUNCTION in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 62 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"FUNCTION"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 32 "scanner.l"
-{ printf("found token#%d RETURN in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}                
+#line 67 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"RETURN"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 33 "scanner.l"
-{ printf("found token#%d BREAK in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}               
+#line 72 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"BREAK"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "scanner.l"
-{ printf("found token#%d CONTINUE in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}             
+#line 77 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"CONTINUE"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "scanner.l"
-{ printf("found token#%d AND in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}                  
+#line 82 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"AND"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 36 "scanner.l"
-{ printf("found token#%d NOT in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}                   
+#line 87 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"NOT"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 37 "scanner.l"
-{ printf("found token#%d OR in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 92 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"OR"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 38 "scanner.l"
-{ printf("found token#%d LOCAL in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 97 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"LOCAL"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 39 "scanner.l"
-{ printf("found token#%d TRUE in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 102 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"TRUE"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 40 "scanner.l"
-{ printf("found token#%d FALSE in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 107 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"FALSE"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 41 "scanner.l"
-{ printf("found token#%d NIL in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 112 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"NIL"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 44 "scanner.l"
-{ printf("found token#%d EQUAL in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 118 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"EQUALS"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 45 "scanner.l"
-{ printf("found token#%d NOT_EQUAL in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 123 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"NOT_EQUALS"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 46 "scanner.l"
-{ printf("found token#%d PLUS_PLUS in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 128 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"PLUS_PLUS"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 47 "scanner.l"
-{ printf("found token#%d MINUS_MINUS in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 133 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MINUS_MINUS"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 48 "scanner.l"
-{ printf("found token#%d GREATER_EQUAL in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 138 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"GREATER_EQUAL"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 49 "scanner.l"
-{ printf("found token#%d LESS_EQUAL in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 143 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"LESS_EQUAL"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 50 "scanner.l"
-{ printf("found token#%d ASSIGNMENT in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 148 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"ASSIGN"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 51 "scanner.l"
-{ printf("found token#%d PLUS in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 153 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"PLUS"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 52 "scanner.l"
-{ printf("found token#%d MINUS in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 158 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MINUS"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 53 "scanner.l"
-{ printf("found token#%d ASTERISKOS in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 163 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MULTIPLICATION"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 54 "scanner.l"
-{ printf("found token#%d SLASH in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 168 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"SLASH"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 55 "scanner.l"
-{ printf("found token#%d PERCENT in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 173 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MODULO"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 56 "scanner.l"
-{ printf("found token#%d GREATER in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 178 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"GREATER_THAN"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 57 "scanner.l"
-{ printf("found token#%d LESS in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 183 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"LESS_THAN"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 60 "scanner.l"
-{ printf("found token#%d LEFT_BRACE in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 189 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"LEFT_BRACE"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 61 "scanner.l"
-{ printf("found token#%d RIGHT_BRACE in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 194 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"RIGHT_BRACE"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 62 "scanner.l"
-{ printf("found token#%d LEFT_BRACKET in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 199 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"LEFT_BRACKET"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 63 "scanner.l"
-{ printf("found token#%d RIGHT_BRACKET in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 204 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"RIGHT_BRACKET"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 64 "scanner.l"
-{ printf("found token#%d LEFT_PARENTHESIS in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 209 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"LEFT_PARENTHESIS"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 65 "scanner.l"
-{ printf("found token#%d RIGHT_PARENTHESIS in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 214 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"RIGHT_PARENTHESIS"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 66 "scanner.l"
-{ printf("found token#%d SEMICOLON in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 219 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"SEMICOLON"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 67 "scanner.l"
-{ printf("found token#%d COMA in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 224 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"COMMA"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 68 "scanner.l"
-{ printf("found token#%d COLON in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 229 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"COLON"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 69 "scanner.l"
-{ printf("found token#%d DOUBLE_COLON in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 234 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"DOUBLE_COLON"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 70 "scanner.l"
-{ printf("found token#%d STOP in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 239 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"STOP"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 71 "scanner.l"
-{ printf("found token#%d DOUBLE_STOP in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 244 "scanner.l"
+{ 
+                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"DOUBLE_STOP"); 
+                            return 1;
+                        }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 77 "scanner.l"
+#line 250 "scanner.l"
 {BEGIN(LINE_COMMENT);}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 78 "scanner.l"
+#line 252 "scanner.l"
 {}
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 79 "scanner.l"
+#line 254 "scanner.l"
 {
-  printf("found token#%d COMMENT LINE_COMMENT in line %d\n",++num_token,yylineno-1);
-  BEGIN(INITIAL);
-}
+                            insert_data(yylineno-1, ++num_token, " ", COMMENT, yylval,"LINE_COMMENT");
+                            BEGIN(INITIAL);
+                            return 1;
+                        }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 84 "scanner.l"
-{BEGIN(BLOCK_COMMENT);total_comments++;start_comments=yylineno;}
+#line 260 "scanner.l"
+{
+                            BEGIN(BLOCK_COMMENT);
+                            start_comments=yylineno;
+                        }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 85 "scanner.l"
-{total_comments++;}
+#line 265 "scanner.l"
+{
+                            nested_comment_starting_line[nested_comments]=yylineno;
+                            if(nested_comments > 1024){ 
+                                printf("\033[1;31mERROR\033[0m: exceeded amount of nested comments.\n"); return -1;
+                            }	
+			                nested_comments++;
+                        }
 	YY_BREAK
 case 48:
-/* rule 48 can match eol */
 YY_RULE_SETUP
-#line 86 "scanner.l"
-{}
+#line 273 "scanner.l"
+{
+                            if(nested_comments==0){
+                                char str_final[1024];
+                                sprintf(str_final, "%d%s%d",start_comments," - ",yylineno);
+                                insert_data(start_comments, ++num_token, str_final, COMMENT, yylval,"BLOCK_COMMENT");
+                                BEGIN(INITIAL);
+                            }else{
+                                nested_comments--;
+                                char str_final[1024];
+                                sprintf(str_final, "%d%s%d",nested_comment_starting_line[nested_comments]," - ",yylineno);
+                                nested_comment_starting_line[nested_comments] = 0;
+                                insert_data(yylineno, ++num_token, str_final, COMMENT, yylval,"NESTED_COMMENT");
+                            }
+                            return 1;
+                        }
 	YY_BREAK
 case 49:
-/* rule 49 can match eol */
 YY_RULE_SETUP
-#line 87 "scanner.l"
-{total_comments++;}
+#line 289 "scanner.l"
+{}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 88 "scanner.l"
-{
-  
-  if((--total_comments)==0){
-    printf("found token#%d COMMENT BLOCK_COMMENT from line %d till line %d \n",++num_token, start_comments, yylineno);
-    BEGIN(INITIAL);
-  }
-
-}
-	YY_BREAK
-case YY_STATE_EOF(BLOCK_COMMENT):
-#line 96 "scanner.l"
-{ printf("error: unclosed comment in line %d\n", start_comments); exit(-1);}
+#line 290 "scanner.l"
+{}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 99 "scanner.l"
-{ printf("found token#%d DOUBLE INTEGER in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext); }
+#line 291 "scanner.l"
+{}
 	YY_BREAK
 case 52:
+/* rule 52 can match eol */
 YY_RULE_SETUP
-#line 100 "scanner.l"
-{ printf("found token#%d INTEGER in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext); }
+#line 292 "scanner.l"
+{}
+	YY_BREAK
+case YY_STATE_EOF(BLOCK_COMMENT):
+#line 294 "scanner.l"
+{ 
+                            printf("\033[1;31mERROR\033[0m: unclosed comment in line %d\n", start_comments); 
+                            return -1;
+                        }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 101 "scanner.l"
-{ printf("found token#%d IDENTIFIER in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext); }
+#line 300 "scanner.l"
+{  
+                            insert_data(yylineno, ++num_token, yytext, DOUBLE, yylval,NULL); 
+                            return 1; 
+                        }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 104 "scanner.l"
-{ printf("found token#%d STRING in line %d with value: \'%s\'\n", ++num_token, yylineno , yytext);}
+#line 305 "scanner.l"
+{
+                           insert_data(yylineno, ++num_token, yytext, INTEGER, yylval,NULL); 
+                           return 1; 
+                        }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 107 "scanner.l"
-{}
+#line 310 "scanner.l"
+{
+                           insert_data(yylineno, ++num_token, yytext, IDENTIFIER, yylval,NULL); 
+                           return 1; 
+                        }
 	YY_BREAK
 case 56:
+/* rule 56 can match eol */
 YY_RULE_SETUP
-#line 108 "scanner.l"
-ECHO;
+#line 315 "scanner.l"
+{
+                            int new_lines = find_new_lines(yytext);
+                            backslash(&yytext);
+                            insert_data(yylineno - new_lines, ++num_token, yytext, STRING_, yylval,NULL); return 1;
+                        }
 	YY_BREAK
-#line 1160 "scanner.c"
+case 57:
+/* rule 57 can match eol */
+YY_RULE_SETUP
+#line 321 "scanner.l"
+{ 
+                            printf("\033[1;31m");
+                            printf("ERROR:");
+                            printf("\033[0m");
+                            printf(" unclosed string starting in line %d\n",yylineno);
+                            return -1;
+                        }
+	YY_BREAK
+case 58:
+YY_RULE_SETUP
+#line 329 "scanner.l"
+{
+                            printf("\033[1;31mERROR\033[0m: not accepted token -> \033[0;35m \'%s\'\033[0m in line %d\n",yytext,yylineno);
+                        }
+	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(LINE_COMMENT):
 case YY_STATE_EOF(STRING):
-	yyterminate();
+#line 333 "scanner.l"
+{return -1;}
+	YY_BREAK
+case 59:
+/* rule 59 can match eol */
+YY_RULE_SETUP
+#line 335 "scanner.l"
+{}
+	YY_BREAK
+case 60:
+YY_RULE_SETUP
+#line 337 "scanner.l"
+{
+                            printf("\033[1;31m");
+                            printf("ERROR");
+                            printf("\033[0m");
+                            printf(": not accepted character -> \033[0;35m \'%s\'\033[0m in line %d\n", yytext,yylineno);
+                        }
+	YY_BREAK
+case 61:
+YY_RULE_SETUP
+#line 344 "scanner.l"
+ECHO;
+	YY_BREAK
+#line 1387 "scanner.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1455,7 +1678,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 131 )
+			if ( yy_current_state >= 136 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1483,11 +1706,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 131 )
+		if ( yy_current_state >= 136 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 130);
+	yy_is_jam = (yy_current_state == 135);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2175,5 +2398,125 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 108 "scanner.l"
+#line 344 "scanner.l"
+
+
+
+/* Replaces every backshlash we've seen so far in the string 's' with its' true character and returns 
+   a new string 'new_s', without the backslash characters.
+*/
+char* replace_bs_with(char* s, int stop, char c, int first_time) {
+    char *iter = s, *new_s = (char *) malloc(strlen(s) * sizeof(char));
+    int i = 0;
+
+    while(i != stop) {
+        new_s[i] = iter[i];
+        i++;
+    }
+    new_s[i] = c;
+    i++;
+    while(iter[i]){
+        new_s[i] = iter[i+1];
+        i++;
+    }
+
+    if(!first_time)
+        free(s);
+    return new_s;
+}
+
+
+/* Iterates the string 's' and if it finds a backslash, the function replaces it
+   with its true value. Throws a warning if it finds a not accepted character.
+*/
+void backslash(char **s) {
+    int bad_string_flag = 0;
+    char *iter = *s, *old = *s;
+    int first_time = 1, chars = 0, count=0;
+    char bad_character[1];
+
+    while(*iter) {
+        if(*iter == '\\') {
+            if(*(iter+1) == 'n') {
+                *s = replace_bs_with(*s, chars, '\n', first_time);
+                chars--;
+                first_time = 0;
+            }
+            else if(*(iter+1) == 't') {
+                *s = replace_bs_with(*s, chars, '\t', first_time);
+                chars--;
+                first_time = 0;
+            }
+            else if(*(iter+1) == '\\') {
+                *s = replace_bs_with(*s, chars, '\\', first_time);
+                chars--;
+                first_time = 0;
+            }else if(*(iter+1) == '\"') {
+                *s = replace_bs_with(*s, chars, '\"', first_time);
+                chars--;
+                first_time = 0;
+            }else{
+              bad_character[0] = *(iter+1);
+              bad_string_flag=1;
+            }
+            
+            if(*iter == '\\') {
+                chars++;
+                iter++;
+            }
+        }
+        chars++;
+        iter++;
+    }
+    if(bad_string_flag){
+      printf("\033[1;35m");
+      printf("WARNING");
+      printf("\033[0m");
+      printf(": not accepted escape character -> \033[0;35m \'\\%c\'\033[0m, in string\033[0;35m %s\033[0m in line %d\n", bad_character[0],old,yylineno);
+    }
+}
+
+
+/* Returns the number of new lines '\n' in the string 's'. */
+int find_new_lines(char *s){
+  char *iter = s;
+  int new_lines = 0;
+
+  while(*iter){
+    if(*iter == '\n'){
+      new_lines++;
+    }
+    iter++;
+  }
+
+  return new_lines;
+}
+
+
+/* Inserts the data of a token in its struct node alpha_token_t. */
+void insert_data(int numline, int numToken, char *content, char *type, alpha_token_t* yylval, char* specialty)
+{
+    yylval->numline = numline;
+    yylval->numToken = numToken;
+    yylval->content = (char *) malloc(strlen(content) * sizeof(char));
+    strcpy(yylval->content, content);
+    yylval->type = type;
+    yylval->next = NULL;
+
+    //if specialty is null it means copy the content to the specialty else assign the new one
+    if(specialty==NULL){
+      yylval->specialty = yylval->content;
+    }else{
+      yylval->specialty = specialty;
+    }
+    if(type==STRING_ || type==IDENTIFIER){
+      yylval->category = "char*";
+    }else if(type==INTEGER){
+      yylval->category = "integer";
+    }else if(type==DOUBLE){
+      yylval->category = "double";
+    }else{
+      yylval->category = "enumerated";
+    }  
+}
 

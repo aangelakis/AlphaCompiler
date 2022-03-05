@@ -96,6 +96,7 @@ local true false nil
 
 +++-====!==<-*
 
+_lol
 
 { } []
 
@@ -122,4 +123,3 @@ local true false nil
 
 "Multi line
 string test"
-
