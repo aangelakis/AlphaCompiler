@@ -420,20 +420,26 @@ int sf16(char c) {
     int c2 = GetNextChar();
     //printf("c=%c and c2=%c\n",c, c2);
     assert(c == '\\');
-    if(c2 == 'n')
+    if(c2 == 'n'){
         ExtendLexeme('\n');
+
+    }
     else if(c2 == 't')
         ExtendLexeme('\t');
     else if(c2 == '\\')
         ExtendLexeme('\\');
-    else if(c2 == '\"')
+    else if(c2 == '\"'){
         ExtendLexeme('\"');
+    }
     else {
         ExtendLexeme(c);
+        if(isspace(c2))
+            CheckLine(c2);
+        ExtendLexeme(c2);
         puts("WARNING: unrecognized escape character");
     }
 
-    ExtendLexeme(c2);
+    Retract(GetNextChar());
     return STATE(15);
 }
 
