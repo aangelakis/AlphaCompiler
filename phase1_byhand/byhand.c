@@ -425,7 +425,7 @@ int sf16(char c) {
         puts("WARNING: unrecognized escape character");
     }
 
-    Retract(c2);
+    Retract(GetNextChar());
     return STATE(15);
 }
 
