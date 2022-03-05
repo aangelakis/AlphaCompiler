@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
                 insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, names[return_token-1]);
             }
             else if(return_token == 50)
-                printf("ERROR: UNCLOSED_STRING in line %d\n", lineNo);    
+                puts("ERROR: UNCLOSED_STRING in line %d\n", lineNo);    
             
             insert_token(curr);
         }
