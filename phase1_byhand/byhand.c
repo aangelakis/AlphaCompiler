@@ -405,8 +405,6 @@ int sf15(char c) {
     }
 
     if(isspace(c)) {
-        if(c == '\n')
-            printf("Found new line in line %d\n", lineNo);
         CheckLine(c);
         ExtendLexeme(c);
     }
@@ -435,6 +433,8 @@ int sf16(char c) {
     }
     else {
         ExtendLexeme(c);
+        if(isspace(c2))
+            CheckLine(c2)
         ExtendLexeme(c2);
         puts("WARNING: unrecognized escape character");
     }
