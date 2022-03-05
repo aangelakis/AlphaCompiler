@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+/* IN CASE STACKS ARE NEEDED
 struct open_comment_list{
   unsigned int line;
   struct open_comment_list* previous;
@@ -59,7 +60,7 @@ void close_comment(int closing_line){
   tmp2->next = node;
 }
 
-
+*/
 
 
 
@@ -67,49 +68,108 @@ void close_comment(int closing_line){
 //sf 20 einai oti exume ena /
 //sf 21 line comment
 //sf 22 block comment
-//sf 23 / mesa se block comment
-//
+
 
 int inside_block=0;
 int nested_comments = 0;
 
+// prwto / brethike
 int sf20(char c){
-  if(c=='/'&& inside_block==0)  return STATE(21);
-  if(c=='*'){ nested_comments=0;return STATE(22);} //arxise block comment
+  if(c=='/')                    return STATE(21);   //arxise line comment
+  if(c=='*'){ nested_comments=0;return STATE(22);}  //arxise block comment
 
-  ExtendLexem(c)
+  ExtendLexeme(c);
+
+  //edw mporei na einai kai to operand slash
+  return STATE(?)
   
 }
 
+//mesa se line comment
 int sf21(char c){
-  if(c!='\n') return STATE(21);
+    while(c != \'n')
+      c = GetNextChar();
+    
+    //if(c!='\n') return STATE(21);
 
-  ExtendLexem(c);
-  return TOKEN(LINE_COMMENT);
+    //ExtendLexeme(c);
+    return TOKEN(LINE_COMMENT);
 }
+
+
 
 int sf22(char c){ //block comment
   
-  if(c=='/')    return STATE(23); //pithanotita gia nested
-  if(c=='*')    return STATE(24); //pithanotita kleisimatos comment
+  int charIntForm=0;
+  while (1)
+  {
+      //printf("got this -> %c == %d \n",c,c);
+      if (c == '/')  //pithanotita nested comment
+    {
+      charIntForm = GetNextChar();  //pairnw ton epomeno
+      if (charIntForm==-1)  //check an ftasame EOF
+      {
+        return TOKEN(UNCLOSED_BLOCK_COMMENT);
+      }
+      c = (char)charIntForm;  //metatropi apo ascii se char
+      
+      //ama den mpei stin if idi exume parei ton epomeno xaraktira 
+      if (c == '*') //exoume nested comment
+      {
+        printf("NESTED COMMENT OPENED IN LINE %d\n",69);
+        nested_comments++;
 
-  
-  return STATE(22);
-}
+          //etoimazw ton epomeno xaraktira
+        charIntForm = GetNextChar();  //pairnw ton epomeno
+          if (charIntForm==-1)  //check an ftasame EOF
+          {
+            return TOKEN(UNCLOSED_BLOCK_COMMENT);  //ean eimaste sto eof den ekleise pote to comment
+          }
+          c = (char)charIntForm;  //metatropi apo ascii se char
+      }
+      
+    }else if (c == '*') //pithanotita kleisimatos comment
+    {
+      charIntForm = GetNextChar();  //pairnw ton epomeno
+      if (charIntForm==-1)  //check an ftasame EOF
+      {
+        return TOKEN(UNCLOSED_BLOCK_COMMENT);  //ean eimaste sto eof den ekleise pote to comment
+      }
+      c = (char)charIntForm;  //metatropi apo ascii se char
 
-int sf23(char c){
-  if(c!='*')    return STATE(22); //oxi nested
+      //an den mpei stin if idi exoume parei epomeno xaraktira ara den xreiazete
+      if (c=='/')   //ekleise ena comment
+      {
+        if (nested_comments!=0) //check an exoume nested comments
+        {
+          nested_comments--;  //meiwnoume kata ena ta nested comments
+          printf("Ekleise nested comment stin grammi %d\n",69);
+        }else{
+          inside_block = 0;   //ekleise to block comment
+          return TOKEN(BLOCK_COMMENT);  
+        }
 
-  nested_comments++;   //brethike nested
-  return STATE(22);
-}
-
-int sf24(char c){
-  if(c!='/') return STATE(22);  //den ekleise to comment
-  if(nested_comments==0){       //an den iparxoun nested tote ekleise to block
-    ExtendLexem(c);
-    return TOKEN(BLOCK_COMMENT);
+            //etoimazw ton epomeno xaraktira
+        charIntForm = GetNextChar();  //pairnw ton epomeno
+        if (charIntForm==-1)  //check an ftasame EOF
+        {
+          return TOKEN(UNCLOSED_BLOCK_COMMENT);  //ean eimaste sto eof den ekleise pote to comment
+        }
+        c = (char)charIntForm;  //metatropi apo ascii se char
+        
+      } //an den ekleise to comment agnooume otidipote allo
+    }else{
+        //etoimazw ton epomeno xaraktira
+      charIntForm = GetNextChar();  //pairnw ton epomeno
+        if (charIntForm==-1)  //check an ftasame EOF
+        {
+          return TOKEN(UNCLOSED_BLOCK_COMMENT);  //ean eimaste sto eof den ekleise pote to comment
+        }
+        c = (char)charIntForm;  //metatropi apo ascii se char
+    }
+    
+    
   }
-  nested_comments--;
 
 }
+
