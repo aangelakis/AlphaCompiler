@@ -426,8 +426,10 @@ int sf16(char c) {
         ExtendLexeme('\t');
     else if(c2 == '\\')
         ExtendLexeme('\\');
-    else if(c2 == '\"')
+    else if(c2 == '\"'){
+        puts("I AM HERE");
         ExtendLexeme('\"');
+    }
     else {
         ExtendLexeme(c);
         ExtendLexeme(c2);
