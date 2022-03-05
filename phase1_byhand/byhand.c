@@ -233,7 +233,7 @@ int sf2(char c) {
         return TOKEN(NE);
     }
     Retract(c);
-    return TOKEN(NOT);
+    return UNKNOWN_TOKEN;
 }
 
 int sf3(char c) {
@@ -400,6 +400,10 @@ int sf15(char c) {
         ExtendLexeme(c);
     }
 
+    if(c == EOF){
+        puts("UNCLOSED STRING");
+        return TOKEN(UNCLOSED_COMMENT);
+    }
     return STATE(15);
 }
 
@@ -420,7 +424,7 @@ int sf16(char c) {
         puts("WARNING: unrecognized escape character");
     }
 
-    Retract(GetNextChar());
+    //Retract(GetNextChar());
     return STATE(15);
 }
 
