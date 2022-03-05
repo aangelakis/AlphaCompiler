@@ -83,7 +83,7 @@ int sf3(char c);   int sf4(char c);   int sf5(char c);
 int sf6(char c);   int sf7(char c);   int sf8(char c); 
 int sf9(char c);   int sf10(char c);  int sf11(char c);
 int sf12(char c);  int sf13(char c);  int sf14(char c);
-int sf15(char c); int sf16(char c);  int sf17(char c);
+int sf15(char c);  int sf16(char c);  int sf17(char c);
 int sf18(char c);  int sf19(char c);
 
 int (*stateFuncs[MAX_STATE+1])(char) = { &sf0, &sf1, &sf2, &sf3, &sf4, &sf5, &sf6, &sf7, &sf8, &sf9, &sf10, &sf11, &sf12, &sf13, &sf14, &sf15, &sf16, &sf17, &sf18, &sf19};
