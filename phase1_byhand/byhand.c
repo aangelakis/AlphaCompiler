@@ -433,7 +433,7 @@ int sf16(char c) {
         puts("WARNING: unrecognized escape character");
     }
 
-    Retract(c2);
+    ExtendLexeme(c2);
     return STATE(15);
 }
 
