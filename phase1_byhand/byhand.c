@@ -466,7 +466,7 @@ int sf17(char c){
 
 /* "LINE_COMMENT" state */
 int sf18(char c){
-    while(c != '\n')
+    while(c != EOF && c != '\n')
       c = GetNextChar();
     //CheckLine(c);
     //if(c!='\n') return STATE(21);
