@@ -497,7 +497,7 @@ int sf19(char c){
             c = GetNextChar();
             CheckLine(c);
             if(c == '/'){
-                printf("%d <---\n",total_comments);
+                //printf("%d <---\n",total_comments);
                 total_comments--;
                 int tmp = nested_comment_starting_line[total_comments];
 
