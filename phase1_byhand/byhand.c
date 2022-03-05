@@ -115,8 +115,10 @@ int main(int argc, char *argv[]) {
     unsigned return_token;
     while((return_token = gettoken()) != END_OF_FILE) {
         if(return_token == UNKNOWN_TOKEN){
-            printf("UNKNOWN_TOKEN: \'%s\' in line %d\n", GetLexeme(), lineNo);
+            printf("ERROR: UNKNOWN_TOKEN: \'%s\' in line %d\n", GetLexeme(), lineNo);
         }
+        else if(return_token == 50)
+            printf("ERROR: UNCLOSED_STRING in line %d\n", lineNo);  
         else {
             alpha_token_t* curr = malloc(sizeof(alpha_token_t));
             
@@ -144,9 +146,7 @@ int main(int argc, char *argv[]) {
                 }
                 
                 insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, names[return_token-1]);
-            }
-            else if(return_token == 50)
-                printf("ERROR: UNCLOSED_STRING in line %d\n", lineNo);    
+            }  
             
             insert_token(curr);
         }
@@ -429,7 +429,6 @@ int sf16(char c) {
     return STATE(15);
 }
 
-
 // prwto / brethike
 int sf17(char c){
   if(c=='/')                        return STATE(18);   //arxise line comment
@@ -439,7 +438,6 @@ int sf17(char c){
 
   //edw mporei na einai kai to operand slash
   return TOKEN(DIV);
-  
 }
 
 //mesa se line comment
