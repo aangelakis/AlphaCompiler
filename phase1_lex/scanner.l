@@ -441,8 +441,11 @@ void insert_data(int numline, int numToken, char *content, char *type, alpha_tok
 {
     yylval->numline = numline;
     yylval->numToken = numToken;
-    yylval->content = (char *) malloc(strlen(content) * sizeof(char));
+    yylval->content = (char *) malloc((strlen(content) + 1) * sizeof(char));
     strcpy(yylval->content, content);
+    yylval->content[strlen(content)] = '\0';
+   // yylval->content = (char *) malloc(strlen(content) * sizeof(char));
+    //strcpy(yylval->content, content);
     yylval->type = type;
     yylval->next = NULL;
 
