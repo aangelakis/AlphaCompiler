@@ -2,4 +2,3 @@ LEX:
   1) Assignment of string literal to 'char *' pointers in function 'insert_data'
      That is read-only memory, if there are changes to be made then use 'strdup()' or 'malloc()' + 'strcpy()' 
      If you use 'strdup' the memory the 'char *' pointer points to needs to be freed afterwards.
-  2) Change the define for the prefix so that we don't get a warning
