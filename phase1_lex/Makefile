@@ -1,3 +1,4 @@
+# Phase1 was tested on 'portokali'.
 all: flex compile
 
 flex:
