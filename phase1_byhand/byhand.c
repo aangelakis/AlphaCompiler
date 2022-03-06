@@ -484,9 +484,9 @@ int sf19(char c){
     CheckLine(c);
 
     while(total_comments != 0){
-        
         if(c == '/'){
             c = GetNextChar();
+
             CheckLine(c);
             if(c == '*'){
                 if(total_comments>1023){
@@ -495,11 +495,13 @@ int sf19(char c){
                 }
                 nested_comment_starting_line[total_comments] = lineNo ;
                 total_comments++;
+                c = GetNextChar();
             }
         }
         if(c == '*'){
             c = GetNextChar();
             CheckLine(c);
+            //if(c == '*'){continue;}
             if(c == '/'){
                 //printf("%d <---\n",total_comments);
                 total_comments--;
@@ -513,16 +515,17 @@ int sf19(char c){
                     alpha_token_t* curr = malloc(sizeof(alpha_token_t));
                     insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, "NESTED_COMMENT");
                     insert_token(curr);
+                    c = GetNextChar();
                 }else{
-                    
-    if(c == '\n')
-        lineNo--;
-
-    return TOKEN(BLOCK_COMMENT);
+                    if(c == '\n')
+                        lineNo--;
+                    return TOKEN(BLOCK_COMMENT);
                 }
             }
         }
-        c = GetNextChar();
+        if(c!='/' && c!='*')
+            c = GetNextChar();
+
         if(c == EOF)
             return TOKEN(UNCLOSED_COMMENT);
         CheckLine(c);
