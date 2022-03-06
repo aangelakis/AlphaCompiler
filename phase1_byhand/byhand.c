@@ -47,6 +47,7 @@ void print_all()
         if (strcmp(iter->type, "STRING") == 0)
         {
             printf("%u:\t#%u\t\"%s\"\t%s\t\"%s\"\t<--%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty, iter->category);
+            //printf("length is =%ld\n",strlen(iter->content));
         }
         else if (strcmp(iter->type, "COMMENT") == 0)
         {
@@ -80,7 +81,7 @@ void insert_data(int numline, int numToken, char *content, char *type, alpha_tok
 {
     yylval->numline = numline;
     yylval->numToken = numToken;
-    yylval->content = (char *) malloc(strlen(content) * sizeof(char));
+    yylval->content = (char *) malloc((strlen(content)+1) * sizeof(char));
     strcpy(yylval->content, content);
     yylval->type = type;
     yylval->next = NULL;
@@ -106,7 +107,7 @@ int inside_block=0;
 int nested_comments = 0;
 int nested_comment_starting_line[1024];
 int num_tokens=0;
-
+int string_opened=0;
 int main(int argc, char *argv[]) {
     if(argc > 1)
         inputFile = fopen(argv[1], "r");
@@ -137,8 +138,15 @@ int main(int argc, char *argv[]) {
                 insert_data(lineNo, ++num_tokens, GetLexeme(), "CONST_INT", curr, NULL);
             else if(return_token == DOUBLE)
                 insert_data(lineNo, ++num_tokens, GetLexeme(), "CONST_DOUBLE", curr, NULL);
-            else if(return_token == STRING)
-                insert_data(lineNo, ++num_tokens, GetLexeme(), "STRING", curr, NULL);
+            else if(return_token == STRING){
+                char * s = GetLexeme();
+                //printf("\n\nlexe -> %s\n",s);
+                //printf(" strlen -> %ld\n",strlen(s));
+                insert_data(lineNo, ++num_tokens, s, "STRING", curr, NULL);
+                //alpha_token_t *iter=curr;
+                //printf("%u:\t#%u\t\"%s\"\t%s\t\"%s\"\t<--%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty, iter->category);
+                //printf("length is =%ld\n",strlen(iter->content));
+                }
             else if(return_token > 0 && return_token < 17)
                 insert_data(lineNo, ++num_tokens, GetLexeme(), "OPERATOR", curr, names[return_token-1]);
             else if(return_token > 33 && return_token < 46)
