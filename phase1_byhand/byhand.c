@@ -457,14 +457,18 @@ int sf16(char c) {
         if(isspace(c2))
             CheckLine(c2);
         ExtendLexeme(c2);
-        printf("\033[1;35mWARNING\033[0m: not accepted escape character -> \033[0;35m \'%c%c\'\033[0m, in line %d\n", c,c2, lineNo);
+        printf("`\033[1;35mWARNING\033[0m: not accepted escape character -> \033[0;35m \'%c%c\'\033[0m, in line %d\n", c,c2, lineNo);
     }
 
     // We are already using retract because of '\'
     // but '\' is now useless and because it is retracted it will be falsly
     // added to the lexeme
     // so we just retract the next character of the file to use it in state15
-    Retract(GetNextChar());
+    c = GetNextChar();
+    if(c == EOF)
+        return TOKEN(UNCLOSED_STRING);
+    
+    Retract(c);
     return STATE(15);
 }
 
