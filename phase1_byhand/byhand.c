@@ -460,14 +460,15 @@ int sf16(char c) {
         printf("`\033[1;35mWARNING\033[0m: not accepted escape character -> \033[0;35m \'%c%c\'\033[0m, in line %d\n", c,c2, lineNo);
     }
 
-    // We are already using retract because of '\'
+    // We are already using lookahead because of '\'
     // but '\' is now useless and because it is retracted it will be falsly
-    // added to the lexeme
+    // added to the lexeme the next time we call GetNextChar()
     // so we just retract the next character of the file to use it in state15
     c = GetNextChar();
+    // we have to check if the next character we have taken is EOF
     if(c == EOF)
         return TOKEN(UNCLOSED_STRING);
-    
+
     Retract(c);
     return STATE(15);
 }
