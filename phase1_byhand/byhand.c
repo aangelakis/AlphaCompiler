@@ -457,7 +457,7 @@ int sf16(char c) {
         if(isspace(c2))
             CheckLine(c2);
         ExtendLexeme(c2);
-        printf("`\033[1;35mWARNING\033[0m: not accepted escape character -> \033[0;35m \'%c%c\'\033[0m, in line %d\n", c,c2, lineNo);
+        printf("\033[1;35mWARNING\033[0m: not accepted escape character -> \033[0;35m \'%c%c\'\033[0m, in line %d\n", c,c2, lineNo);
     }
 
     // We are already using lookahead because of '\'
