@@ -320,10 +320,11 @@ string         	\"(\\.|\\\n|[^"\\])*\"
                         }
 
 [\"][^"]*               { 
+                            int new_lines = find_new_lines(yytext);
                             printf("\033[1;31m");
                             printf("ERROR:");
                             printf("\033[0m");
-                            printf(" unclosed string starting in line %d\n",yylineno);
+                            printf(" unclosed string starting in line %d\n",yylineno - new_lines);
                             return -1;
                         }
 
