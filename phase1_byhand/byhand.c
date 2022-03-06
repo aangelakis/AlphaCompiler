@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
                 printf("\033[1;31mERROR\033[0m: not accepted token -> \033[0;35m \'%s\'\033[0m in line %d\n", unknown, lineNo);
         }
         else if(return_token == 49)
-            printf("\033[1;31mERROR\033[0m: UNCLOSED_COMMENT in line %d\n", lineNo);  
+            printf("\033[1;31mERROR\033[0m: UNCLOSED_COMMENT in line %d\n", nested_comment_starting_line[0]);  
         else if(return_token == 50)
             printf("\033[1;31mERROR\033[0m: UNCLOSED_STRING in line %d\n", lineNo);  
         else {
