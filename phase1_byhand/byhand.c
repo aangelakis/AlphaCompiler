@@ -495,8 +495,8 @@ int sf19(char c){
     while(total_comments != 0){
         if(c == '/'){
             c = GetNextChar();
-
             CheckLine(c);
+
             if(c == '*'){
                 if(total_comments>1023){
                     printf("\033[1;31mERROR\033[0m: exceeded amount of nested comments. \n");
@@ -505,6 +505,7 @@ int sf19(char c){
                 nested_comment_starting_line[total_comments] = lineNo ;
                 total_comments++;
                 c = GetNextChar();
+                CheckLine(c);
             }
         }
         if(c == '*'){
@@ -525,9 +526,8 @@ int sf19(char c){
                     insert_data(lineNo, ++num_tokens, str_final, "COMMENT", curr, "NESTED_COMMENT");
                     insert_token(curr);
                     c = GetNextChar();
+                    CheckLine(c);
                 }else{
-                    if(c == '\n')
-                        lineNo--;
                     return TOKEN(BLOCK_COMMENT);
                 }
             }
