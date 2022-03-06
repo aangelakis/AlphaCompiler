@@ -508,7 +508,9 @@ int sf19(char c){
 
             if(c == '*'){
                 if(total_comments>1023){
-                    printf("\033[1;31mERROR\033[0m: exceeded amount of nested comments. \n");
+                    printf("\033[1;31mERROR\033[0m: exceeded maximum amount of nested comments allowed.\n");
+                    print_all();
+                    free_all();
                     exit(0);
                 }
                 nested_comment_starting_line[total_comments] = lineNo ;
