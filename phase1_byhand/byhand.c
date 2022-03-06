@@ -123,8 +123,10 @@ int main(int argc, char *argv[]) {
         }
         else if(return_token == 49)
             printf("\033[1;31mERROR\033[0m: UNCLOSED_COMMENT in line %d\n", nested_comment_starting_line[0]);  
-        else if(return_token == 50)
-            printf("\033[1;31mERROR\033[0m: UNCLOSED_STRING in line %d\n", lineNo);  
+        else if(return_token == 50){
+            printf("\033[1;31mERROR\033[0m: UNCLOSED_STRING in line %d\n", string_opened);
+            string_opened = 0;
+            }  
         else {
             alpha_token_t* curr = malloc(sizeof(alpha_token_t));
             
@@ -144,6 +146,7 @@ int main(int argc, char *argv[]) {
                 //printf("\n\nlexe -> %s\n",s);
                 //printf(" strlen -> %ld\n",strlen(s));
                 insert_data(lineNo, ++num_tokens, s, "STRING", curr, NULL);
+                string_opened = 0;
                 //alpha_token_t *iter=curr;
                 //printf("%u:\t#%u\t\"%s\"\t%s\t\"%s\"\t<--%s\n", iter->numline, iter->numToken, iter->content, iter->type, iter->specialty, iter->category);
                 //printf("length is =%ld\n",strlen(iter->content));
@@ -411,6 +414,7 @@ int sf14(char c){
 
 /* STRING state */
 int sf15(char c) {
+    if(string_opened==0){string_opened = lineNo;}
     if(c == '\\'){
         // Retract '\' to find it in state 16
         Retract(c);
