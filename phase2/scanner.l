@@ -483,7 +483,7 @@ int find_new_lines(char *s){
 
 void print_token(int numline, int numToken, char * content, char *type, char * specialty){
     FILE *fp;
-    fp = fopen("lex_output.txt", "w+");
+    fp = fopen("lex_output.txt", "a+");
 
     char * category ;
 
