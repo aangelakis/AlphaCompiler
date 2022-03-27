@@ -351,7 +351,7 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 {indentifier}           {
                            print_token(yylineno, ++num_token, yytext, "IDENTIFIER", NULL);
                            yylval.strVal = strdup(yytext); 
-                           return IDENTIFIER; 
+                           return ID; 
                         }
 
 {string}                {
