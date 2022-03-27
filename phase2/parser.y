@@ -84,7 +84,7 @@ extern char* yytext;
 
 %type<allVal> stmt
 %type<allVal> expr
-%type<strVal> op
+//%type<strVal> op
 
 %type<allVal> term
 %type<allVal> assignexpr
@@ -110,11 +110,11 @@ extern char* yytext;
 
 %%
 
-program: liststmt  ;
+program: liststmt;
 
-liststmt:   liststmt stmt
-            | stmt
-            ;
+liststmt: liststmt stmt
+          | stmt
+          ;
 
 stmt: expr ";"      {}
       | ifstmt      {}
@@ -128,25 +128,39 @@ stmt: expr ";"      {}
       | ";"           {}
       ;
 
-expr:   assignexpr
-        | expr op expr
-        | term
+expr:   assignexpr        {}
+        | term            {}
+        | expr PLUS expr  {}
+        | expr MINUS expr {}
+        | expr MULT expr  {}
+        | expr DIV expr   {}
+        | expr MOD expr   {}
+        | expr GE expr    {}
+        | expr GT expr    {}
+        | expr LE expr    {}
+        | expr LT expr    {}
+        | expr EQ expr    {}
+        | expr NE expr    {}
+        | expr AND expr   {}
+        | expr OR expr    {}
         ;
 
-op: PLUS    {}
+// Check this!
+/*op: PLUS    {}
   | MINUS   {}
   | MULT    {}
   | DIV     {}
   | MOD     {}
-  | GT      {}
   | GE      {}
-  | LT      {}
+  | GT      {}
   | LE      {}
+  | LT      {}
   | EQ      {}
   | NE      {}
   | AND     {}
   | OR      {}
   ; 
+*/
 
 term:   "(" expr ")"            {}
         | "-"expr  %prec UMINUS {}

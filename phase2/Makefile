@@ -3,6 +3,7 @@ all: bison flex gcc
 conflicts: bison_conflict
 
 bison_conflict:
+	rm parser.output
 	bison --defines -v  --output=parser.c parser.y
 
 bison:
