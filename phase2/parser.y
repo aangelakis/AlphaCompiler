@@ -1,13 +1,29 @@
-/* IDENTIFIER */
+%{
+int yyerror(char *yaccProvideMessage);
+int yylex();
+
+#include <stdio.h>
+extern int yylineno;
+extern char* yytext;
+%}
+
+%output "parser.c"
+%defines
+
+%union {
+    char*   strVal;
+    int     intVal;
+    double  realVal;
+    void*   allVal;
+}
+
+%start program
+
 %token<strVal> IDENTIFIER
-/* STRING */
 %token<strVal> STRING
-/* INTEGER */
 %token<intVal> INT
-/* DOUBLE*/
 %token<realVal> DOUBLE
 
-/* OPERATORS */
 %token LE              "<="
 %token LT              "<"
 %token NE              "!="
@@ -23,7 +39,6 @@
 %token DIV             "/"
 %token MOD             "%"
 
-/* KEYWORDS */
 %token IF              "if"
 %token ELSE            "else"
 %token WHILE           "while"
@@ -40,7 +55,6 @@
 %token FALSE           "false"
 %token NIL             "nil"
 
-/* PUNCTUATION */
 %token LEFT_BRACE          "["
 %token RIGHT_BRACE         "]"
 %token LEFT_BRACKET        "{"
@@ -54,7 +68,6 @@
 %token STOP                "."
 %token DOUBLE_STOP         ".."
 
-/* Operator Associativity and Priority (Bottom-to-Top Priority)*/
 %right ASSIGN
 %left OR
 %left AND
@@ -63,7 +76,43 @@
 %left PLUS 
 %right MINUS
 %left MULT DIV MOD
-%right NOT PLUS_PLUS MINUS_MINUS MINUS
+%right NOT PLUS_PLUS MINUS_MINUS
 %left STOP DOUBLE_STOP
 %left LEFT_BRACE RIGHT_BRACE
 %left LEFT_PARENTHESIS RIGHT_PARENTHESIS
+
+%type<allVal> stmt
+%type<intVal> expr
+%type<strVal> op
+
+%%
+
+program: stmt;
+
+stmt: expr  {};
+
+expr:   INT
+        |expr op expr
+        ;
+
+op: PLUS    {}
+  | MINUS   {}
+  | MULT    {}
+  | DIV     {}
+  | MOD     {}
+  | GT      {}
+  | GE      {}
+  | LT      {}
+  | LE      {}
+  | EQ      {}
+  | NE      {}
+  | AND     {}
+  | OR      {}; 
+
+%%
+
+int yyerror(char* yaccProvideMessage)
+{
+    fprintf(stderr, "%s:at line %d, before token: %s\n",  yaccProvideMessage, yylineno, yytext);
+    fprintf(stderr , "INPUT NOT VALID\n");
+}

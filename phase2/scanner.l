@@ -1,12 +1,9 @@
 /* Definition Section */
 %{
-#include"lexanal.h"
+#include<stdio.h>
+#include"parser.h"
 
-#define YY_DECL int alpha_yylex(void* yylval)
-
-alpha_token_t *tail = NULL;
-
-extern int num_token;
+int num_token = 0;
 int start_comments = 0;
 int nested_comments = 0;
 int string_flag = 0;
@@ -16,7 +13,7 @@ char* replace_bs_with(char*, int, char, int);
 void backslash(char **);
 int find_new_lines(char *);
 void remove_quotes(char* s);
-void insert_data(int numline, int numToken, char *content, char *type, alpha_token_t* yylval, char* specialty);
+void print_token(int numline, int numToken, char *content, char *type, char* specialty);
 %}
 
 /* FLEX Options */
@@ -40,210 +37,251 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 \n                      {};
 
 "if"                    { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"IF"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD","IF");
+                            yylval.strVal = strdup(yytext);
+                            return IF;
                         }
 
 "else"                  { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"ELSE"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD","ELSE");
+                            yylval.strVal = strdup(yytext);
+                            return ELSE;
                         }
 
 "while"                 {
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"WHILE"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "WHILE");
+                            yylval.strVal = strdup(yytext);
+                            return WHILE;
                         }
 
 "for"                   { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"FOR"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "FOR");
+                            yylval.strVal = strdup(yytext);
+                            return FOR;
                         }
 
 "function"              { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"FUNCTION"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "FUNCTION");
+                            yylval.strVal = strdup(yytext);
+                            return FUNCTION;
                         }
 
 "return"                { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"RETURN"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "RETURN");
+                            yylval.strVal = strdup(yytext); 
+                            return RETURN;
                         }
 
 "break"                 { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"BREAK"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "BREAK");
+                            yylval.strVal = strdup(yytext); 
+                            return BREAK;
                         }
 
 "continue"              { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"CONTINUE"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "CONTINUE");
+                            yylval.strVal = strdup(yytext); 
+                            return CONTINUE;
                         }
 
 "and"                   { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"AND"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "AND");
+                            yylval.strVal = strdup(yytext); 
+                            return AND;
                         }
 
 "not"                   { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"NOT"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "NOT");
+                            yylval.strVal = strdup(yytext); 
+                            return NOT;
                         }
 
 "or"                    { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"OR"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "OR");
+                            yylval.strVal = strdup(yytext); 
+                            return OR;
                         }
 
 "local"                 { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"LOCAL"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "LOCAL");
+                            yylval.strVal = strdup(yytext); 
+                            return LOCAL;
                         }
 
 "true"                  { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"TRUE"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "TRUE");
+                            yylval.strVal = strdup(yytext); 
+                            return TRUE;
                         }
 
 "false"                 { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"FALSE"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "FALSE");
+                            yylval.strVal = strdup(yytext); 
+                            return FALSE;
                         }
 
 "nil"                   { 
-                            insert_data(yylineno, ++num_token, yytext, KEYWORD, yylval,"NIL"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "KEYWORD", "NIL");
+                            yylval.strVal = strdup(yytext); 
+                            return NIL;
                         }
 
 
 "=="                    { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"EQUALS"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "EQUALS");
+                            yylval.strVal = strdup(yytext); 
+                            return EQ;
                         }
 
 "!="                    { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"NOT_EQUALS"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "NOT_EQUALS");
+                            yylval.strVal = strdup(yytext); 
+                            return NE;
                         }
 
 "++"                    { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"PLUS_PLUS"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "PLUS_PLUS");
+                            yylval.strVal = strdup(yytext); 
+                            return PLUS_PLUS;
                         }
 
 "--"                    { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MINUS_MINUS"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "MINUS_MINUS");
+                            yylval.strVal = strdup(yytext); 
+                            return MINUS_MINUS;
                         }
 
 ">="                    { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"GREATER_EQUAL"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "GREATER_EQUAL");
+                            yylval.strVal = strdup(yytext); 
+                            return GE;
                         }
 
 "<="                    { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"LESS_EQUAL"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "LESS_EQUAL");
+                            yylval.strVal = strdup(yytext); 
+                            return LE;
                         }
 
 "="                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"ASSIGNMENT"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "ASSIGNMENT");
+                            yylval.strVal = strdup(yytext); 
+                            return ASSIGN;
                         }
 
 "+"                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"PLUS"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "PLUS");
+                            yylval.strVal = strdup(yytext); 
+                            return PLUS;
                         }
 
 "-"                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MINUS"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "MINUS");
+                            yylval.strVal = strdup(yytext); 
+                            return MINUS;
                         }
 
 "*"                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MULTIPLICATION"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "MULTIPLICATION");
+                            yylval.strVal = strdup(yytext); 
+                            return MULT;
                         }
 
 "/"                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"DIVISION"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "DIVISION");
+                            yylval.strVal = strdup(yytext); 
+                            return DIV;
                         }
 
 "%"                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"MODULO"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "MODULO");
+                            yylval.strVal = strdup(yytext); 
+                            return MOD;
                         }
 
 ">"                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"GREATER_THAN"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "GREATER_THAN");
+                            yylval.strVal = strdup(yytext); 
+                            return GT;
                         }
 
 "<"                     { 
-                            insert_data(yylineno, ++num_token, yytext, OPERATOR, yylval,"LESS_THAN"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "OPERATOR", "LESS_THAN");
+                            yylval.strVal = strdup(yytext); 
+                            return LT;
                         }
 
                 
 "{"                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"LEFT_BRACE"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "LEFT_BRACE");
+                            yylval.strVal = strdup(yytext); 
+                            return LEFT_BRACE;
                         }
 
 "}"                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"RIGHT_BRACE"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "RIGHT_BRACE");
+                            yylval.strVal = strdup(yytext); 
+                            return RIGHT_BRACE;
                         }
 
 "["                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"LEFT_BRACKET"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "LEFT_BRACKET");
+                            yylval.strVal = strdup(yytext); 
+                            return LEFT_BRACKET;
                         }
 
 "]"                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"RIGHT_BRACKET"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "RIGHT_BRACKET");
+                            yylval.strVal = strdup(yytext); 
+                            return RIGHT_BRACKET;
                         }
 
 "("                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"LEFT_PARENTHESIS"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "LEFT_PARENTHESIS");
+                            yylval.strVal = strdup(yytext); 
+                            return LEFT_PARENTHESIS;
                         }
 
 ")"                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"RIGHT_PARENTHESIS"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "RIGHT_PARENTHESIS");
+                            yylval.strVal = strdup(yytext); 
+                            return RIGHT_PARENTHESIS;
                         }
 
 ";"                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"SEMICOLON"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "SEMICOLON");
+                            yylval.strVal = strdup(yytext); 
+                            return SEMICOLON;
                         }
 
 ","                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"COMMA"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "COMMA");
+                            yylval.strVal = strdup(yytext); 
+                            return COMMA;
                         }
 
 ":"                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"COLON"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "COLON");
+                            yylval.strVal = strdup(yytext); 
+                            return COLON;
                         }
 
 "::"                    { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"DOUBLE_COLON"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "DOUBLE_COLON");
+                            yylval.strVal = strdup(yytext); 
+                            return DOUBLE_COLON;
                         }
 
 "."                     { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"STOP"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "STOP");
+                            yylval.strVal = strdup(yytext); 
+                            return STOP;
                         }
 
 ".."                    { 
-                            insert_data(yylineno, ++num_token, yytext, PUNCTUATION, yylval,"DOUBLE_STOP"); 
-                            return 1;
+                            print_token(yylineno, ++num_token, yytext, "PUNCTUATION", "DOUBLE_STOP");
+                            yylval.strVal = strdup(yytext); 
+                            return DOUBLE_STOP;
                         }
 
 
@@ -252,9 +290,9 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 <LINE_COMMENT>.         {}
 
 <LINE_COMMENT>\n        {
-                            insert_data(yylineno-1, ++num_token, "", COMMENT, yylval,"LINE_COMMENT");
+                            print_token(yylineno-1, ++num_token, "", "COMMENT", "LINE_COMMENT");
                             BEGIN(INITIAL);
-                            return 1;
+                            //return LINE_COMMENT;
                         }
 
 "/*"                    {
@@ -274,16 +312,17 @@ string         	\"(\\.|\\\n|[^"\\])*\"
                             if(nested_comments==0){
                                 char str_final[1024];
                                 sprintf(str_final, "%d%s%d",start_comments," - ",yylineno);
-                                insert_data(start_comments, ++num_token, str_final, COMMENT, yylval,"BLOCK_COMMENT");
+                                print_token(start_comments, ++num_token, str_final, "COMMENT", "BLOCK_COMMENT");
                                 BEGIN(INITIAL);
+                                //return BLOCK_COMMENT;
                             }else{
                                 nested_comments--;
                                 char str_final[1024];
                                 sprintf(str_final, "%d%s%d",nested_comment_starting_line[nested_comments]," - ",yylineno);
                                 nested_comment_starting_line[nested_comments] = 0;
-                                insert_data(yylineno, ++num_token, str_final, COMMENT, yylval,"NESTED_COMMENT");
+                                print_token(yylineno, ++num_token, str_final, "COMMENT", "NESTED_COMMENT");
+                                //return NESTED_COMMENT;
                             }
-                            return 1;
                         }
 
 <BLOCK_COMMENT>"*"+     {}
@@ -298,25 +337,30 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 
 
 {real}                  {  
-                            insert_data(yylineno, ++num_token, yytext, DOUBLE, yylval,NULL); 
-                            return 1; 
+                            print_token(yylineno, ++num_token, yytext, "CONST_DOUBLE", NULL);
+                            yylval.realVal = atof(yytext);
+                            return DOUBLE; 
                         }
 
 {integer}               {
-                           insert_data(yylineno, ++num_token, yytext, INTEGER, yylval,NULL); 
-                           return 1; 
+                           print_token(yylineno, ++num_token, yytext, "CONST_INT", NULL);
+                           yylval.intVal = atoi(yytext); 
+                           return INT; 
                         }
 
 {indentifier}           {
-                           insert_data(yylineno, ++num_token, yytext, IDENTIFIER, yylval,NULL); 
-                           return 1; 
+                           print_token(yylineno, ++num_token, yytext, "IDENTIFIER", NULL);
+                           yylval.strVal = strdup(yytext); 
+                           return IDENTIFIER; 
                         }
 
 {string}                {
                             int new_lines = find_new_lines(yytext);
                             backslash(&yytext);
                             remove_quotes(yytext);
-                            insert_data(yylineno - new_lines, ++num_token, yytext, STRING_, yylval,NULL); return 1;
+                            print_token(yylineno - new_lines, ++num_token, yytext, "STRING", NULL);
+                            yylval.strVal = strdup(yytext); 
+                            return STRING;
                         }
 
 [\"][^"]*               { 
@@ -330,9 +374,10 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 
 ([0-9]+)([a-zA-Z_]+)    {
                             printf("\033[1;31mERROR\033[0m: not accepted token -> \033[0;35m \'%s\'\033[0m in line %d\n",yytext,yylineno);
+                            return -1;
                         }
 
-<<EOF>>                 {return -1;}
+<<EOF>>                 {return 0;} //YYEOF
 
 {space}                 {}
 
@@ -436,36 +481,35 @@ int find_new_lines(char *s){
   return new_lines;
 }
 
+void print_token(int numline, int numToken, char * content, char *type, char * specialty){
+    char * category ;
 
-/* Inserts the data of a token in its struct node alpha_token_t. */
-void insert_data(int numline, int numToken, char *content, char *type, alpha_token_t* yylval, char* specialty)
-{
-    yylval->numline = numline;
-    yylval->numToken = numToken;
-    yylval->content = (char *) malloc((strlen(content) + 1) * sizeof(char));
-    strcpy(yylval->content, content);
-    yylval->content[strlen(content)] = '\0'; // just to be sure.
-   // yylval->content = (char *) malloc(strlen(content) * sizeof(char));
-    //strcpy(yylval->content, content);
-    yylval->type = type;
-    yylval->next = NULL;
+    if((strcmp(type,"STRING") == 0) || (strcmp(type,"IDENTIFIER") == 0)){
+        category = strdup("char*");
+    }else if(strcmp(type,"CONST_INT") == 0){
+        category = strdup("integer");
+    }else if(strcmp(type,"CONST_DOUBLE") == 0){
+        category = strdup("double");
+    }else{
+        category = strdup("enumerated");
+    }
 
-    //if specialty is null it means copy the content to the specialty else assign the new one
-    if(specialty==NULL){
-      yylval->specialty = yylval->content;
-    }else{
-      yylval->specialty = specialty;
-    }    
-    if((strcmp(type,STRING_) == 0) || (strcmp(type,IDENTIFIER) == 0)){
-      yylval->category = "char*";
-    }else if(strcmp(type,INTEGER) == 0){
-      yylval->category = "integer";
-    }else if(strcmp(type,DOUBLE) == 0){
-      yylval->category = "double";
-    }else{
-      yylval->category = "enumerated";
-    }  
+    if (strcmp(type, "STRING") == 0)
+        {
+            printf("%u:\t#%u\t\"%s\"\t%s\t\"%s\"\t<--%s\n", numline, numToken, content, type, specialty, category);
+        }
+        else if (strcmp(type, "COMMENT") == 0)
+        {
+            printf("%u:\t#%u\t\"%s\"\t%s\t%s\t<--%s\n", numline, numToken, content, type, specialty, category);
+        }
+        else
+        {
+            printf("%u:\t#%u\t\"%s\"\t%s\t%s\t<--%s\n", numline, numToken, content, type, specialty, category);
+        }
+    
+    free(category);
 }
+
 
 /* Removes first and last quote from a string */
 void remove_quotes(char* s){

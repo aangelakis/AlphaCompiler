@@ -1,0 +1,84 @@
+1) to eof to pianame san -1 stin main pleon apo ta defines einai 0 na dume ama thelei allagi
+
+
+2) grammatiki savidi :
+program -> stmt*
+
+stmt -> expr ;
+      | ifstmt
+      | whilestmt
+      | forstmt
+      | returnstmt
+      | break ;
+      | continue;
+      | block
+      | funcdef
+      | ;
+
+expr -> assignexpr
+      | expr op expr
+      | term
+
+op -> + | - | * | / | % | > | >= | < | <= | == | != | and | or
+
+term -> ( expr )
+      | - expr
+      | not expr
+      | ++lvalue
+      | lvalue++
+      | --lvalue
+      | lvalue--
+      | primary
+
+assginexpr -> lvalue = expr
+
+primary -> lvalue
+      | call
+      | objectdef
+      | ( funcdef )
+      | const
+
+lvalue -> id
+      | local id
+      | :: id
+      | member
+
+member -> lvalue . id
+      | lvalue [ expr ]
+      | call . id
+      | call [ expr ]
+
+call -> call ( elist )
+      | lvalue callsuffix
+      | ( funcdef) ( elist )
+
+callsuffix -> normcall
+      | methodcall
+
+normcall -> ( elist )
+
+methodcall ->.. id ( elist ) // equivalent to lvalue.id(lvalue, elist)
+
+elist -> [ expr [, expr] * ] //proeretika kai ta dio
+
+objectdef -> [ [elist | indexed] ] // mesa brackets proeretika
+
+indexed -> [indexedelem [, indexedelem] * ] //olo proeretika
+
+indexedelem -> { expr : expr }
+
+block -> { [stmt*] } //proeretika brackets
+
+funcdef -> function [id] (idlist) block //id proeretika
+
+const -> number | string | nil | true | false
+
+idlist ->[id [, id] * ] //olo proeretika
+
+ifstmt -> if ( expr ) stmt [ else stmt ] // proeretika brackets
+
+whilestmt -> while ( expr ) stmt
+
+forstmt -> for ( elist; expr; elist) stmt
+
+returnstmt -> return [expr]; // proeretika brackets
