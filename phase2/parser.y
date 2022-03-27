@@ -19,7 +19,7 @@ extern char* yytext;
 
 %start program
 
-%token<strVal> IDENTIFIER
+%token<strVal> ID
 %token<strVal> STRING
 %token<intVal> INT
 %token<realVal> DOUBLE
@@ -79,20 +79,58 @@ extern char* yytext;
 %right NOT PLUS_PLUS MINUS_MINUS
 %left STOP DOUBLE_STOP
 %left LEFT_BRACE RIGHT_BRACE
+%nonassoc UMINUS
 %left LEFT_PARENTHESIS RIGHT_PARENTHESIS
 
 %type<allVal> stmt
-%type<intVal> expr
+%type<allVal> expr
 %type<strVal> op
+
+%type<allVal> term
+%type<allVal> assignexpr
+%type<allVal> primary
+%type<allVal> lvalue
+%type<allVal> member
+%type<allVal> call
+%type<allVal> callsuffix
+%type<allVal> normcall
+%type<allVal> methodcall
+%type<allVal> elist
+%type<allVal> objectdef
+%type<allVal> indexed
+%type<allVal> indexedelem
+%type<allVal> block
+%type<allVal> funcdef
+%type<allVal> const
+%type<allVal> idlist
+%type<allVal> ifstmt
+%type<allVal> whilestmt
+%type<allVal> forstmt
+%type<allVal> returnstmt
 
 %%
 
-program: stmt;
+program: liststmt  ;
 
-stmt: expr  {};
+liststmt:   liststmt stmt
+            | stmt
+            ;
 
-expr:   INT
-        |expr op expr
+stmt: expr ";"      {}
+      | ifstmt      {}
+      | whilestmt   {}
+      | forstmt     {}
+      | returnstmt  {}
+      | BREAK ";"   {}  
+      | CONTINUE ";"{}
+      | block       {}
+      | funcdef     {}
+      | ";"           {}
+      ;
+
+expr:   assignexpr
+        | expr op expr
+        | term
         ;
 
 op: PLUS    {}
@@ -107,7 +145,99 @@ op: PLUS    {}
   | EQ      {}
   | NE      {}
   | AND     {}
-  | OR      {}; 
+  | OR      {}
+  ; 
+
+term:   "(" expr ")"            {}
+        | "-"expr  %prec UMINUS {}
+        | NOT expr              {}
+        | "++"lvalue          {}
+        | lvalue"++"          {}
+        | "--"lvalue          {}
+        | primary               {}
+        ;
+
+assignexpr: lvalue"="expr  {};
+
+primary:  lvalue            {}
+          | call            {}
+          | objectdef       {}
+          | "("funcdef")"   {}
+          | const           {}
+          ;
+
+lvalue: ID                    {}
+        | LOCAL ID            {}
+        | DOUBLE_COLON ID     {}
+        | member              {}
+        ;
+
+member: lvalue "." ID           {}
+        | lvalue "[" expr "]"   {}
+        | call "." ID           {}
+        | call "[" expr "]"     {}
+        ;
+
+call: call "(" elist ")"                 {}
+      | lvalue callsuffix                {}
+      | "(" funcdef ")" "(" elist ")"    {}
+      ;
+
+callsuffix: normcall      {}
+            | methodcall  {}
+            ;
+
+normcall:   "(" elist ")"   {};          
+
+methodcall: DOUBLE_STOP ID "(" elist ")"    {};
+
+elist:  %empty            {}
+        | elist "," expr  {}
+        | expr            {}      
+        ;
+
+objectdef:  "[" elist "]"     {}
+        |   "[" indexed "]"   {}
+        ;
+
+indexed:  indexed"," indexedelem    {}
+          | indexedelem               {}
+          ;
+
+indexedelem: "{" expr ":" expr "}" {};
+
+block: "{" liststmt "}" {}
+        | "{" "}"        {}
+        ;
+
+funcdef: FUNCTION ID "("idlist")" block {}
+        | FUNCTION "("idlist")" block {}
+        ;
+
+const:  INT       {}
+        | DOUBLE  {}
+        | STRING  {}
+        | NIL     {}
+        | TRUE    {}
+        | FALSE   {}
+        ;
+
+idlist: %empty          {}
+        | idlist "," ID {}
+        | ID            {}
+        ;
+
+ifstmt: IF "(" expr ")" stmt ELSE stmt {}
+        | IF "(" expr ")" stmt {}
+        ;
+
+whilestmt: WHILE "(" expr ")" stmt  {};
+
+forstmt: FOR "(" elist ";" expr ";" elist ")" stmt  {};
+
+returnstmt: RETURN expr";"  {}
+            | RETURN";"     {}
+            ;
 
 %%
 

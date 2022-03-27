@@ -1,5 +1,10 @@
 all: bison flex gcc
 
+conflicts: bison_conflict
+
+bison_conflict:
+	bison --defines -v  --output=parser.c parser.y
+
 bison:
 	bison --defines  --output=parser.c parser.y
 
