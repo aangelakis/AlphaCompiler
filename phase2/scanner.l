@@ -482,6 +482,9 @@ int find_new_lines(char *s){
 }
 
 void print_token(int numline, int numToken, char * content, char *type, char * specialty){
+    FILE *fp;
+    fp = fopen("lex_output.txt", "w+");
+
     char * category ;
 
     if((strcmp(type,"STRING") == 0) || (strcmp(type,"IDENTIFIER") == 0)){
@@ -496,18 +499,19 @@ void print_token(int numline, int numToken, char * content, char *type, char * s
 
     if (strcmp(type, "STRING") == 0)
         {
-            printf("%u:\t#%u\t\"%s\"\t%s\t\"%s\"\t<--%s\n", numline, numToken, content, type, specialty, category);
+            fprintf(fp,"%u:\t#%u\t\"%s\"\t%s\t\"%s\"\t<--%s\n", numline, numToken, content, type, specialty, category);
         }
         else if (strcmp(type, "COMMENT") == 0)
         {
-            printf("%u:\t#%u\t\"%s\"\t%s\t%s\t<--%s\n", numline, numToken, content, type, specialty, category);
+            fprintf(fp,"%u:\t#%u\t\"%s\"\t%s\t%s\t<--%s\n", numline, numToken, content, type, specialty, category);
         }
         else
         {
-            printf("%u:\t#%u\t\"%s\"\t%s\t%s\t<--%s\n", numline, numToken, content, type, specialty, category);
+            fprintf(fp,"%u:\t#%u\t\"%s\"\t%s\t%s\t<--%s\n", numline, numToken, content, type, specialty, category);
         }
     
     free(category);
+    fclose(fp);
 }
 
 
