@@ -56,10 +56,10 @@ extern char* yytext;
 %token FALSE           "false"
 %token NIL             "nil"
 
-%token LEFT_BRACE          "["
-%token RIGHT_BRACE         "]"
-%token LEFT_BRACKET        "{"
-%token RIGHT_BRACKET       "}"
+%token LEFT_BRACKET        "["
+%token RIGHT_BRACKET       "]"
+%token LEFT_BRACE          "{"
+%token RIGHT_BRACE         "}"
 %token LEFT_PARENTHESIS    "("
 %token RIGHT_PARENTHESIS   ")"
 %token SEMICOLON           ";"
@@ -80,7 +80,7 @@ extern char* yytext;
 %left MULT DIV MOD
 %right NOT PLUS_PLUS MINUS_MINUS
 %left STOP DOUBLE_STOP
-%left LEFT_BRACE RIGHT_BRACE
+%left LEFT_BRACKET RIGHT_BRACKET
 %nonassoc UMINUS
 %left LEFT_PARENTHESIS RIGHT_PARENTHESIS
 
@@ -259,6 +259,6 @@ returnstmt: RETURN expr";"  {   printf("returnstmt -> return expr;\n"); }
 
 int yyerror(char* yaccProvideMessage)
 {
-    fprintf(stderr, "%s:at line %d, before token: %s\n",  yaccProvideMessage, yylineno, yytext);
+    fprintf(stderr, "%s:at line %d, before token: \'%s\'\n",  yaccProvideMessage, yylineno, yytext);
     fprintf(stderr , "INPUT NOT VALID\n");
 }

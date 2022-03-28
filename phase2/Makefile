@@ -3,7 +3,6 @@ all: bison flex gcc
 conflicts: bison_conflict
 
 bison_conflict:
-	rm parser.output
 	bison --defines -v  --output=parser.c parser.y
 
 bison:
@@ -16,4 +15,4 @@ gcc:
 	gcc scanner.c parser.c syntaxanal.c
 
 clean:
-	rm -rf a.out parser.c parser.h scanner.c scanner.h
+	rm -rf a.out parser.c parser.h scanner.c scanner.h lex_output.txt
