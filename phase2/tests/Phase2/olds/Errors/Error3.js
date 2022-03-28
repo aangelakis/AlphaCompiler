@@ -1,0 +1,23 @@
+//DONE
+
+{
+        {
+x = 123;
+
+function a(){
+
+       function b(){
+
+               x = 5;		//Cannot acces 'x' inside function b'
+       }
+        
+       function c(){
+               a();
+               b();
+               local a = 1;
+               a();           
+       }
+
+}
+
+}}
