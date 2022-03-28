@@ -13,7 +13,7 @@ char* replace_bs_with(char*, int, char, int);
 void backslash(char **);
 int find_new_lines(char *);
 void remove_quotes(char* s);
-void print_token(int numline, int numToken, char *content, char *type, char* specialty);
+void print_token(int numline, int numToken, char *content,const char *type, char* specialty);
 %}
 
 /* FLEX Options */
@@ -31,7 +31,7 @@ string         	\"(\\.|\\\n|[^"\\])*\"
 
 %x BLOCK_COMMENT
 %x LINE_COMMENT
-%x STRING
+
 %%
 
 \n                      {};
@@ -481,7 +481,7 @@ int find_new_lines(char *s){
   return new_lines;
 }
 
-void print_token(int numline, int numToken, char * content, char *type, char * specialty){
+void print_token(int numline, int numToken, char * content,const char *type, char * specialty){
     FILE *fp;
     fp = fopen("lex_output.txt", "a+");
 

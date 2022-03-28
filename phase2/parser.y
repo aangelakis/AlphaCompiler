@@ -170,6 +170,7 @@ term:   "(" expr ")"            {   printf("term -> (expr)\n");     }
         | "++"lvalue            {   printf("term -> ++lvalue\n");   }
         | lvalue"++"            {   printf("term -> lvalue++\n");   }
         | "--"lvalue            {   printf("term -> --lvalue\n");   }
+        | lvalue"--"            {   printf("term -> lvalue--\n");   }
         | primary               {   printf("term -> primary\n");    }
         ;
 
