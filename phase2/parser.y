@@ -3,8 +3,11 @@ int yyerror(char *yaccProvideMessage);
 int yylex();
 
 #include <stdio.h>
+#include "ipografes.h"
 extern int yylineno;
 extern char* yytext;
+int scope = 0;
+int flag_scope = 0 ; // 0 == block ; 1 == function
 %}
 
 %output "parser.c"
@@ -18,6 +21,7 @@ extern char* yytext;
 }
 
 %start program
+%expect 1
 
 /* Terminal Symbols */
 %token<strVal> ID
@@ -87,7 +91,6 @@ extern char* yytext;
 /* Non Terminal Symbols */
 %type<allVal> stmt
 %type<allVal> expr
-//%type<strVal> op
 %type<allVal> term
 %type<allVal> assignexpr
 %type<allVal> primary
@@ -112,148 +115,133 @@ extern char* yytext;
 
 %%
 
-program: liststmt   {   printf("program -> stmt*\n");   };
-
-liststmt: liststmt stmt {   printf("liststmt -> liststmt stmt\n");  }
-          | stmt        {   printf("liststmt -> stmt\n");   }
-          ;
-
-stmt: expr ";"      {   printf("stmt -> expr;\n");      }
-      | ifstmt      {   printf("stmt -> ifstmt\n");     }
-      | whilestmt   {   printf("stmt -> whilestmt\n");  }
-      | forstmt     {   printf("stmt -> forstmt\n");    }
-      | returnstmt  {   printf("stmt -> returnstmt\n"); }
-      | BREAK ";"   {   printf("stmt -> break;\n");     }  
-      | CONTINUE ";"{   printf("stmt -> continue;\n");  }
-      | block       {   printf("stmt -> block\n");      }
-      | funcdef     {   printf("stmt -> funcdef\n");    }
-      | ";"         {   printf("stmt -> ;\n");          }
-      ;
-
-expr:   assignexpr        {     printf("expr -> assignexpr\n");     }
-        | term            {     printf("expr -> term\n");           }
-        | expr PLUS expr  {     printf("expr -> expr + expr\n");    }
-        | expr MINUS expr {     printf("expr -> expr - expr\n");    }
-        | expr MULT expr  {     printf("expr -> expr * expr\n");    }
-        | expr DIV expr   {     printf("expr -> expr / expr\n");    }
-        | expr MOD expr   {     printf("expr -> expr %% expr\n");   }
-        | expr GE expr    {     printf("expr -> expr >= expr\n");   }
-        | expr GT expr    {     printf("expr -> expr > expr\n");    }
-        | expr LE expr    {     printf("expr -> expr <= expr\n");   }
-        | expr LT expr    {     printf("expr -> expr < expr\n");    }
-        | expr EQ expr    {     printf("expr -> expr == expr\n");   }
-        | expr NE expr    {     printf("expr -> expr != expr\n");   }
-        | expr AND expr   {     printf("expr -> expr and expr\n");  }
-        | expr OR expr    {     printf("expr -> expr or expr\n");   }
+program: liststmt   {   Manage_program_liststmt();      }
+        |%empty     {   Manage_program_empty();         }
         ;
 
-// Check this!
-/*op: PLUS    {}
-  | MINUS   {}
-  | MULT    {} 
-  | DIV     {}
-  | MOD     {}
-  | GE      {}
-  | GT      {}
-  | LE      {}
-  | LT      {}
-  | EQ      {}
-  | NE      {}
-  | AND     {}
-  | OR      {}
-  ; 
-*/
+liststmt: liststmt stmt {  Manage_liststmt_liststmtStmt();      }
+          | stmt        {   Manage_liststmt_stmt();             }
+          ;
 
-term:   "(" expr ")"            {   printf("term -> (expr)\n");     }
-        | "-"expr  %prec UMINUS {   printf("term -> -expr\n");      }
-        | NOT expr              {   printf("term -> not expr\n");   }
-        | "++"lvalue            {   printf("term -> ++lvalue\n");   }
-        | lvalue"++"            {   printf("term -> lvalue++\n");   }
-        | "--"lvalue            {   printf("term -> --lvalue\n");   }
-        | lvalue"--"            {   printf("term -> lvalue--\n");   }
-        | primary               {   printf("term -> primary\n");    }
+stmt: expr ";"      {   Manage_stmt_expr();         }
+      | ifstmt      {   Manage_stmt_ifstmt();       }
+      | whilestmt   {   Manage_stmt_whilestmt();    }
+      | forstmt     {   Manage_stmt_forstmt();      }
+      | returnstmt  {   Manage_stmt_returnstmt();   }
+      | BREAK ";"   {   Manage_stmt_break();        }  
+      | CONTINUE ";"{   Manage_stmt_continue();     }
+      | block       {   Manage_stmt_block();        }
+      | funcdef     {   Manage_stmt_funcdef();      }
+      | ";"         {   Manage_stmt_semicolon();    }
+      ;
+
+expr:   assignexpr        {     Manage_expr_assignexpr();       }
+        | term            {     Manage_expr_term();             }
+        | expr PLUS expr  {     Manage_expr_exprOPexpr("+");    }
+        | expr MINUS expr {     Manage_expr_exprOPexpr("-");    }
+        | expr MULT expr  {     Manage_expr_exprOPexpr("*");    }
+        | expr DIV expr   {     Manage_expr_exprOPexpr("/");    }
+        | expr MOD expr   {     Manage_expr_exprOPexpr("%");    }
+        | expr GE expr    {     Manage_expr_exprOPexpr(">=");   }
+        | expr GT expr    {     Manage_expr_exprOPexpr(">");    }
+        | expr LE expr    {     Manage_expr_exprOPexpr("<=");   }
+        | expr LT expr    {     Manage_expr_exprOPexpr("<");    }
+        | expr EQ expr    {     Manage_expr_exprOPexpr("==");   }
+        | expr NE expr    {     Manage_expr_exprOPexpr("!=");   }
+        | expr AND expr   {     Manage_expr_exprOPexpr("and");  }
+        | expr OR expr    {     Manage_expr_exprOPexpr("or");   }
+        ;
+
+term:   "(" expr ")"            {   Manage_term_expr();                 }
+        | "-"expr  %prec UMINUS {   Manage_term_uminusExpr();           }
+        | NOT expr              {   Manage_term_notExpr();              }
+        | "++"lvalue            {   Manage_term_pluspluslvalue();       }
+        | lvalue"++"            {   Manage_term_lvalueplusplus();       }
+        | "--"lvalue            {   Manage_term_minusminuslvalue();     }
+        | lvalue"--"            {   Manage_term_lvalueminusminus();     }
+        | primary               {   Manage_term_primary();              }
         ;
 
 assignexpr: lvalue"="expr       {   printf("assignexpr -> lvalue=expr\n");  };
 
-primary:  lvalue            {   printf("primary -> lvalue\n");      }
-          | call            {   printf("primary -> call\n");        }
-          | objectdef       {   printf("primary -> objectdef\n");   }
-          | "("funcdef")"   {   printf("primary -> (funcdec)\n");   }
-          | const           {   printf("primary -> const\n");       }
+primary:  lvalue            {   Manage_primary_lvalue();      }
+          | call            {   Manage_primary_call();        }
+          | objectdef       {   Manage_primary_objectdef();   }
+          | "("funcdef")"   {   Manage_primary_funcdef();     }
+          | const           {   Manage_primary_const();       }
           ;
 
-lvalue: ID                    { printf("lvalue -> id\n");       }
-        | LOCAL ID            { printf("lvalue -> local id\n"); }
-        | DOUBLE_COLON ID     { printf("lvalue -> ::id\n");     }
-        | member              { printf("lvalue -> member\n");   }
+lvalue: ID                    { Manage_lvalue_id();         }
+        | LOCAL ID            { Manage_lvalue_localID();    }
+        | DOUBLE_COLON ID     { Manage_lvalue_globalID();   }
+        | member              { Manage_lvalue_member();     }
         ;
 
-member: lvalue "." ID           {   printf("member -> lvalue.id\n");    }
-        | lvalue "[" expr "]"   {   printf("member -> lvalue[expr]\n"); }
-        | call "." ID           {   printf("member -> call.id\n");      }
-        | call "[" expr "]"     {   printf("member -> call[expr]\n");   }
+member: lvalue "." ID           {   Manage_member_lvalueID();   }
+        | lvalue "[" expr "]"   {   Manage_member_lvalueExpr(); }
+        | call "." ID           {   Manage_member_callID();     }
+        | call "[" expr "]"     {   Manage_member_callExpr();   }
         ;
 
-call: call "(" elist ")"                 {  printf("call -> call(elist)\n");        }
-      | lvalue callsuffix                {  printf("call -> lvalue callsuffix\n");  }
-      | "(" funcdef ")" "(" elist ")"    {  printf("call -> (funcdef)(elist)\n");   }
+call: call "(" elist ")"                 {  Manage_call_callElist();        }
+      | lvalue callsuffix                {  Manage_call_lvalueCallsuffix(); }
+      | "(" funcdef ")" "(" elist ")"    {  Manage_call_funcdefElist();     }
       ;
 
-callsuffix: normcall      { printf("callsuffix -> normcall\n");     }
-            | methodcall  { printf("callsuffix -> methodcall\n");   }
+callsuffix: normcall      { Manage_callsuffix_normcall();     }
+            | methodcall  { Manage_callsuffix_methodcall();   }
             ;
 
-normcall:   "(" elist ")"   {   printf("normcall -> (elist)\n");    };          
+normcall:   "(" elist ")"   {   Manage_normcall();    };          
 
-methodcall: DOUBLE_STOP ID "(" elist ")"    {   printf("methodcall -> ..id(elist)\n");  };
+methodcall: DOUBLE_STOP ID "(" elist ")"    {   Manage_methodcall();  };
 
-elist:  %empty            {     printf("elist -> ε\n");             }
-        | elist "," expr  {     printf("elist -> elist,expr\n");    }
-        | expr            {     printf("elist -> epxr\n");          }      
+elist:  %empty            {     Manage_elist_empty();           }
+        | elist "," expr  {     Manage_elist_elistExpr();       }
+        | expr            {     Manage_elist_expr();            }      
         ;
 
-objectdef:  "[" elist "]"     {     printf("objectdef -> [elist]\n");   }
-        |   "[" indexed "]"   {     printf("objectdef -> [indexed]\n"); }
+objectdef:  "[" elist "]"     {     Manage_objectdef_elist();   }
+        |   "[" indexed "]"   {     Manage_objectdef_indexed(); }
         ;
 
-indexed:  indexed"," indexedelem    {   printf("indexed -> indexed,indexedelem\n"); }
-          | indexedelem             {   printf("indexed -> indexedelem\n");         }
+indexed:  indexed"," indexedelem    {   Manage_indexed_indexedIndexedelem(); }
+          | indexedelem             {   Manage_indexed_indexedelem();        }
           ;
 
-indexedelem: "{" expr ":" expr "}"  {   printf("indexedelem -> {expr:expr}\n"); };
+indexedelem: "{" expr ":" expr "}"  {   Manage_indexedelem(); };
 
-block: "{" liststmt "}" {   printf("block -> stmt*\n"); }
-        | "{" "}"        {  printf("block -> {}\n");    }
+block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt();    }
+        |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();  }
         ;
 
-funcdef: FUNCTION ID "("idlist")" block {   printf("function id (idlist) block\n"); }
-        | FUNCTION "("idlist")" block   {   printf("function (idlist) block\n");    }
+funcdef: FUNCTION ID {ScopeUp(1);}"("idlist")" block {   Manage_funcdef_functionId(); }
+        | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function();   }
         ;
 
-const:  INT       { printf("const -> number\n");    }
-        | DOUBLE  { printf("const -> number\n");    }
-        | STRING  { printf("const -> string\n");    }
-        | NIL     { printf("const -> nil\n");       }
-        | TRUE    { printf("const -> true\n");      }
-        | FALSE   { printf("const -> false\n");     }
+const:  INT       { Manage_const_number();    }
+        | DOUBLE  { Manage_const_number();    }
+        | STRING  { Manage_const_string();    }
+        | NIL     { Manage_const_nil();       }
+        | TRUE    { Manage_const_true();      }
+        | FALSE   { Manage_const_false();     }
         ;
 
-idlist: %empty          {   printf("idlist -> ε\n");        }
-        | idlist "," ID {   printf("idlist -> id,id*\n");   }
-        | ID            {   printf("idlist -> id\n");       }
+idlist: %empty          {   Manage_idlist_empty();      }
+        | idlist "," ID {   Manage_idlist_idlistId();   }
+        | ID            {   Manage_idlist_id();         }
         ;
 
-ifstmt: IF "(" expr ")" stmt ELSE stmt {    printf("ifstmt -> if (expr) stmt else\n");  }
-        | IF "(" expr ")" stmt         {    printf("ifstmt -> if (expr)\n");            }
+ifstmt: IF "(" expr ")" stmt ELSE stmt {   Manage_ifstmt_ifelse();  }
+        | IF "(" expr ")" stmt         {    Manage_ifstmt_if();     }
         ;
 
-whilestmt: WHILE "(" expr ")" stmt     {    printf("whilestmt -> while(expr) stmt\n");  };
+whilestmt: WHILE  "(" expr ")" stmt     {    Manage_whilestmt();  };
 
-forstmt: FOR "(" elist ";" expr ";" elist ")" stmt  {   printf("forstmt -> for(elist;expr;elist) stmt\n");  };
+forstmt: FOR "(" elist ";" expr ";" elist ")" stmt  {   Manage_forstmt();  };
 
-returnstmt: RETURN expr";"  {   printf("returnstmt -> return expr;\n"); }
-            | RETURN";"     {   printf("returnstmt -> return;\n");      }
+returnstmt: RETURN expr";"  {   Manage_returnstmt_returnexpr(); }
+            | RETURN";"     {   Manage_returnstmt_return();     }
             ;
 
 %%
