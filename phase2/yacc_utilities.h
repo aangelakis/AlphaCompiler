@@ -2,8 +2,8 @@ extern int scope;
 extern int flag_scope;
 
 
-//if the the last who called this function is a block(0) and you are a block(0) scope++
-//else if you are a function(1) scope++
+//if the the last who called this function is a block(0) and you are a block(0) => scope++
+//else if you are a function(1) => scope++
 //else if the last was a function and you are a block you change the flag
 void ScopeUp(int callee){
     if (callee == 0 && flag_scope == 0)
@@ -21,6 +21,7 @@ void ScopeUp(int callee){
     
 }
 void ScopeDown(int callee){
+    //here call hide(active_scope);
     printf("Scope down to %d\n",--scope);
 }
 

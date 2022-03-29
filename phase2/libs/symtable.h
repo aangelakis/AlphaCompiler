@@ -24,14 +24,14 @@ enum SymbolType {
     GLOBAL, LOCAL, FORMAL, USERFUNC, LIBFUNC
 };
 
-typedef struct SymbolTableEntry {
+typedef struct SymTableEntry {
     int isActive; //Boolean
     union {
         Variable *varVal;
         Function *funcVal;
     } value;
     enum SymbolType type;
-} SymbolTableEntry;
+} SymTableEntry;
 
 
 /* SymTable_T interface */

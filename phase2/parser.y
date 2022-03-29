@@ -3,7 +3,7 @@ int yyerror(char *yaccProvideMessage);
 int yylex();
 
 #include <stdio.h>
-#include "ipografes.h"
+#include "yacc_utilities.h"
 extern int yylineno;
 extern char* yytext;
 int scope = 0;
@@ -171,9 +171,9 @@ primary:  lvalue            {   Manage_primary_lvalue();      }
           | const           {   Manage_primary_const();       }
           ;
 
-lvalue: ID                    { Manage_lvalue_id();         }
-        | LOCAL ID            { Manage_lvalue_localID();    }
-        | DOUBLE_COLON ID     { Manage_lvalue_globalID();   }
+lvalue: ID                    { Manage_lvalue_id($1);         } 
+        | LOCAL ID            { Manage_lvalue_localID($2);    }
+        | DOUBLE_COLON ID     { Manage_lvalue_globalID($2);   }
         | member              { Manage_lvalue_member();     }
         ;
 
@@ -229,7 +229,7 @@ const:  INT       { Manage_const_number();    }
 
 idlist: %empty          {   Manage_idlist_empty();      }
         | idlist "," ID {   Manage_idlist_idlistId();   }
-        | ID            {   Manage_idlist_id();         }
+        | ID            {   Manage_idlist_id();         } 
         ;
 
 ifstmt: IF "(" expr ")" stmt ELSE stmt {   Manage_ifstmt_ifelse();  }
