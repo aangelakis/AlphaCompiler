@@ -5,6 +5,35 @@
 
 typedef struct SymTable_T* SymTable_T;
 
+/* Symbol Table Entries */
+
+typedef struct Variable {
+    const char *name;
+    unsigned int scope;
+    unsigned int line;
+} Variable;
+
+typedef struct Function {
+    const char *name;
+    //List of arguments
+    unsigned int scope;
+    unsigned int line;
+} Function;
+
+enum SymbolType {
+    GLOBAL, LOCAL, FORMAL, USERFUNC, LIBFUNC
+};
+
+typedef struct SymbolTableEntry {
+    int isActive; //Boolean
+    union {
+        Variable *varVal;
+        Function *funcVal;
+    } value;
+    enum SymbolType type;
+} SymbolTableEntry;
+
+
 /* SymTable_T interface */
 
 /* Returns a new empty SymTable(no bindings) */
