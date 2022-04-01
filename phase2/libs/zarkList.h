@@ -16,17 +16,16 @@ typedef struct zarkList {
 /* Initializes the zarkList */
 zarkList* zarklist_initialize(int);
 
-/* Inserts a token in the struct token list. */
+/* Inserts a zarkNode in the zarkList. */
 void zarklist_insert(zarkList*, void*);
 
-/* Prints the content of each node of the list using function print */
+/* Deletes zarkNode 'node' from the zarkList 'list' */
+void zarklist_delete(zarkList *list, zarkNode* node);
+
+/* Applys function 'apply(void*)' to the content of each zarkNode of the zarkList */
 void zarklist_apply(void*, void (*apply)(void*));
 
-/* Frees the struct token list. */
-void zarklist_free_all(zarkList*);
-
-
-
-
+/* Frees the zarkList and all its zarkNodes. */
+void zarklist_free_all_nodes(zarkList*);
 
 #endif

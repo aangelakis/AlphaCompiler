@@ -10,7 +10,7 @@ zarkList* zarklist_initialize(int isContentFreeable)
 
     return list;
 }
-/* Inserts a token in the struct token list. */
+
 void zarklist_insert(zarkList* list, void* content)
 {
     zarkNode* new_entry = malloc(sizeof(zarkNode));
@@ -32,7 +32,43 @@ void zarklist_insert(zarkList* list, void* content)
     list->size++;
 }
 
-/* Prints the content of each node of the list using function print */
+void zarklist_delete(zarkList *list, zarkNode* node)
+{
+    zarkNode *iter = list->head, *prev = NULL;
+
+    // Find the node to be deleted
+    while(iter != NULL && iter != node) {
+        prev = iter;
+        iter = iter->next;
+    }
+
+    // node must exist based on our structures
+    assert(iter != NULL);
+
+    // delete the node you found 'iter' points to it
+    if(prev == NULL){
+        list->head = iter->next;
+        iter->next = NULL;
+        if(list->isContentFreeable)
+            free(iter->content);
+        free(iter);
+    }
+    else if(iter == list->tail){
+        list->tail = prev;
+        prev->next = NULL;
+        if(list->isContentFreeable)
+            free(iter->content);
+        free(iter);
+    }
+    else {
+        prev->next = iter->next;
+        iter->next = NULL;
+        if(list->isContentFreeable)
+            free(iter->content);
+        free(iter);
+    }
+}
+
 void zarklist_apply(void *list, void (*apply)(void*))
 {
     zarkNode *iter = list->head;
@@ -43,8 +79,7 @@ void zarklist_apply(void *list, void (*apply)(void*))
     }
 }
 
-/* Frees the struct token list. */
-void zarklist_free_all(zarkList* list)
+void zarklist_free_all_nodes(zarkList* list)
 {
     zarkNode *iter = list->head, *tmp;
     int isFreeable = list->isContentFreeable;
@@ -56,4 +91,13 @@ void zarklist_free_all(zarkList* list)
             free(tmp->content);
         free(tmp);
     }
+}
+
+void zarklist_free(zarkList* list) {
+    zarklist_free_all_nodes(list);
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+    list->isContentFreeable = 0;
+    free(list);
 }

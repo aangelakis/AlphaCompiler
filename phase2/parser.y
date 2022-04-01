@@ -18,6 +18,8 @@ int flag_scope = 0 ; // 0 == block ; 1 == function
     int     intVal;
     double  realVal;
     void*   allVal;
+    SymTableEntry* exprNode;
+
 }
 
 %start program

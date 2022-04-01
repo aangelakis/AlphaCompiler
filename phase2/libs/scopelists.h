@@ -5,7 +5,7 @@
 typedef zarkList scopelist;
 
 typedef struct scopeArray {
-    scopelist* scopes;
+    scopelist** scopes;
     int size;
 } scopeArray;
 
@@ -28,10 +28,11 @@ scopeArray* expand_scopeArr(scopeArray* array);
 void free_scopeArr(scopeArray* array);
 
 /*puts in the scopeArray at the end of the scope list the entry*/
-void insert_to_scopeArr(int scope, SymTableEntry * entry);
+void insert_to_scopeArr(scopeArray* array, int scope, SymTableEntry* entry);
 
+/*checks if the given scope can exist in the given array*/
+scopeArray* checkScopeSize(scopeArray* array, int scope);
 
+/*returns a pointer to a symtable entry if found otherwise null*/
+SymTableEntry* lookup_with_scope (scopeArray* array, int scope,  char* c);
 #endif
-
-
-
