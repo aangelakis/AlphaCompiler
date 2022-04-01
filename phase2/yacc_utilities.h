@@ -1,6 +1,9 @@
+#ifndef YACC_UTILITIES_HEADER
+#define YACC_UTILITIES_HEADER
+
 extern int scope;
 extern int flag_scope;
-
+unsigned int invalid_funcname_number  = 0;
 
 //if the the last who called this function is a block(0) and you are a block(0) => scope++
 //else if you are a function(1) => scope++
@@ -23,6 +26,14 @@ void ScopeUp(int callee){
 void ScopeDown(int callee){
     //here call hide(active_scope);
     printf("Scope down to %d\n",--scope);
+}
+
+/* Generates a invalid name for a function */
+char* invalid_funcname_generator(){
+    char* invalid_name = malloc(1024*(sizeof(char)));
+    sprintf(invalid_name, "_$f%u", invalid_funcname_number++);
+    
+    return invalid_name;
 }
 
 void Manage_returnstmt_returnexpr(){
@@ -308,3 +319,6 @@ void Manage_program_liststmt(){
 void Manage_program_empty(){
     printf("empty program\n");  
 }
+
+
+#endif

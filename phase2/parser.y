@@ -4,6 +4,7 @@ int yylex();
 
 #include <stdio.h>
 #include "yacc_utilities.h"
+#include "symtable.h"
 extern int yylineno;
 extern char* yytext;
 int scope = 0;
@@ -19,7 +20,7 @@ int flag_scope = 0 ; // 0 == block ; 1 == function
     double  realVal;
     void*   allVal;
     SymTableEntry* exprNode;
-
+    idList* idlist;
 }
 
 %start program

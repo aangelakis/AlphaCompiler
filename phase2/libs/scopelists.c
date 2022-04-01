@@ -111,5 +111,36 @@ scopeArray* checkScopeSize(scopeArray* array, int scope){
 
 /*returns a pointer to a symtable entry if found otherwise null*/
 SymTableEntry* lookup_with_scope (scopeArray* array, int scope,  char* c){
-
+	array = checkScopeSize(array, scope);
+	zarkNode* itter = array->scopes[scope]->head;
+	
+	//while loop
+	while (itter!=NULL)
+	{
+		//if it is active
+		if(Look_up_node->isActive==1){
+			//if it is a libfunc or a userfunction
+			if ((Look_up_node->type==USERFUNC) || (Look_up_node->type==LIBFUNC))
+			{
+				//if it is what we are looking for
+				if (strcmp(Look_up_node->value.funcVal->name,c)==0)
+				{
+					return Look_up_node;
+				}
+			//else if it is a variable
+			}else{
+				//if it is what we are looking for
+				if (strcmp(Look_up_node->value.varVal->name,c)==0)
+				{
+					return Look_up_node;
+				}
+			}
+			
+		}
+		
+		//go to next zarkNode
+		itter = itter->next;
+	}
+	//if we reached here nothing was found
+	return NULL;
 }

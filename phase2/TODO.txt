@@ -1,18 +1,18 @@
-  1) struct define gia function kai variable 
-d     1a) list gia ta id pu pairnei ena function
-d 2) scope list  
-  3) change hash table
-d 4) 2 hide mia total hide pu tha ta afairei kai apo to scope list kai mia pu apla ta apenergopoiei
-    d 4a) unhide tha xreiastei
-          h douleia ths unhide einai na ksana energopoiei ola ta symbols pou briskontai se scope 1-n,
-          opou n to scope mias synarthshs apo thn opoia molis bgainoume. Mono tote tha xrhsipoieite h unhide.
-    d 4b) Ta 2 hide tha einai to soft_hide kai to hard_hide. To soft_hide apla tha apenergopoiei proswrina to visibility,
-          kai to hard_hide tha kanei delete ta symbols apo ta scope lists oloklhrwtika.
-  5) total_lookup, lookup_with_scope
-  6) eisagwgh libfuncs sthn arxikopoihsh tou hashtable
-d 7) idList struct to opoio apothikeuei se mia lista ta ids twn arguments enos function 
-  8) prosthese sto union tou yacc tous typous SymTableEntry kai idList
-  9) gia ta anwnima function na ftiaksume mia sinartisi na dinei (random) unique invalid onoma
+    1) struct define gia function kai variable 
+d       1a) list gia ta id pu pairnei ena function
+d   2) scope list  
+    3) change hash table, total_lookup
+d   4) 2 hide mia total hide pu tha ta afairei kai apo to scope list kai mia pu apla ta apenergopoiei
+    d   4a) unhide tha xreiastei
+            h douleia ths unhide einai na ksana energopoiei ola ta symbols pou briskontai se scope 1-n,
+            opou n to scope mias synarthshs apo thn opoia molis bgainoume. Mono tote tha xrhsipoieite h unhide.
+    d   4b) Ta 2 hide tha einai to soft_hide kai to hard_hide. To soft_hide apla tha apenergopoiei proswrina to visibility,
+            kai to hard_hide tha kanei delete ta symbols apo ta scope lists oloklhrwtika.
+d  5) lookup_with_scope
+   6) eisagwgh libfuncs sthn arxikopoihsh tou hashtable
+d  7) idList struct to opoio apothikeuei se mia lista ta ids twn arguments enos function 
+d  8) prosthese sto union tou yacc tous typous SymTableEntry kai idList
+d  9) gia ta anwnima function na ftiaksume mia sinartisi na dinei (random) unique invalid onoma
 
 
                       AND THE WINNER IS:

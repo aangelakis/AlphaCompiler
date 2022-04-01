@@ -2,6 +2,9 @@
 #define SCOPELIST_HEADER
 #include "zarkList.h"
 #include "symtable.h"
+
+#define Look_up_node ((SymTableEntry *)itter->content)
+
 typedef zarkList scopelist;
 
 typedef struct scopeArray {
