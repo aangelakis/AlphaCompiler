@@ -1,9 +1,9 @@
 #ifndef SCOPELIST_HEADER
 #define SCOPELIST_HEADER
 #include "zarkList.h"
-#include "symtable.h"
-
-#define Look_up_node ((SymTableEntry *)itter->content)
+#include "SymTableEntry.h"
+#include <string.h>
+#define getNodeContent ((SymTableEntry *)iter->content)
 
 typedef zarkList scopelist;
 
@@ -22,7 +22,7 @@ void hard_hide(scopeArray* array, int scope);
 void unhide(scopeArray* array, int scope);
 
 /*initializes the scope array to hold 5 scopelists*/
-scopeArray scope_initialize();
+scopeArray* scope_initialize();
 
 /*expands the scope array to hold 5 more scopelists*/
 scopeArray* expand_scopeArr(scopeArray* array);
@@ -38,4 +38,5 @@ scopeArray* checkScopeSize(scopeArray* array, int scope);
 
 /*returns a pointer to a symtable entry if found otherwise null*/
 SymTableEntry* lookup_with_scope (scopeArray* array, int scope,  char* c);
+
 #endif

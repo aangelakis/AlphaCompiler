@@ -20,7 +20,7 @@ int flag_scope = 0 ; // 0 == block ; 1 == function
     double  realVal;
     void*   allVal;
     SymTableEntry* exprNode;
-    idList* idlist;
+    idList* args;
 }
 
 %start program
@@ -177,7 +177,7 @@ primary:  lvalue            {   Manage_primary_lvalue();      }
 lvalue: ID                    { Manage_lvalue_id($1);         } 
         | LOCAL ID            { Manage_lvalue_localID($2);    }
         | DOUBLE_COLON ID     { Manage_lvalue_globalID($2);   }
-        | member              { Manage_lvalue_member();     }
+        | member              { Manage_lvalue_member();       }
         ;
 
 member: lvalue "." ID           {   Manage_member_lvalueID();   }

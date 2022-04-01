@@ -1,5 +1,7 @@
 #ifndef ZARKLIST_HEADER
 #define ZARKLIST_HEADER
+#include<stdlib.h>
+#include<assert.h>
 
 typedef struct zarkNode {
         void *content;
@@ -9,9 +11,11 @@ typedef struct zarkNode {
 typedef struct zarkList {
     zarkNode* head;
     zarkNode* tail;
-    int size;
+    unsigned size;
     int isContentFreeable;
 } zarkList;
+
+unsigned zarklist_getsize(zarkList* list);
 
 /* Initializes the zarkList */
 zarkList* zarklist_initialize(int);
@@ -20,12 +24,14 @@ zarkList* zarklist_initialize(int);
 void zarklist_insert(zarkList*, void*);
 
 /* Deletes zarkNode 'node' from the zarkList 'list' */
-void zarklist_delete(zarkList *list, zarkNode* node);
+void zarklist_delete(zarkList *list, void* content, int (*compare)(void*, void*));
 
 /* Applys function 'apply(void*)' to the content of each zarkNode of the zarkList */
-void zarklist_apply(void*, void (*apply)(void*));
+void zarklist_apply(zarkList *list, void (*apply)(void*));
 
 /* Frees the zarkList and all its zarkNodes. */
-void zarklist_free_all_nodes(zarkList*);
+void zarklist_delete_all_nodes(zarkList* list);
+
+void zarklist_free(zarkList* list);
 
 #endif

@@ -1,5 +1,7 @@
 #include"zarkList.h"
 
+unsigned zarklist_getsize(zarkList* list) { return list->size; }
+
 zarkList* zarklist_initialize(int isContentFreeable)
 {
     zarkList* list = malloc(sizeof(zarkList));
@@ -32,12 +34,12 @@ void zarklist_insert(zarkList* list, void* content)
     list->size++;
 }
 
-void zarklist_delete(zarkList *list, zarkNode* node)
+void zarklist_delete(zarkList *list, void* content, int (*compare)(void*, void*))
 {
     zarkNode *iter = list->head, *prev = NULL;
 
     // Find the node to be deleted
-    while(iter != NULL && iter != node) {
+    while(iter != NULL && compare(iter->content, content)) {
         prev = iter;
         iter = iter->next;
     }
@@ -67,9 +69,10 @@ void zarklist_delete(zarkList *list, zarkNode* node)
             free(iter->content);
         free(iter);
     }
+    list->size--;
 }
 
-void zarklist_apply(void *list, void (*apply)(void*))
+void zarklist_apply(zarkList *list, void (*apply)(void*))
 {
     zarkNode *iter = list->head;
     while (iter)
@@ -79,7 +82,7 @@ void zarklist_apply(void *list, void (*apply)(void*))
     }
 }
 
-void zarklist_free_all_nodes(zarkList* list)
+void zarklist_delete_all_nodes(zarkList* list)
 {
     zarkNode *iter = list->head, *tmp;
     int isFreeable = list->isContentFreeable;
@@ -91,10 +94,13 @@ void zarklist_free_all_nodes(zarkList* list)
             free(tmp->content);
         free(tmp);
     }
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
 }
 
 void zarklist_free(zarkList* list) {
-    zarklist_free_all_nodes(list);
+    zarklist_delete_all_nodes(list);
     list->head = NULL;
     list->tail = NULL;
     list->size = 0;

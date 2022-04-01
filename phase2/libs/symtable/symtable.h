@@ -1,46 +1,9 @@
-#ifndef SYMTABLE_HEADER
-#define SYMTABLE_HEADER
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "scopelists.h"
-#include "zarkList.h"
-
-typedef struct zarkList idList;
 
 typedef struct SymTable_T* SymTable_T;
-
-/* Symbol Table Entries */
-
-typedef struct Variable {
-    const char *name;
-    unsigned int scope;
-    unsigned int line;
-} Variable;
-
-typedef struct Function {
-    const char *name;
-    //List of arguments
-    idList* args;
-    unsigned int scope;
-    unsigned int line;
-} Function;
-
-enum SymbolType {
-    GLOBAL, LOCAL, FORMAL, USERFUNC, LIBFUNC
-};
-
-typedef struct SymTableEntry {
-    int isActive; //Boolean
-    union {
-        Variable *varVal;
-        Function *funcVal;
-    } value;
-    enum SymbolType type;
-    struct SymTableEntry* next;
-} SymTableEntry;
-
 
 /* SymTable_T interface */
 
@@ -83,4 +46,3 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey);
 void SymTable_map(SymTable_T oSymTable, 
 void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra),
 const void *pvExtra); 
-#endif

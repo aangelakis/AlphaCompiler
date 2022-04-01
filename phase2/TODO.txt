@@ -1,7 +1,7 @@
-    1) struct define gia function kai variable 
+d   1) struct define gia function kai variable 
 d       1a) list gia ta id pu pairnei ena function
 d   2) scope list  
-    3) change hash table, total_lookup
+d   3) change hash table, total_lookup
 d   4) 2 hide mia total hide pu tha ta afairei kai apo to scope list kai mia pu apla ta apenergopoiei
     d   4a) unhide tha xreiastei
             h douleia ths unhide einai na ksana energopoiei ola ta symbols pou briskontai se scope 1-n,
