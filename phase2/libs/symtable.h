@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include "scopelists.h"
+#include "idList.h"
+
+typedef struct zarkList idList;
 
 typedef struct SymTable_T* SymTable_T;
 
@@ -16,6 +20,7 @@ typedef struct Variable {
 typedef struct Function {
     const char *name;
     //List of arguments
+    idList* args;
     unsigned int scope;
     unsigned int line;
 } Function;
@@ -31,6 +36,7 @@ typedef struct SymTableEntry {
         Function *funcVal;
     } value;
     enum SymbolType type;
+    struct SymTableEntry* next;
 } SymTableEntry;
 
 
@@ -73,5 +79,5 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey);
  * and "passes" 'pvExtra' as extra argument to this function.
  * It is a checked runtime error for 'oSymTable' or 'pcApply' to be NULL. */
 void SymTable_map(SymTable_T oSymTable, 
-void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra),
+)void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra,
 const void *pvExtra); 

@@ -215,7 +215,7 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt(
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();  }
         ;
 
-funcdef: FUNCTION ID {ScopeUp(1);}"("idlist")" block {   Manage_funcdef_functionId(); }
+funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" block {  Manage_funcdef_functionId(); }
         | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function();   }
         ;
 
