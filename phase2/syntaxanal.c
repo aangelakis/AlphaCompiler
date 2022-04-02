@@ -51,7 +51,8 @@ int main(int argc, char *argv[]){
     }
 
     yyparse();
-    
+    puts("\n\n\n"); 
+    puts("----------------Symbol Table Entries-------------------------\n");
     SymTable_quickApply(symTable, printSymTableEntry);
     return 24;
 }

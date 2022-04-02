@@ -19,11 +19,11 @@ d  9) gia ta anwnima function na ftiaksume mia sinartisi na dinei (random) uniqu
 d  10) Na ta kanoume na douleuoun ola mazi <3 !!! UwU OwO KEKW T_T
 
   1) error checking 'expr/term'
-  2) error checking 'lvalue'
-  3) 'lvalue' make it work, most of the work here
+? 2) error checking 'lvalue'
+d 3) 'lvalue' make it work, most of the work here
   4) error checking 'call'
   5) error checking 'methodcall'
 d 6) block hide/unhide
-  7) error checking 'fundef'
-  8) error checking plus constuct list in 'idlist'
+d 7) error checking 'fundef'
+d 8) error checking plus constuct list in 'idlist'
   9) (?) idexedelem (?) maybe some error checking here too

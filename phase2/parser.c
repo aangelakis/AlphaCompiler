@@ -77,9 +77,12 @@
 	extern char* yytext;
 	int scope = 0;
 	int flag_scope = 0 ; // 0 == block ; 1 == function
+    /* TODO */
+    //int blocks_active = 0;
+    //int nested_start_block_line[1024];
 
 
-#line 83 "parser.c"
+#line 86 "parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -180,7 +183,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "parser.y"
+#line 20 "parser.y"
 
     char*   strVal;
     int     intVal;
@@ -188,7 +191,7 @@ union YYSTYPE
 	SymTableEntry* symEntr;
 	idList* args;
 
-#line 192 "parser.c"
+#line 195 "parser.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -568,16 +571,16 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   121,   121,   122,   125,   126,   129,   130,   131,   132,
-     133,   134,   135,   136,   137,   138,   141,   142,   143,   144,
-     145,   146,   147,   148,   149,   150,   151,   152,   153,   154,
-     155,   158,   159,   160,   161,   162,   163,   164,   165,   168,
-     170,   171,   172,   173,   174,   177,   178,   179,   180,   183,
-     184,   185,   186,   189,   190,   191,   194,   195,   198,   200,
-     202,   203,   204,   207,   208,   211,   212,   215,   217,   217,
-     217,   218,   218,   218,   221,   221,   222,   222,   225,   226,
-     227,   228,   229,   230,   233,   234,   235,   238,   239,   242,
-     244,   246,   247
+       0,   124,   124,   125,   128,   129,   132,   133,   134,   135,
+     136,   137,   138,   139,   140,   141,   144,   145,   146,   147,
+     148,   149,   150,   151,   152,   153,   154,   155,   156,   157,
+     158,   161,   162,   163,   164,   165,   166,   167,   168,   171,
+     173,   174,   175,   176,   177,   180,   181,   182,   183,   186,
+     187,   188,   189,   192,   193,   194,   197,   198,   201,   203,
+     205,   206,   207,   210,   211,   214,   215,   218,   220,   220,
+     220,   221,   221,   221,   224,   224,   225,   225,   228,   229,
+     230,   231,   232,   233,   236,   237,   238,   241,   242,   245,
+     247,   249,   250
 };
 #endif
 
@@ -1588,553 +1591,553 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 121 "parser.y"
+#line 124 "parser.y"
                     {   Manage_program_liststmt();      }
-#line 1594 "parser.c"
+#line 1597 "parser.c"
     break;
 
   case 3:
-#line 122 "parser.y"
+#line 125 "parser.y"
                     {   Manage_program_empty();         }
-#line 1600 "parser.c"
+#line 1603 "parser.c"
     break;
 
   case 4:
-#line 125 "parser.y"
+#line 128 "parser.y"
                         {  Manage_liststmt_liststmtStmt();      }
-#line 1606 "parser.c"
+#line 1609 "parser.c"
     break;
 
   case 5:
-#line 126 "parser.y"
+#line 129 "parser.y"
                         {   Manage_liststmt_stmt();             }
-#line 1612 "parser.c"
+#line 1615 "parser.c"
     break;
 
   case 6:
-#line 129 "parser.y"
+#line 132 "parser.y"
                     {   Manage_stmt_expr();         }
-#line 1618 "parser.c"
+#line 1621 "parser.c"
     break;
 
   case 7:
-#line 130 "parser.y"
+#line 133 "parser.y"
                     {   Manage_stmt_ifstmt();       }
-#line 1624 "parser.c"
+#line 1627 "parser.c"
     break;
 
   case 8:
-#line 131 "parser.y"
+#line 134 "parser.y"
                     {   Manage_stmt_whilestmt();    }
-#line 1630 "parser.c"
+#line 1633 "parser.c"
     break;
 
   case 9:
-#line 132 "parser.y"
+#line 135 "parser.y"
                     {   Manage_stmt_forstmt();      }
-#line 1636 "parser.c"
+#line 1639 "parser.c"
     break;
 
   case 10:
-#line 133 "parser.y"
+#line 136 "parser.y"
                     {   Manage_stmt_returnstmt();   }
-#line 1642 "parser.c"
+#line 1645 "parser.c"
     break;
 
   case 11:
-#line 134 "parser.y"
+#line 137 "parser.y"
                     {   Manage_stmt_break();        }
-#line 1648 "parser.c"
+#line 1651 "parser.c"
     break;
 
   case 12:
-#line 135 "parser.y"
+#line 138 "parser.y"
                     {   Manage_stmt_continue();     }
-#line 1654 "parser.c"
+#line 1657 "parser.c"
     break;
 
   case 13:
-#line 136 "parser.y"
+#line 139 "parser.y"
                     {   Manage_stmt_block();        }
-#line 1660 "parser.c"
+#line 1663 "parser.c"
     break;
 
   case 14:
-#line 137 "parser.y"
+#line 140 "parser.y"
                     {   Manage_stmt_funcdef();      }
-#line 1666 "parser.c"
+#line 1669 "parser.c"
     break;
 
   case 15:
-#line 138 "parser.y"
+#line 141 "parser.y"
                     {   Manage_stmt_semicolon();    }
-#line 1672 "parser.c"
+#line 1675 "parser.c"
     break;
 
   case 16:
-#line 141 "parser.y"
+#line 144 "parser.y"
                           {     Manage_expr_assignexpr();       }
-#line 1678 "parser.c"
+#line 1681 "parser.c"
     break;
 
   case 17:
-#line 142 "parser.y"
+#line 145 "parser.y"
                           {     Manage_expr_term();             }
-#line 1684 "parser.c"
+#line 1687 "parser.c"
     break;
 
   case 18:
-#line 143 "parser.y"
+#line 146 "parser.y"
                           {     Manage_expr_exprOPexpr("+");    }
-#line 1690 "parser.c"
+#line 1693 "parser.c"
     break;
 
   case 19:
-#line 144 "parser.y"
+#line 147 "parser.y"
                           {     Manage_expr_exprOPexpr("-");    }
-#line 1696 "parser.c"
+#line 1699 "parser.c"
     break;
 
   case 20:
-#line 145 "parser.y"
+#line 148 "parser.y"
                           {     Manage_expr_exprOPexpr("*");    }
-#line 1702 "parser.c"
+#line 1705 "parser.c"
     break;
 
   case 21:
-#line 146 "parser.y"
+#line 149 "parser.y"
                           {     Manage_expr_exprOPexpr("/");    }
-#line 1708 "parser.c"
+#line 1711 "parser.c"
     break;
 
   case 22:
-#line 147 "parser.y"
+#line 150 "parser.y"
                           {     Manage_expr_exprOPexpr("%");    }
-#line 1714 "parser.c"
+#line 1717 "parser.c"
     break;
 
   case 23:
-#line 148 "parser.y"
+#line 151 "parser.y"
                           {     Manage_expr_exprOPexpr(">=");   }
-#line 1720 "parser.c"
+#line 1723 "parser.c"
     break;
 
   case 24:
-#line 149 "parser.y"
+#line 152 "parser.y"
                           {     Manage_expr_exprOPexpr(">");    }
-#line 1726 "parser.c"
+#line 1729 "parser.c"
     break;
 
   case 25:
-#line 150 "parser.y"
+#line 153 "parser.y"
                           {     Manage_expr_exprOPexpr("<=");   }
-#line 1732 "parser.c"
+#line 1735 "parser.c"
     break;
 
   case 26:
-#line 151 "parser.y"
+#line 154 "parser.y"
                           {     Manage_expr_exprOPexpr("<");    }
-#line 1738 "parser.c"
+#line 1741 "parser.c"
     break;
 
   case 27:
-#line 152 "parser.y"
+#line 155 "parser.y"
                           {     Manage_expr_exprOPexpr("==");   }
-#line 1744 "parser.c"
+#line 1747 "parser.c"
     break;
 
   case 28:
-#line 153 "parser.y"
+#line 156 "parser.y"
                           {     Manage_expr_exprOPexpr("!=");   }
-#line 1750 "parser.c"
+#line 1753 "parser.c"
     break;
 
   case 29:
-#line 154 "parser.y"
+#line 157 "parser.y"
                           {     Manage_expr_exprOPexpr("and");  }
-#line 1756 "parser.c"
+#line 1759 "parser.c"
     break;
 
   case 30:
-#line 155 "parser.y"
+#line 158 "parser.y"
                           {     Manage_expr_exprOPexpr("or");   }
-#line 1762 "parser.c"
+#line 1765 "parser.c"
     break;
 
   case 31:
-#line 158 "parser.y"
+#line 161 "parser.y"
                                 {   Manage_term_expr();                 }
-#line 1768 "parser.c"
+#line 1771 "parser.c"
     break;
 
   case 32:
-#line 159 "parser.y"
+#line 162 "parser.y"
                                 {   Manage_term_uminusExpr();           }
-#line 1774 "parser.c"
+#line 1777 "parser.c"
     break;
 
   case 33:
-#line 160 "parser.y"
+#line 163 "parser.y"
                                 {   Manage_term_notExpr();              }
-#line 1780 "parser.c"
+#line 1783 "parser.c"
     break;
 
   case 34:
-#line 161 "parser.y"
-                                {   Manage_term_pluspluslvalue();       }
-#line 1786 "parser.c"
+#line 164 "parser.y"
+                                {   Manage_term_pluspluslvalue((yyvsp[0].symEntr));       }
+#line 1789 "parser.c"
     break;
 
   case 35:
-#line 162 "parser.y"
-                                {   Manage_term_lvalueplusplus();       }
-#line 1792 "parser.c"
+#line 165 "parser.y"
+                                {   Manage_term_lvalueplusplus((yyvsp[-1].symEntr));       }
+#line 1795 "parser.c"
     break;
 
   case 36:
-#line 163 "parser.y"
-                                {   Manage_term_minusminuslvalue();     }
-#line 1798 "parser.c"
+#line 166 "parser.y"
+                                {   Manage_term_minusminuslvalue((yyvsp[0].symEntr));     }
+#line 1801 "parser.c"
     break;
 
   case 37:
-#line 164 "parser.y"
-                                {   Manage_term_lvalueminusminus();     }
-#line 1804 "parser.c"
+#line 167 "parser.y"
+                                {   Manage_term_lvalueminusminus((yyvsp[-1].symEntr));     }
+#line 1807 "parser.c"
     break;
 
   case 38:
-#line 165 "parser.y"
+#line 168 "parser.y"
                                 {   Manage_term_primary();              }
-#line 1810 "parser.c"
+#line 1813 "parser.c"
     break;
 
   case 39:
-#line 168 "parser.y"
-                                {   printf("assignexpr -> lvalue=expr\n");  }
-#line 1816 "parser.c"
+#line 171 "parser.y"
+                                {   Manage_assignexpr((yyvsp[-2].symEntr));  }
+#line 1819 "parser.c"
     break;
 
   case 40:
-#line 170 "parser.y"
+#line 173 "parser.y"
                             {   Manage_primary_lvalue();      }
-#line 1822 "parser.c"
+#line 1825 "parser.c"
     break;
 
   case 41:
-#line 171 "parser.y"
+#line 174 "parser.y"
                             {   Manage_primary_call();        }
-#line 1828 "parser.c"
+#line 1831 "parser.c"
     break;
 
   case 42:
-#line 172 "parser.y"
+#line 175 "parser.y"
                             {   Manage_primary_objectdef();   }
-#line 1834 "parser.c"
+#line 1837 "parser.c"
     break;
 
   case 43:
-#line 173 "parser.y"
+#line 176 "parser.y"
                             {   Manage_primary_funcdef();     }
-#line 1840 "parser.c"
+#line 1843 "parser.c"
     break;
 
   case 44:
-#line 174 "parser.y"
+#line 177 "parser.y"
                             {   Manage_primary_const();       }
-#line 1846 "parser.c"
+#line 1849 "parser.c"
     break;
 
   case 45:
-#line 177 "parser.y"
+#line 180 "parser.y"
                               { Manage_lvalue_id(&((yyval.symEntr)), (yyvsp[0].strVal), scope, yylineno);         }
-#line 1852 "parser.c"
+#line 1855 "parser.c"
     break;
 
   case 46:
-#line 178 "parser.y"
+#line 181 "parser.y"
                               { Manage_lvalue_localID(&((yyval.symEntr)), (yyvsp[0].strVal), scope, yylineno);    }
-#line 1858 "parser.c"
+#line 1861 "parser.c"
     break;
 
   case 47:
-#line 179 "parser.y"
+#line 182 "parser.y"
                               { Manage_lvalue_globalID(&((yyval.symEntr)), (yyvsp[0].strVal));                    }
-#line 1864 "parser.c"
+#line 1867 "parser.c"
     break;
 
   case 48:
-#line 180 "parser.y"
+#line 183 "parser.y"
                               { Manage_lvalue_member();                            }
-#line 1870 "parser.c"
+#line 1873 "parser.c"
     break;
 
   case 49:
-#line 183 "parser.y"
+#line 186 "parser.y"
                                 {   Manage_member_lvalueID();   }
-#line 1876 "parser.c"
+#line 1879 "parser.c"
     break;
 
   case 50:
-#line 184 "parser.y"
+#line 187 "parser.y"
                                 {   Manage_member_lvalueExpr(); }
-#line 1882 "parser.c"
+#line 1885 "parser.c"
     break;
 
   case 51:
-#line 185 "parser.y"
+#line 188 "parser.y"
                                 {   Manage_member_callID();     }
-#line 1888 "parser.c"
+#line 1891 "parser.c"
     break;
 
   case 52:
-#line 186 "parser.y"
+#line 189 "parser.y"
                                 {   Manage_member_callExpr();   }
-#line 1894 "parser.c"
+#line 1897 "parser.c"
     break;
 
   case 53:
-#line 189 "parser.y"
+#line 192 "parser.y"
                                          {  Manage_call_callElist();        }
-#line 1900 "parser.c"
+#line 1903 "parser.c"
     break;
 
   case 54:
-#line 190 "parser.y"
-                                         {  Manage_call_lvalueCallsuffix(); }
-#line 1906 "parser.c"
+#line 193 "parser.y"
+                                         {  Manage_call_lvalueCallsuffix((yyvsp[-1].symEntr)); }
+#line 1909 "parser.c"
     break;
 
   case 55:
-#line 191 "parser.y"
+#line 194 "parser.y"
                                          {  Manage_call_funcdefElist();     }
-#line 1912 "parser.c"
+#line 1915 "parser.c"
     break;
 
   case 56:
-#line 194 "parser.y"
+#line 197 "parser.y"
                           { Manage_callsuffix_normcall();     }
-#line 1918 "parser.c"
+#line 1921 "parser.c"
     break;
 
   case 57:
-#line 195 "parser.y"
+#line 198 "parser.y"
                           { Manage_callsuffix_methodcall();   }
-#line 1924 "parser.c"
+#line 1927 "parser.c"
     break;
 
   case 58:
-#line 198 "parser.y"
+#line 201 "parser.y"
                             {   Manage_normcall();    }
-#line 1930 "parser.c"
+#line 1933 "parser.c"
     break;
 
   case 59:
-#line 200 "parser.y"
+#line 203 "parser.y"
                                             {   Manage_methodcall();  }
-#line 1936 "parser.c"
+#line 1939 "parser.c"
     break;
 
   case 60:
-#line 202 "parser.y"
+#line 205 "parser.y"
                           {     Manage_elist_empty();           }
-#line 1942 "parser.c"
+#line 1945 "parser.c"
     break;
 
   case 61:
-#line 203 "parser.y"
+#line 206 "parser.y"
                           {     Manage_elist_elistExpr();       }
-#line 1948 "parser.c"
+#line 1951 "parser.c"
     break;
 
   case 62:
-#line 204 "parser.y"
+#line 207 "parser.y"
                           {     Manage_elist_expr();            }
-#line 1954 "parser.c"
+#line 1957 "parser.c"
     break;
 
   case 63:
-#line 207 "parser.y"
+#line 210 "parser.y"
                               {     Manage_objectdef_elist();   }
-#line 1960 "parser.c"
+#line 1963 "parser.c"
     break;
 
   case 64:
-#line 208 "parser.y"
+#line 211 "parser.y"
                               {     Manage_objectdef_indexed(); }
-#line 1966 "parser.c"
+#line 1969 "parser.c"
     break;
 
   case 65:
-#line 211 "parser.y"
+#line 214 "parser.y"
                                     {   Manage_indexed_indexedIndexedelem(); }
-#line 1972 "parser.c"
+#line 1975 "parser.c"
     break;
 
   case 66:
-#line 212 "parser.y"
+#line 215 "parser.y"
                                     {   Manage_indexed_indexedelem();        }
-#line 1978 "parser.c"
+#line 1981 "parser.c"
     break;
 
   case 67:
-#line 215 "parser.y"
+#line 218 "parser.y"
                                     {   Manage_indexedelem(); }
-#line 1984 "parser.c"
+#line 1987 "parser.c"
     break;
 
   case 68:
-#line 217 "parser.y"
+#line 220 "parser.y"
            {ScopeUp(0);}
-#line 1990 "parser.c"
+#line 1993 "parser.c"
     break;
 
   case 69:
-#line 217 "parser.y"
+#line 220 "parser.y"
                                       {ScopeDown(0);}
-#line 1996 "parser.c"
+#line 1999 "parser.c"
     break;
 
   case 70:
-#line 217 "parser.y"
+#line 220 "parser.y"
                                                       {   Manage_block_liststmt();    }
-#line 2002 "parser.c"
+#line 2005 "parser.c"
     break;
 
   case 71:
-#line 218 "parser.y"
+#line 221 "parser.y"
                {ScopeUp(0);}
-#line 2008 "parser.c"
+#line 2011 "parser.c"
     break;
 
   case 72:
-#line 218 "parser.y"
+#line 221 "parser.y"
                                  {ScopeDown(0);}
-#line 2014 "parser.c"
+#line 2017 "parser.c"
     break;
 
   case 73:
-#line 218 "parser.y"
-                                                       {  Manage_block_emptyblock();  }
-#line 2020 "parser.c"
+#line 221 "parser.y"
+                                                       {  Manage_block_emptyblock();   }
+#line 2023 "parser.c"
     break;
 
   case 74:
-#line 221 "parser.y"
+#line 224 "parser.y"
                      {ScopeUp(1);}
-#line 2026 "parser.c"
+#line 2029 "parser.c"
     break;
 
   case 75:
-#line 221 "parser.y"
+#line 224 "parser.y"
                                                       {  Manage_funcdef_functionId((yyvsp[-5].strVal),(yyvsp[-2].args)); }
-#line 2032 "parser.c"
+#line 2035 "parser.c"
     break;
 
   case 76:
-#line 222 "parser.y"
+#line 225 "parser.y"
                   {ScopeUp(1);}
-#line 2038 "parser.c"
+#line 2041 "parser.c"
     break;
 
   case 77:
-#line 222 "parser.y"
+#line 225 "parser.y"
                                                      {   Manage_funcdef_function((yyvsp[-2].args));   }
-#line 2044 "parser.c"
+#line 2047 "parser.c"
     break;
 
   case 78:
-#line 225 "parser.y"
+#line 228 "parser.y"
                   { Manage_const_number();    }
-#line 2050 "parser.c"
+#line 2053 "parser.c"
     break;
 
   case 79:
-#line 226 "parser.y"
+#line 229 "parser.y"
                   { Manage_const_number();    }
-#line 2056 "parser.c"
+#line 2059 "parser.c"
     break;
 
   case 80:
-#line 227 "parser.y"
+#line 230 "parser.y"
                   { Manage_const_string();    }
-#line 2062 "parser.c"
+#line 2065 "parser.c"
     break;
 
   case 81:
-#line 228 "parser.y"
+#line 231 "parser.y"
                   { Manage_const_nil();       }
-#line 2068 "parser.c"
+#line 2071 "parser.c"
     break;
 
   case 82:
-#line 229 "parser.y"
+#line 232 "parser.y"
                   { Manage_const_true();      }
-#line 2074 "parser.c"
+#line 2077 "parser.c"
     break;
 
   case 83:
-#line 230 "parser.y"
+#line 233 "parser.y"
                   { Manage_const_false();     }
-#line 2080 "parser.c"
+#line 2083 "parser.c"
     break;
 
   case 84:
-#line 233 "parser.y"
+#line 236 "parser.y"
                         {   Manage_idlist_empty(&((yyval.args)));      }
-#line 2086 "parser.c"
+#line 2089 "parser.c"
     break;
 
   case 85:
-#line 234 "parser.y"
+#line 237 "parser.y"
                         {   Manage_idlist_idlistId(&((yyval.args)),(yyvsp[-2].args),(yyvsp[0].strVal));   }
-#line 2092 "parser.c"
+#line 2095 "parser.c"
     break;
 
   case 86:
-#line 235 "parser.y"
+#line 238 "parser.y"
                         {   Manage_idlist_id(&((yyval.args)),(yyvsp[0].strVal));         }
-#line 2098 "parser.c"
+#line 2101 "parser.c"
     break;
 
   case 87:
-#line 238 "parser.y"
+#line 241 "parser.y"
                                        {   Manage_ifstmt_ifelse();  }
-#line 2104 "parser.c"
+#line 2107 "parser.c"
     break;
 
   case 88:
-#line 239 "parser.y"
+#line 242 "parser.y"
                                        {    Manage_ifstmt_if();     }
-#line 2110 "parser.c"
+#line 2113 "parser.c"
     break;
 
   case 89:
-#line 242 "parser.y"
+#line 245 "parser.y"
                                         {    Manage_whilestmt();  }
-#line 2116 "parser.c"
+#line 2119 "parser.c"
     break;
 
   case 90:
-#line 244 "parser.y"
+#line 247 "parser.y"
                                                     {   Manage_forstmt();  }
-#line 2122 "parser.c"
+#line 2125 "parser.c"
     break;
 
   case 91:
-#line 246 "parser.y"
+#line 249 "parser.y"
                             {   Manage_returnstmt_returnexpr(); }
-#line 2128 "parser.c"
+#line 2131 "parser.c"
     break;
 
   case 92:
-#line 247 "parser.y"
+#line 250 "parser.y"
                             {   Manage_returnstmt_return();     }
-#line 2134 "parser.c"
+#line 2137 "parser.c"
     break;
 
 
-#line 2138 "parser.c"
+#line 2141 "parser.c"
 
       default: break;
     }
@@ -2366,6 +2369,6 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 250 "parser.y"
+#line 253 "parser.y"
 
 

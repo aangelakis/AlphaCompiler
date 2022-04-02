@@ -8,6 +8,9 @@
 	extern char* yytext;
 	int scope = 0;
 	int flag_scope = 0 ; // 0 == block ; 1 == function
+    /* TODO */
+    //int blocks_active = 0;
+    //int nested_start_block_line[1024];
 
 %}
 
@@ -158,14 +161,14 @@ expr:   assignexpr        {     Manage_expr_assignexpr();       }
 term:   "(" expr ")"            {   Manage_term_expr();                 }
         | "-"expr  %prec UMINUS {   Manage_term_uminusExpr();           }
         | NOT expr              {   Manage_term_notExpr();              }
-        | "++"lvalue            {   Manage_term_pluspluslvalue();       }
-        | lvalue"++"            {   Manage_term_lvalueplusplus();       }
-        | "--"lvalue            {   Manage_term_minusminuslvalue();     }
-        | lvalue"--"            {   Manage_term_lvalueminusminus();     }
+        | "++"lvalue            {   Manage_term_pluspluslvalue($2);       }
+        | lvalue"++"            {   Manage_term_lvalueplusplus($1);       }
+        | "--"lvalue            {   Manage_term_minusminuslvalue($2);     }
+        | lvalue"--"            {   Manage_term_lvalueminusminus($1);     }
         | primary               {   Manage_term_primary();              }
         ;
 
-assignexpr: lvalue"="expr       {   printf("assignexpr -> lvalue=expr\n");  };
+assignexpr: lvalue"="expr       {   Manage_assignexpr($1);  };
 
 primary:  lvalue            {   Manage_primary_lvalue();      }
           | call            {   Manage_primary_call();        }
@@ -187,7 +190,7 @@ member: lvalue "." ID           {   Manage_member_lvalueID();   }
         ;
 
 call: call "(" elist ")"                 {  Manage_call_callElist();        }
-      | lvalue callsuffix                {  Manage_call_lvalueCallsuffix(); }
+      | lvalue callsuffix                {  Manage_call_lvalueCallsuffix($1); }
       | "(" funcdef ")" "(" elist ")"    {  Manage_call_funcdefElist();     }
       ;
 
@@ -215,7 +218,7 @@ indexed:  indexed"," indexedelem    {   Manage_indexed_indexedIndexedelem(); }
 indexedelem: "{" expr ":" expr "}"  {   Manage_indexedelem(); };
 
 block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt();    }
-        |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();  }
+        |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();   }
         ;
 
 funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" block {  Manage_funcdef_functionId($2,$5); }

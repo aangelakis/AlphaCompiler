@@ -19,7 +19,7 @@ int yyerror(char* yaccProvideMessage)
     fprintf(stderr , "\033[0;31mINPUT NOT VALID\033[0m\n");
 }
 
-int print_custom_error(char* yaccProvideMessage,char* yaccProvideName)
+int print_custom_error(char* yaccProvideMessage,const char* yaccProvideName)
 {
     fprintf(stderr , "\033[0;31mERROR\033[0m\n");
     fprintf(stderr, "\033[0;33m%s\033[0m -> at line %d, at token: \033[0;36m\'%s\'\033[0m\n",  yaccProvideMessage, yylineno, yaccProvideName);
@@ -264,7 +264,10 @@ void Manage_call_callElist(){
     printf("call -> call(elist)\n");
 }
 
-void Manage_call_lvalueCallsuffix(){
+void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
+    if(entry->type!=USERFUNC && entry->type!=LIBFUNC){
+        print_custom_error("Cant make call from a variable",entry->value.varVal->name);
+    }
     printf("call -> lvalue callsuffix\n");
 }
 
@@ -375,6 +378,13 @@ void Manage_primary_const(){
     printf("primary -> const\n");
 }
 
+void Manage_assignexpr(SymTableEntry* entry){
+    if(entry->type==USERFUNC || entry->type==LIBFUNC){
+        print_custom_error("Cant make assignment to function",entry->value.funcVal->name);
+    }
+    
+}
+
 void Manage_term_expr(){
     printf("term -> (expr)\n");
 }
@@ -387,19 +397,31 @@ void Manage_term_notExpr(){
     printf("term -> not expr\n");
 }
 
-void Manage_term_pluspluslvalue(){
+void Manage_term_pluspluslvalue(SymTableEntry *entry){
+    if(entry->type==USERFUNC || entry->type==LIBFUNC){
+        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name);
+    }
     printf("term -> ++lvalue\n");
 }
 
-void Manage_term_lvalueplusplus(){
+void Manage_term_lvalueplusplus(SymTableEntry *entry){
+    if(entry->type==USERFUNC || entry->type==LIBFUNC){
+        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name);
+    }
     printf("term -> lvalue++\n");
 }
 
-void Manage_term_minusminuslvalue(){
+void Manage_term_minusminuslvalue(SymTableEntry *entry){
+    if(entry->type==USERFUNC || entry->type==LIBFUNC){
+        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name);
+    }
     printf("term -> --lvalue\n");
 }
 
-void Manage_term_lvalueminusminus(){
+void Manage_term_lvalueminusminus(SymTableEntry *entry){
+    if(entry->type==USERFUNC || entry->type==LIBFUNC){
+        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name);
+    }
     printf("term -> lvalue--\n");
 }
 

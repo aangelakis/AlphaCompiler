@@ -9,50 +9,13 @@ call -> lvalue callsuffix
 primary -> call
 term -> primary
 expr -> term
-assignexpr -> lvalue=expr
 expr -> assignexpr
 stmt -> expr;
 liststmt -> stmt
-lvalue -> id
-I am called with id=g
-const -> number
-primary -> const
-term -> primary
-expr -> term
-assignexpr -> lvalue=expr
-expr -> assignexpr
-stmt -> expr;
-liststmt -> liststmt stmt
-lvalue -> id
-I am called with id=print
-lvalue -> id
-I am called with id=typeof
-lvalue -> id
-I am called with id=x
-primary -> lvalue
-term -> primary
-expr -> term
-elist -> epxr
-normcall -> (elist)
-callsuffix -> normcall
-call -> lvalue callsuffix
-primary -> call
-term -> primary
-expr -> term
-elist -> epxr
-normcall -> (elist)
-callsuffix -> normcall
-call -> lvalue callsuffix
-primary -> call
-term -> primary
-expr -> term
-stmt -> expr;
-liststmt -> liststmt stmt
 Scope up to 1
 idlist -> id,id*
 idlist -> id,id*
-lvalue -> id
-I am called with id=print
+lvalue -> local id
 lvalue -> id
 I am called with id=x
 primary -> lvalue
@@ -64,6 +27,16 @@ primary -> lvalue
 term -> primary
 expr -> term
 expr -> expr + expr
+expr -> assignexpr
+stmt -> expr;
+liststmt -> stmt
+lvalue -> id
+I am called with id=print
+lvalue -> id
+I am called with id=z
+primary -> lvalue
+term -> primary
+expr -> term
 elist -> epxr
 normcall -> (elist)
 callsuffix -> normcall
@@ -72,17 +45,53 @@ primary -> call
 term -> primary
 expr -> term
 stmt -> expr;
+liststmt -> liststmt stmt
+Scope up to 2
+idlist -> id,id*
+idlist -> id,id*
+lvalue -> id
+I am called with id=a
+primary -> lvalue
+term -> primary
+expr -> term
+lvalue -> id
+I am called with id=b
+primary -> lvalue
+term -> primary
+expr -> term
+expr -> expr + expr
+returnstmt -> return expr;
+stmt -> returnstmt
 liststmt -> stmt
+Scope down to 1
+block -> stmt*
+function id (idlist) block
+primary -> (funcdec)
+term -> primary
+expr -> term
+returnstmt -> return expr;
+stmt -> returnstmt
+liststmt -> liststmt stmt
 Scope down to 0
 block -> stmt*
 function id (idlist) block
 stmt -> funcdef
 liststmt -> liststmt stmt
 program -> stmt+
-SymTableEntry: <name>=g, <scope>=0, <line>=2, <type>=global variable
-SymTableEntry: <name>=x, <scope>=1, <line>=4, <type>=formal argument
-SymTableEntry: <name>=x, <scope>=0, <line>=1, <type>=global variable
-SymTableEntry: <name>=y, <scope>=1, <line>=4, <type>=formal argument
+
+
+
+
+----------------Symbol Table Entries-------------------------
+
+SymTableEntry: <name>=a, <scope>=2, <line>=6, <type>=formal argument
+SymTableEntry: <name>=b, <scope>=2, <line>=6, <type>=formal argument
+SymTableEntry: <name>=f, <args>=(a, b), <scope>=1, <line>=8, <type>=user function
+SymTableEntry: <name>=g, <args>=(x, y), <scope>=0, <line>=9, <type>=user function
+SymTableEntry: <name>=x, <scope>=1, <line>=3, <type>=formal argument
+SymTableEntry: <name>=x, <scope>=0, <line>=2, <type>=global variable
+SymTableEntry: <name>=y, <scope>=1, <line>=3, <type>=formal argument
+SymTableEntry: <name>=z, <scope>=1, <line>=4, <type>=local variable
 SymTableEntry: <name>=objecttotalmembers, <args>=(void), <scope>=0, <line>=0, <type>=library function
 SymTableEntry: <name>=cos, <args>=(void), <scope>=0, <line>=0, <type>=library function
 SymTableEntry: <name>=print, <args>=(void), <scope>=0, <line>=0, <type>=library function
@@ -93,6 +102,5 @@ SymTableEntry: <name>=sin, <args>=(void), <scope>=0, <line>=0, <type>=library fu
 SymTableEntry: <name>=objectmemberkeys, <args>=(void), <scope>=0, <line>=0, <type>=library function
 SymTableEntry: <name>=input, <args>=(void), <scope>=0, <line>=0, <type>=library function
 SymTableEntry: <name>=sqrt, <args>=(void), <scope>=0, <line>=0, <type>=library function
-SymTableEntry: <name>=foo, <args>=(x, y), <scope>=0, <line>=12, <type>=user function
 SymTableEntry: <name>=typeof, <args>=(void), <scope>=0, <line>=0, <type>=library function
 SymTableEntry: <name>=argument, <args>=(void), <scope>=0, <line>=0, <type>=library function
