@@ -1,8 +1,12 @@
 #ifndef SYMTABLEENTRY_HEADER
 #define SYMTABLEENTRY_HEADER
 #include "zarkList.h"
-
+#include <string.h>
 typedef struct zarkList idList;
+
+char *idListContent_to_string(void* content);
+
+extern char symTypes[5][20];
 
 /* Symbol Table Entries */
 
@@ -33,4 +37,7 @@ typedef struct SymTableEntry {
 } SymTableEntry;
 
 SymTableEntry* makeSymTableEntry(const char* name, idList* args, unsigned scope, unsigned line, SymbolType type);
+
+
+void printSymTableEntry(void*);
 #endif

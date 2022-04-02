@@ -1,3 +1,5 @@
+#ifndef SYMTABLE_HEADER
+#define SYMTABLE_HEADER
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,3 +48,7 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey);
 void SymTable_map(SymTable_T oSymTable, 
 void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra),
 const void *pvExtra); 
+
+void SymTable_quickApply(SymTable_T oSymTable, void (*pfApply)(void *));
+
+#endif

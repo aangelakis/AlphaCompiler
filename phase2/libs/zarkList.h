@@ -1,6 +1,7 @@
 #ifndef ZARKLIST_HEADER
 #define ZARKLIST_HEADER
 #include<stdlib.h>
+#include<stdio.h>
 #include<assert.h>
 
 typedef struct zarkNode {
@@ -33,5 +34,8 @@ void zarklist_apply(zarkList *list, void (*apply)(void*));
 void zarklist_delete_all_nodes(zarkList* list);
 
 void zarklist_free(zarkList* list);
+
+void zarklist_print(zarkList *list, char* (*content_to_string)(void*));
+
 
 #endif

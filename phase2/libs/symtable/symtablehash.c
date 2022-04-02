@@ -1,4 +1,5 @@
 #include "symtable.h"
+#include <stdio.h>
 #define HASH_MULTIPLIER 65599
 
 static int diffSizes[8] = {509, 1021, 2053, 4093, 8191, 16381, 32771, 65521}; 
@@ -226,6 +227,23 @@ const void *pvExtra){
         iter = oSymTable -> hashtable[i];
         while(iter){
             (*pfApply)(iter -> key, iter -> value, (void *) pvExtra);
+            iter = iter -> next;
+        }
+    }
+} 
+
+void SymTable_quickApply(SymTable_T oSymTable, void (*pfApply)(void *))
+{
+    int i, size = diffSizes[oSymTable -> currentSizeIn];
+    binding *iter = NULL;
+    assert(oSymTable);
+    assert(pfApply);
+
+    /* Iterate oSymTable's hashtable and call 'pfApply' for every binding */
+    for(i = 0; i < size; i++){
+        iter = oSymTable -> hashtable[i];
+        while(iter){
+            (*pfApply)(iter -> value);
             iter = iter -> next;
         }
     }

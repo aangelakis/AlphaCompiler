@@ -82,6 +82,24 @@ void zarklist_apply(zarkList *list, void (*apply)(void*))
     }
 }
 
+void zarklist_print(zarkList *list, char* (*content_to_string)(void*))
+{
+    if (list == NULL || list->size == 0)
+    {
+        printf("VOID");
+        return;
+    }
+    
+    zarkNode *iter = list->head;
+    while (iter)
+    {   
+        printf("%s", content_to_string(iter->content));
+        iter = iter->next;
+        if(iter)
+            printf(", ");
+    }
+}
+
 void zarklist_delete_all_nodes(zarkList* list)
 {
     zarkNode *iter = list->head, *tmp;

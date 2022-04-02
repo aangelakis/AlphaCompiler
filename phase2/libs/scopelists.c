@@ -1,10 +1,10 @@
 #include"scopelists.h"
 
 /*hides the elements of the given scope */
-void soft_hide(scopeArray* array, int scope)
+void soft_hide(scopeArray** array, int scope)
 {
-	array = checkScopeSize(array, scope);
-	zarkNode* iter = array->scopes[scope]->head;
+	*array = checkScopeSize(*array, scope);
+	zarkNode* iter = (*array)->scopes[scope]->head;
 
 	while (iter != NULL)
 	{
@@ -14,25 +14,25 @@ void soft_hide(scopeArray* array, int scope)
 }
 
 /*hides the elements of the given scope and removes the list from the scope list*/
-void hard_hide(scopeArray* array, int scope)
+void hard_hide(scopeArray** array, int scope)
 {
-	array = checkScopeSize(array, scope);
-	zarkNode* iter = array->scopes[scope]->head;
+	*array = checkScopeSize(*array, scope);
+	zarkNode* iter = (*array)->scopes[scope]->head;
 
 	while (iter != NULL)
 	{
 		getNodeContent->isActive = 0;
 		iter = iter->next;
 	}
-	zarklist_delete_all_nodes(array->scopes[scope]);
+	zarklist_delete_all_nodes((*array)->scopes[scope]);
 }
 
 /*unhides every element of the given scope*/
-void unhide(scopeArray* array, int scope)
+void unhide(scopeArray** array, int scope)
 {
-	array = checkScopeSize(array, scope);
+	*array = checkScopeSize(*array, scope);
 
-	zarkNode* iter = array->scopes[scope]->head;
+	zarkNode* iter = (*array)->scopes[scope]->head;
 
 	while (iter != NULL)
 	{
@@ -64,7 +64,7 @@ scopeArray* expand_scopeArr(scopeArray* array)
 	//giving it its new size
 	new_array->size = new_size;
 	//allocating memory for the array of scope lists
-	new_array->scopes = malloc(new_array->size*(sizeof(scopelist*)));
+	new_array->scopes = malloc(new_size*(sizeof(scopelist*)));
 
 	//copying the first array->size elements
 	for (int i = 0; i < array->size; i++)
@@ -77,6 +77,7 @@ scopeArray* expand_scopeArr(scopeArray* array)
 	{
         new_array->scopes[i] = zarklist_initialize(0);
 	}
+
 	//free the old array and the allocated memory of the array that holds the lists
 	free(array->scopes);
 	free(array);
@@ -96,10 +97,11 @@ void free_scopeArr(scopeArray* array)
 }
 
 /*puts in the scopeArray at the end of the scope list the entry*/
-void insert_to_scopeArr(scopeArray* array, int scope, SymTableEntry* entry)
+void insert_to_scopeArr(scopeArray** array, int scope, SymTableEntry* entry)
 {
-	array = checkScopeSize(array,scope);
-	zarklist_insert(array->scopes[scope],(SymTableEntry*)entry);
+	*array = checkScopeSize(*array,scope);
+	//printf("check inside insert = > size %d\n",array->size);
+	zarklist_insert((*array)->scopes[scope],(SymTableEntry*)entry);
 }
 
 /* checks if the given scope can exist in the given array, returns a new array if needed,
@@ -108,17 +110,19 @@ scopeArray* checkScopeSize(scopeArray* array, int scope)
 {
 	if (array->size<scope+1)
 	{
-        //printf("ERROR scope given to hide is bigger than the maximum of the given scopeArray\n");
-        return expand_scopeArr(array);
+        scopeArray * tmp = expand_scopeArr(array);
+				//printf("check size %d\n",tmp->size);
+        return tmp;
 	}
 	return array;
 }
 
 /*returns a pointer to a symtable entry if found otherwise null*/
-SymTableEntry* lookup_with_scope (scopeArray* array, int scope,  char* c)
+SymTableEntry* lookup_with_scope (scopeArray** array, int scope,  char* c)
 {
-	array = checkScopeSize(array, scope);
-	zarkNode* iter = array->scopes[scope]->head;
+
+	*array = checkScopeSize(*array, scope);
+	zarkNode* iter = (*array)->scopes[scope]->head;
 	
 	//while loop
 	while (iter!=NULL)

@@ -13,13 +13,13 @@ typedef struct scopeArray {
 } scopeArray;
 
 /*hides the elements of the given scope */
-void soft_hide(scopeArray* array, int scope);
+void soft_hide(scopeArray** array, int scope);
 
 /*hides the elements of the given scope and removes the list from the scope list*/
-void hard_hide(scopeArray* array, int scope);
+void hard_hide(scopeArray** array, int scope);
 
 /*unhides every element of the given scope*/
-void unhide(scopeArray* array, int scope);
+void unhide(scopeArray** array, int scope);
 
 /*initializes the scope array to hold 5 scopelists*/
 scopeArray* scope_initialize();
@@ -31,12 +31,12 @@ scopeArray* expand_scopeArr(scopeArray* array);
 void free_scopeArr(scopeArray* array);
 
 /*puts in the scopeArray at the end of the scope list the entry*/
-void insert_to_scopeArr(scopeArray* array, int scope, SymTableEntry* entry);
+void insert_to_scopeArr(scopeArray** array, int scope, SymTableEntry* entry);
 
 /*checks if the given scope can exist in the given array*/
 scopeArray* checkScopeSize(scopeArray* array, int scope);
 
 /*returns a pointer to a symtable entry if found otherwise null*/
-SymTableEntry* lookup_with_scope (scopeArray* array, int scope,  char* c);
+SymTableEntry* lookup_with_scope (scopeArray** array, int scope,  char* c);
 
 #endif
