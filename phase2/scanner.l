@@ -1,5 +1,9 @@
 /* Definition Section */
 %{
+#include "libs/scopelist/scopelists.h"
+#include "libs/SymTableEntry/SymTableEntry.h"
+#include "libs/symtable/symtable.h"
+#include "libs/zarkList/zarkList.h"
 #include<stdio.h>
 #include"parser.h"
 

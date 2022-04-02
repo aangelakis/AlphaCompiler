@@ -86,7 +86,7 @@ void zarklist_print(zarkList *list, char* (*content_to_string)(void*))
 {
     if (list == NULL || list->size == 0)
     {
-        printf("VOID");
+        printf("void");
         return;
     }
     
@@ -118,6 +118,10 @@ void zarklist_delete_all_nodes(zarkList* list)
 }
 
 void zarklist_free(zarkList* list) {
+    if(list == NULL){
+        fprintf(stderr,"WARNING: You were ready to free a NULL list");
+        return;
+    }
     zarklist_delete_all_nodes(list);
     list->head = NULL;
     list->tail = NULL;

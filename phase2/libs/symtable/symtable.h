@@ -37,6 +37,8 @@ int SymTable_remove(SymTable_T oSymTable, const char *pcKey);
  * It is a checked runtime error for 'oSymTable' or 'pcKey' to be NULL. */
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey);
 
+void* SymTable_lookup(SymTable_T oSymTable, const char *pcKey, int (*condition)(void *));
+
 /* Returns corresponding value to 'pcKey' if 'pcKey' exists in 'oSymTable',
  * else returns NULL.
  * It is a checked runtime error for 'oSymTable' or 'pcKey' to be NULL. */

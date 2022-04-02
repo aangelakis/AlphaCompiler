@@ -1,7 +1,6 @@
-#include "symtable/symtable.h"
-#include "SymTableEntry.h"
-#include "scopelists.h"
-#define TESTSIZE 16 
+#include "../libs/symtable/symtable.h"
+#include "../libs/SymTableEntry/SymTableEntry.h"
+#include "../libs/scopelist/scopelists.h"
 
 char libraryFunctions[12][24]={
     "print",
@@ -30,9 +29,9 @@ int main(){
 
     for (int i = 0; i < 12; i++)
     {
-        char *key = strdup(libraryFunctions[i]);
-        tmp = makeSymTableEntry(key, NULL, 0, 0, LIBFUNC);
-        SymTable_put(testTable, key, (void*)tmp);
+        //char *key = strdup(libraryFunctions[i]);
+        tmp = makeSymTableEntry(libraryFunctions[i], NULL, 0, 0, LIBFUNC);
+        SymTable_put(testTable, libraryFunctions[i], (void*)tmp);
         insert_to_scopeArr(&array,0,tmp);
     }
     printf("lookup %s \n",lookup_with_scope(&array,0,"sin")->value.funcVal->name);

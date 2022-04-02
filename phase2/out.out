@@ -1,0 +1,98 @@
+lvalue -> id
+I am called with id=x
+lvalue -> id
+I am called with id=input
+elist -> ε
+normcall -> (elist)
+callsuffix -> normcall
+call -> lvalue callsuffix
+primary -> call
+term -> primary
+expr -> term
+assignexpr -> lvalue=expr
+expr -> assignexpr
+stmt -> expr;
+liststmt -> stmt
+lvalue -> id
+I am called with id=g
+const -> number
+primary -> const
+term -> primary
+expr -> term
+assignexpr -> lvalue=expr
+expr -> assignexpr
+stmt -> expr;
+liststmt -> liststmt stmt
+lvalue -> id
+I am called with id=print
+lvalue -> id
+I am called with id=typeof
+lvalue -> id
+I am called with id=x
+primary -> lvalue
+term -> primary
+expr -> term
+elist -> epxr
+normcall -> (elist)
+callsuffix -> normcall
+call -> lvalue callsuffix
+primary -> call
+term -> primary
+expr -> term
+elist -> epxr
+normcall -> (elist)
+callsuffix -> normcall
+call -> lvalue callsuffix
+primary -> call
+term -> primary
+expr -> term
+stmt -> expr;
+liststmt -> liststmt stmt
+Scope up to 1
+idlist -> id,id*
+idlist -> id,id*
+lvalue -> id
+I am called with id=print
+lvalue -> id
+I am called with id=x
+primary -> lvalue
+term -> primary
+expr -> term
+lvalue -> id
+I am called with id=y
+primary -> lvalue
+term -> primary
+expr -> term
+expr -> expr + expr
+elist -> epxr
+normcall -> (elist)
+callsuffix -> normcall
+call -> lvalue callsuffix
+primary -> call
+term -> primary
+expr -> term
+stmt -> expr;
+liststmt -> stmt
+Scope down to 0
+block -> stmt*
+function id (idlist) block
+stmt -> funcdef
+liststmt -> liststmt stmt
+program -> stmt+
+SymTableEntry: <name>=g, <scope>=0, <line>=2, <type>=global variable
+SymTableEntry: <name>=x, <scope>=1, <line>=4, <type>=formal argument
+SymTableEntry: <name>=x, <scope>=0, <line>=1, <type>=global variable
+SymTableEntry: <name>=y, <scope>=1, <line>=4, <type>=formal argument
+SymTableEntry: <name>=objecttotalmembers, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=cos, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=print, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=strtonum, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=objectcopy, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=totalarguments, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=sin, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=objectmemberkeys, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=input, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=sqrt, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=foo, <args>=(x, y), <scope>=0, <line>=12, <type>=user function
+SymTableEntry: <name>=typeof, <args>=(void), <scope>=0, <line>=0, <type>=library function
+SymTableEntry: <name>=argument, <args>=(void), <scope>=0, <line>=0, <type>=library function

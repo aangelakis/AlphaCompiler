@@ -1,6 +1,6 @@
-#include"zarkList.h"
 #include<stdio.h>
 #include<string.h>
+#include"../libs/zarkList/zarkList.h"
 
 void print_string(void *s){
     puts((char*)s);

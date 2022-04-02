@@ -1,8 +1,12 @@
 #ifndef SYMTABLEENTRY_HEADER
 #define SYMTABLEENTRY_HEADER
-#include "zarkList.h"
+#include "../zarkList/zarkList.h"
 #include <string.h>
 typedef struct zarkList idList;
+
+#define IS_FUNCTION(entry) (entry->type == USERFUNC || entry->type == LIBFUNC)
+
+int isActive(void* entry);
 
 char *idListContent_to_string(void* content);
 
@@ -24,7 +28,7 @@ typedef struct Function {
 } Function;
 
 typedef enum SymbolType {
-    GLOBAL, LOCAL, FORMAL, USERFUNC, LIBFUNC
+    VAR_GLOBAL, VAR_LOCAL, VAR_FORMAL, USERFUNC, LIBFUNC
 } SymbolType;
 
 typedef struct SymTableEntry {
@@ -38,6 +42,8 @@ typedef struct SymTableEntry {
 
 SymTableEntry* makeSymTableEntry(const char* name, idList* args, unsigned scope, unsigned line, SymbolType type);
 
-
 void printSymTableEntry(void*);
+
+void freeSymTableEntry(SymTableEntry* entry);
+
 #endif

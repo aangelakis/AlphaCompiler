@@ -1,7 +1,7 @@
 #ifndef SCOPELIST_HEADER
 #define SCOPELIST_HEADER
-#include "zarkList.h"
-#include "SymTableEntry.h"
+#include "../zarkList/zarkList.h"
+#include "../SymTableEntry/SymTableEntry.h"
 #include <string.h>
 #define getNodeContent ((SymTableEntry *)iter->content)
 

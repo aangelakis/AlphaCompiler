@@ -1,9 +1,30 @@
 #ifndef YACC_UTILITIES_HEADER
 #define YACC_UTILITIES_HEADER
-
+#include "libs/scopelist/scopelists.h"
+#include "libs/SymTableEntry/SymTableEntry.h"
+#include "libs/symtable/symtable.h"
+#include "libs/zarkList/zarkList.h"
+extern int yylineno;
+extern char* yytext;
 extern int scope;
 extern int flag_scope;
+extern scopeArray* scpArr;
+extern SymTable_T symTable; 
 unsigned int invalid_funcname_number  = 0;
+
+int yyerror(char* yaccProvideMessage)
+{
+    fprintf(stderr , "\033[0;31mERROR\033[0m\n");
+    fprintf(stderr, "\033[0;33m%s\033[0m -> at line %d, before token: \033[0;36m\'%s\'\033[0m\n",  yaccProvideMessage, yylineno, yytext);
+    fprintf(stderr , "\033[0;31mINPUT NOT VALID\033[0m\n");
+}
+
+int print_custom_error(char* yaccProvideMessage,char* yaccProvideName)
+{
+    fprintf(stderr , "\033[0;31mERROR\033[0m\n");
+    fprintf(stderr, "\033[0;33m%s\033[0m -> at line %d, at token: \033[0;36m\'%s\'\033[0m\n",  yaccProvideMessage, yylineno, yaccProvideName);
+    fprintf(stderr , "\033[0;31mINPUT NOT VALID\033[0m\n");
+}
 
 //if the the last who called this function is a block(0) and you are a block(0) => scope++
 //else if you are a function(1) => scope++
@@ -11,21 +32,30 @@ unsigned int invalid_funcname_number  = 0;
 void ScopeUp(int callee){
     if (callee == 0 && flag_scope == 0)
     {
-      scope ++;
-      printf("Scope up to %d\n",scope);
+        //we dont soft hide inside the block
+        scope ++;
+        printf("Scope up to %d\n",scope);
     }else if (callee == 1){
-      scope ++;
-      flag_scope = 1 ;
-      printf("Scope up to %d\n",scope);
+        //inside one function we soft hide every other scope except the latest scope
+        scope ++;
+        for (int i = 1; i < scope; i++)
+        {
+            soft_hide(&scpArr,i);
+        }
+        flag_scope = 1 ;
+        printf("Scope up to %d\n",scope);
     }else {
-      flag_scope = 0;
+        //this is again inside a block so we dont soft hide the previous
+        flag_scope = 0;
     }
     
     
 }
 void ScopeDown(int callee){
-    //here call hide(active_scope);
-    printf("Scope down to %d\n",--scope);
+    hard_hide(&scpArr,scope); //hide the current scope
+    printf("Scope down to %d\n",--scope);   //print tha we go a scope down
+    unhide(&scpArr,scope);  //unhide the scope
+    
 }
 
 /* Generates a invalid name for a function */
@@ -60,16 +90,65 @@ void Manage_ifstmt_if(){
     printf("ifstmt -> if (expr)\n"); 
 }
 
-void Manage_idlist_empty(){
+void Manage_idlist_empty(idList ** dest){
+    //making an empty idlist
+    *dest = zarklist_initialize(0);
     printf("idlist -> ε\n"); 
 }
 
-void Manage_idlist_idlistId(){
+void Manage_idlist_idlistId(idList ** dest , idList * old_list , char * new_element){
+    //if it already exists in the global scope as an lib func
+    SymTableEntry* search = lookup_with_scope(&scpArr,0,new_element);
+    if (search!=NULL && search->type==LIBFUNC)
+    {
+        print_custom_error("Formal argument shadows library function",new_element);
+        return;
+    }
+    //if it already exists in the same scope
+    search = lookup_with_scope(&scpArr,scope,new_element);
+    if (search!=NULL)
+    {
+        print_custom_error("Formal argument already exists in given scope",new_element);        
+        return ;
+    }
+    
+    //insertion in the symtable and in the scopelist
+    SymTableEntry* entry = makeSymTableEntry(new_element,NULL,scope,yylineno,VAR_FORMAL);
+    SymTable_put(symTable,new_element,entry);
+    insert_to_scopeArr(&scpArr,scope,entry);
+
+    //insertion in the idlist and saving the idlist
+    zarklist_insert(old_list,new_element);
+    dest = &old_list;
     printf("idlist -> id,id*\n");
 }
 
-void Manage_idlist_id(){
-    printf("idlist -> id\n");
+void Manage_idlist_id(idList ** dest , char * new_element){
+    //if it already exists in the global scope as an lib func
+    SymTableEntry* search = lookup_with_scope(&scpArr,0,new_element);
+    if (search!=NULL && search->type==LIBFUNC)
+    {
+        print_custom_error("Formal argument shadows library function",new_element);
+        return;
+    }
+    //if it already exists in the same scope
+    search = lookup_with_scope(&scpArr,scope,new_element);
+    if (search!=NULL)
+    {
+        print_custom_error("Formal argument already exists in given scope",new_element);        
+        return ;
+    }
+    
+    //insertion in the symtable and in the scopelist
+    SymTableEntry* entry = makeSymTableEntry(new_element,NULL,scope,yylineno,VAR_FORMAL);
+    SymTable_put(symTable,new_element,entry);
+    insert_to_scopeArr(&scpArr,scope,entry);
+
+    //insertion in the idlist and saving the idlist
+    
+    *dest = zarklist_initialize(0);
+    zarklist_insert(*dest,new_element);
+    printf("idlist -> id,id*\n");
 }
 
 void Manage_const_number(){
@@ -92,11 +171,36 @@ void Manage_const_false(){
     printf("const -> false\n");
 }
 
-void Manage_funcdef_functionId(){
+void Manage_funcdef_functionId(char *name,idList *args){
+    //if it already exists in the global scope as an lib func
+    SymTableEntry* search = lookup_with_scope(&scpArr,0,name);
+    if (search!=NULL && search->type==LIBFUNC)
+    {
+        print_custom_error("User function shadows library function",name);
+        return;
+    }
+    //if it already exists in the same scope print error
+    if (lookup_with_scope(&scpArr,scope,name)!=NULL)
+    {
+        print_custom_error("Function redefinition",name);
+        return ;
+    }
+    
+    //insertion in the symtable and in the scopelist
+    SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC);
+    SymTable_put(symTable,name,entry);
+    insert_to_scopeArr(&scpArr,scope,entry);
+
     printf("function id (idlist) block\n");
 }
 
-void Manage_funcdef_function(){
+void Manage_funcdef_function(idList *args){
+    char * name = invalid_funcname_generator();
+    //insertion in the symtable and in the scopelist
+    SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC);
+    SymTable_put(symTable,name,entry);
+    insert_to_scopeArr(&scpArr,scope,entry);
+
     printf("function (idlist) block\n");
 }
 
@@ -184,16 +288,67 @@ void Manage_member_callExpr(){
     printf("member -> call[expr]\n");
 }
 
-void Manage_lvalue_id(){
+void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
     printf("lvalue -> id\n");
+    printf("I am called with id=%s\n", id);
+
+    int tmpscope = scope;
+    SymTableEntry* entry = lookup_with_scope(&scpArr, scope, id);
+    while(entry == NULL && tmpscope > -1){
+        entry = lookup_with_scope(&scpArr, tmpscope, id);
+        tmpscope--;
+    }
+
+    if(entry == NULL) {
+        if(scope == 0)
+            entry = makeSymTableEntry(id, NULL,  scope, line, VAR_GLOBAL);
+        else
+            entry = makeSymTableEntry(id, NULL,  scope, line, VAR_LOCAL);
+
+        SymTable_put(symTable,id, entry);
+        insert_to_scopeArr(&scpArr, scope, entry);
+    }
+    else
+        *new_entry = entry;
+
 }
 
-void Manage_lvalue_localID(){
+void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int line){
     printf("lvalue -> local id\n");
+
+    SymTableEntry* entry = lookup_with_scope(&scpArr, scope, id);
+    if(entry == NULL){
+        entry = SymTable_lookup(symTable, id, isActive);
+
+        if(entry == NULL) {
+            if(scope == 0)
+                entry = makeSymTableEntry(id, NULL,  scope, line, VAR_GLOBAL);
+            else
+                entry = makeSymTableEntry(id, NULL,  scope, line, VAR_LOCAL);
+
+            SymTable_put(symTable,id, entry);
+            insert_to_scopeArr(&scpArr, scope, entry);
+        }
+        else if(entry->type == LIBFUNC && entry->value.funcVal->scope != 0) {
+            fprintf(stderr, "ERROR: Cannot shadow a library function \'%s\'\n", id);
+            return;
+        }
+    }
+    else
+        *new_entry = entry;
 }
 
-void Manage_lvalue_globalID(){
+void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
     printf("lvalue -> ::id\n");
+    
+    SymTableEntry* entry = lookup_with_scope(&scpArr, 0, id);
+    if(entry == NULL){
+        fprintf(stderr, "ERROR 404: Global variable named \'%s\' not found\n", id);
+        *new_entry = NULL;
+        return;
+    }
+    else
+        *new_entry = entry;
 }
 
 void Manage_lvalue_member(){

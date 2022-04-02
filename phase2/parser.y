@@ -1,14 +1,14 @@
 %{
-int yyerror(char *yaccProvideMessage);
-int yylex();
+	
+	#include "yacc_utilities.h"
+	
+	int yylex();
 
-#include <stdio.h>
-#include "yacc_utilities.h"
-#include "symtable.h"
-extern int yylineno;
-extern char* yytext;
-int scope = 0;
-int flag_scope = 0 ; // 0 == block ; 1 == function
+	extern int yylineno;
+	extern char* yytext;
+	int scope = 0;
+	int flag_scope = 0 ; // 0 == block ; 1 == function
+
 %}
 
 %output "parser.c"
@@ -17,10 +17,9 @@ int flag_scope = 0 ; // 0 == block ; 1 == function
 %union {
     char*   strVal;
     int     intVal;
-    double  realVal;
-    void*   allVal;
-    SymTableEntry* exprNode;
-    idList* args;
+	double  realVal;
+	SymTableEntry* symEntr;
+	idList* args;
 }
 
 %start program
@@ -92,29 +91,30 @@ int flag_scope = 0 ; // 0 == block ; 1 == function
 %left LEFT_PARENTHESIS RIGHT_PARENTHESIS
 
 /* Non Terminal Symbols */
-%type<allVal> stmt
-%type<allVal> expr
-%type<allVal> term
-%type<allVal> assignexpr
-%type<allVal> primary
-%type<allVal> lvalue
-%type<allVal> member
-%type<allVal> call
-%type<allVal> callsuffix
-%type<allVal> normcall
-%type<allVal> methodcall
-%type<allVal> elist
-%type<allVal> objectdef
-%type<allVal> indexed
-%type<allVal> indexedelem
-%type<allVal> block
-%type<allVal> funcdef
-%type<allVal> const
-%type<allVal> idlist
-%type<allVal> ifstmt
-%type<allVal> whilestmt
-%type<allVal> forstmt
-%type<allVal> returnstmt
+%type<args> idlist
+%type<symEntr> lvalue
+
+%type stmt
+%type expr
+%type term
+%type assignexpr
+%type primary
+%type member
+%type call
+%type callsuffix
+%type normcall
+%type methodcall
+%type elist
+%type objectdef
+%type indexed
+%type indexedelem
+%type block
+%type funcdef
+%type const
+%type ifstmt
+%type whilestmt
+%type forstmt
+%type returnstmt
 
 %%
 
@@ -174,10 +174,10 @@ primary:  lvalue            {   Manage_primary_lvalue();      }
           | const           {   Manage_primary_const();       }
           ;
 
-lvalue: ID                    { Manage_lvalue_id($1);         } 
-        | LOCAL ID            { Manage_lvalue_localID($2);    }
-        | DOUBLE_COLON ID     { Manage_lvalue_globalID($2);   }
-        | member              { Manage_lvalue_member();       }
+lvalue: ID                    { Manage_lvalue_id(&($$), $1, scope, yylineno);         } 
+        | LOCAL ID            { Manage_lvalue_localID(&($$), $2, scope, yylineno);    }
+        | DOUBLE_COLON ID     { Manage_lvalue_globalID(&($$), $2);                    }
+        | member              { Manage_lvalue_member();                            }
         ;
 
 member: lvalue "." ID           {   Manage_member_lvalueID();   }
@@ -218,8 +218,8 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt(
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();  }
         ;
 
-funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" block {  Manage_funcdef_functionId(); }
-        | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function();   }
+funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" block {  Manage_funcdef_functionId($2,$5); }
+        | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function($4);   }
         ;
 
 const:  INT       { Manage_const_number();    }
@@ -230,9 +230,9 @@ const:  INT       { Manage_const_number();    }
         | FALSE   { Manage_const_false();     }
         ;
 
-idlist: %empty          {   Manage_idlist_empty();      }
-        | idlist "," ID {   Manage_idlist_idlistId();   }
-        | ID            {   Manage_idlist_id();         } 
+idlist: %empty          {   Manage_idlist_empty(&($$));      }
+        | idlist "," ID {   Manage_idlist_idlistId(&($$),$1,$3);   }
+        | ID            {   Manage_idlist_id(&($$),$1);         } 
         ;
 
 ifstmt: IF "(" expr ")" stmt ELSE stmt {   Manage_ifstmt_ifelse();  }
@@ -249,8 +249,3 @@ returnstmt: RETURN expr";"  {   Manage_returnstmt_returnexpr(); }
 
 %%
 
-int yyerror(char* yaccProvideMessage)
-{
-    fprintf(stderr, "%s:at line %d, before token: \'%s\'\n",  yaccProvideMessage, yylineno, yytext);
-    fprintf(stderr , "INPUT NOT VALID\n");
-}

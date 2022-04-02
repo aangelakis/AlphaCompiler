@@ -107,13 +107,6 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pcValue){
     assert(oSymTable);
     assert(pcKey);
 
-    while(iter){
-        /* Just return 0(FALSE) if binding with 'pcKey' already exists in 'oSymTable' */
-        if(strcmp(iter -> key, pcKey) == 0)
-            return 0;
-        iter = iter -> next;
-    }
-
     /* if you got out from the last loop, it means that there is no bindings 
      * with 'pcKey', so you can just make the new binding, insert it at the
      * start of the list at the index of the hash table, and return 1(TRUE) */
@@ -210,6 +203,25 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey){
     /* If you got here it means that the binding with key == 'pcKey'
      * was not found and thus 'oSymTable' does not contain it.
      * So just return NULL. */
+    return NULL;
+}
+
+void* SymTable_lookup(SymTable_T oSymTable, const char *pcKey, int (*condition)(void *)){
+    unsigned int index = SymTable_hash(pcKey, oSymTable -> currentSizeIn); 
+    binding *iter = oSymTable -> hashtable[index];
+    assert(oSymTable);
+    assert(pcKey);
+
+    while(iter){
+        /* If you find the binding you with the same key and the condition is true, return its value */
+        if(strcmp(iter -> key, pcKey) == 0 && condition(iter->value))
+            return iter->value;
+        iter = iter -> next;
+    }
+
+    /* If you got here it means that the binding with key == 'pcKey'
+     * was not found and thus 'oSymTable' does not contain it.
+     * So just return 0(FALSE). */
     return NULL;
 }
 
