@@ -291,9 +291,9 @@ void Manage_call_callElist(){
 void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
     if(entry == NULL)
         {print_custom_error("Function not declared", "", scope);}
-    else if(entry->type != USERFUNC && entry->type != LIBFUNC){
-        print_custom_error("Cant make call from a variable",entry->value.varVal->name,scope);
-    }
+    //else if(entry->type != USERFUNC && entry->type != LIBFUNC){
+    //    print_custom_error("Cant make call from a variable",entry->value.varVal->name,scope);
+    //}
     printf("call -> lvalue callsuffix\n");
 }
 
