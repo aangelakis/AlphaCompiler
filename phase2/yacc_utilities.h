@@ -349,6 +349,7 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
             return;
         }
     }
+    //
     // else you found something active it means that the varible refers to it, so returned it as is
     else {
         *new_entry = entry;     // return but we use call by reference
