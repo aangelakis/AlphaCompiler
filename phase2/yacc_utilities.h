@@ -316,7 +316,6 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
             entry = lookup_any_with_scope(&scpArr, tmpscope, id);
             tmpscope--;
         }
-
         if(entry == NULL){   
             // lookup for a global matching symbol
             entry = lookup_active_with_scope(&scpArr, 0, id);
@@ -337,11 +336,14 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
         }
         // if you found a matching non-active symbol then there is an error
         else{
-            char errmsg[69];
-            sprintf(errmsg, "Cannot access local variable declared in line %d with scope %d", entry->value.varVal->line, entry->value.varVal->scope);
+            char errmsg[1024];
+            if (entry->type == USERFUNC || entry->type == LIBFUNC)
+            {
+                sprintf(errmsg, "Cannot access local function declared in line %d with scope %d", entry->value.funcVal->line, entry->value.funcVal->scope);
+            }else{
+                sprintf(errmsg, "Cannot access local variable declared in line %d with scope %d", entry->value.varVal->line, entry->value.varVal->scope);
+            }
             print_custom_error(errmsg , id, scope);
-            //fprintf(stderr, "ERROR in line %d: Cannot access local variable \'%s\' declared in line %u with scope %u\n"
-            //                        , yylineno, id, entry->value.varVal->line, entry->value.varVal->scope);
             return;
         }
     }
@@ -387,7 +389,7 @@ void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
     SymTableEntry* entry = lookup_active_with_scope(&scpArr, 0, id);
     if(entry == NULL){
         print_custom_error("Global variable not found", id, scope);
-        *new_entry = NULL;
+        //*new_entry = NULL;
         return;
     }
     else
