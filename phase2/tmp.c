@@ -25,6 +25,8 @@ function g(){
     function f(){
         x = 5;      // error because of local x in function g and there is function in between, it does not matter there is a global x also
         ::x = 5;    // not error because we only search for globals
+        print(x);       
+        ::print;     
     }
 }
 
@@ -43,29 +45,52 @@ function g(){
 void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
     printf("lvalue -> id\n");
 
+    // search bottom-up for active matching symbols in all scopes except global
     int tmpscope = scope;
-    SymTableEntry* entry = lookup_active_with_scope(&scpArr, scope, id);
+    SymTableEntry* entry = lookup_active_with_scope(&scpArr, tmpscope, id);
     while(entry == NULL && tmpscope > 0){
         entry = lookup_active_with_scope(&scpArr, tmpscope, id);
         tmpscope--;
     }
 
+    // if you didn't find anything active
+    // search bottom-up for any matching symbols in all scopes except global
     if(entry == NULL) {
-        if(scope == 0)
-            entry = makeSymTableEntry(id, NULL,  scope, line, VAR_GLOBAL);
-        else
-            entry = makeSymTableEntry(id, NULL,  scope, line, VAR_LOCAL);
+        int tmpscope = scope;
+        entry = lookup_any_with_scope(&scpArr, tmpscope, id);
+        while(entry == NULL && tmpscope > 0){
+            entry = lookup_any_with_scope(&scpArr, tmpscope, id);
+            tmpscope--;
+        }
 
-        SymTable_put(symTable,id, entry);
-        insert_to_scopeArr(&scpArr, scope, entry);
+        if(entry == NULL){   
+            // lookup for a global matching symbol
+            entry = lookup_active_with_scope(&scpArr, 0, id);
+            // if you didn't find anything then create new symbol
+            if(entry == NULL){
+                SymbolType type = (scope == 0) ? VAR_GLOBAL : VAR_LOCAL;
+                entry = makeSymTableEntry(id, NULL,  scope, line, type);
+                SymTable_put(symTable,id, entry);
+                insert_to_scopeArr(&scpArr, scope, entry);
+            }
+            // else you found something active it means that the varible refers to it, so returned it as is
+            else{
+                *new_entry = entry;     // return but we use call by reference
+                return;
+            }
+        }
+        // if you found a matching non-active symbol then there is an error
+        else{
+            fprintf(stderr, "ERROR: Cannot access local variable \'%s\' in line %u with scope %u\n"
+                                    , id, entry->value.varVal->line, entry->value.varVal->scope);
+            return;
+        }
     }
-    else if(entry->type == LIBFUNC) {
-        fprintf(stderr, "ERROR: Cannot shadow a library function \'%s\'\n", id);
+    // else you found something active it means that the varible refers to it, so returned it as is
+    else {
+        *new_entry = entry;     // return but we use call by reference
         return;
     }
-    else
-        *new_entry = entry;
-
 }
 
 void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int line){
@@ -75,7 +100,11 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
     if(entry == NULL){
         entry = SymTable_lookup(symTable, id, isActive);
 
-        if(entry == NULL) {
+        if(entry != NULL && entry->type == LIBFUNC) {
+            fprintf(stderr, "ERROR: Cannot shadow a library function \'%s\'\n", id);
+            return;
+        }
+        else {
             if(scope == 0)
                 entry = makeSymTableEntry(id, NULL,  scope, line, VAR_GLOBAL);
             else
@@ -83,10 +112,6 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
 
             SymTable_put(symTable,id, entry);
             insert_to_scopeArr(&scpArr, scope, entry);
-        }
-        else if(entry->type == LIBFUNC) {
-            fprintf(stderr, "ERROR: Cannot shadow a library function \'%s\'\n", id);
-            return;
         }
     }
     else

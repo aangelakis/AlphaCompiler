@@ -19,11 +19,11 @@ int yyerror(char* yaccProvideMessage)
     fprintf(stderr , "\033[0;31mINPUT NOT VALID\033[0m\n");
 }
 
-int print_custom_error(char* yaccProvideMessage,const char* yaccProvideName)
+int print_custom_error(char* yaccProvideMessage,const char* yaccProvideName,const int scope)
 {
-    fprintf(stderr , "\033[0;31mERROR\033[0m\n");
-    fprintf(stderr, "\033[0;33m%s\033[0m -> at line %d, at token: \033[0;36m\'%s\'\033[0m\n",  yaccProvideMessage, yylineno, yaccProvideName);
-    fprintf(stderr , "\033[0;31mINPUT NOT VALID\033[0m\n");
+    fprintf(stderr , "\033[1;31mERROR\033[0m at line\033[0;35m %d\033[0m, with scope \033[0;35m%d \033[0m: ", yylineno,scope);
+    fprintf(stderr, "\033[0;33m%s\033[0m -> at token: \033[0;36m\'%s\'\033[0m\n",  yaccProvideMessage, yaccProvideName);
+    //fprintf(stderr , "\033[0;31mINPUT NOT VALID\033[0m\n");
 }
 
 //if the the last who called this function is a block(0) and you are a block(0) => scope++
@@ -101,14 +101,14 @@ void Manage_idlist_idlistId(idList ** dest , idList * old_list , char * new_elem
     SymTableEntry* search = lookup_active_with_scope(&scpArr,0,new_element);
     if (search!=NULL && search->type==LIBFUNC)
     {
-        print_custom_error("Formal argument shadows library function",new_element);
+        print_custom_error("Formal argument shadows library function",new_element,scope);
         return;
     }
     //if it already exists in the same scope
     search = lookup_active_with_scope(&scpArr,scope,new_element);
     if (search!=NULL)
     {
-        print_custom_error("Formal argument already exists in given scope",new_element);        
+        print_custom_error("Formal argument already exists in given scope",new_element,scope);        
         return ;
     }
     
@@ -128,14 +128,14 @@ void Manage_idlist_id(idList ** dest , char * new_element){
     SymTableEntry* search = lookup_active_with_scope(&scpArr,0,new_element);
     if (search!=NULL && search->type==LIBFUNC)
     {
-        print_custom_error("Formal argument shadows library function",new_element);
+        print_custom_error("Formal argument shadows library function",new_element,scope);
         return;
     }
     //if it already exists in the same scope
     search = lookup_active_with_scope(&scpArr,scope,new_element);
     if (search!=NULL)
     {
-        print_custom_error("Formal argument already exists in given scope",new_element);        
+        print_custom_error("Formal argument already exists in given scope",new_element,scope);        
         return ;
     }
     
@@ -176,13 +176,13 @@ void Manage_funcdef_functionId(char *name,idList *args){
     SymTableEntry* search = lookup_active_with_scope(&scpArr,0,name);
     if (search!=NULL && search->type==LIBFUNC)
     {
-        print_custom_error("User function shadows library function",name);
+        print_custom_error("User function shadows library function",name,scope);
         return;
     }
     //if it already exists in the same scope print error
     if (lookup_active_with_scope(&scpArr,scope,name)!=NULL)
     {
-        print_custom_error("Function redefinition",name);
+        print_custom_error("Function redefinition",name,scope);
         return ;
     }
     
@@ -266,7 +266,7 @@ void Manage_call_callElist(){
 
 void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
     if(entry->type!=USERFUNC && entry->type!=LIBFUNC){
-        print_custom_error("Cant make call from a variable",entry->value.varVal->name);
+        print_custom_error("Cant make call from a variable",entry->value.varVal->name,scope);
     }
     printf("call -> lvalue callsuffix\n");
 }
@@ -293,27 +293,56 @@ void Manage_member_callExpr(){
 
 void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
     printf("lvalue -> id\n");
-    printf("I am called with id=%s\n", id);
 
+    // search bottom-up for active matching symbols in all scopes except global
     int tmpscope = scope;
-    SymTableEntry* entry = lookup_active_with_scope(&scpArr, scope, id);
-    while(entry == NULL && tmpscope > -1){
+    SymTableEntry* entry = lookup_active_with_scope(&scpArr, tmpscope, id);
+    while(entry == NULL && tmpscope > 0){
         entry = lookup_active_with_scope(&scpArr, tmpscope, id);
         tmpscope--;
     }
 
+    // if you didn't find anything active
+    // search bottom-up for any matching symbols in all scopes except global
     if(entry == NULL) {
-        if(scope == 0)
-            entry = makeSymTableEntry(id, NULL,  scope, line, VAR_GLOBAL);
-        else
-            entry = makeSymTableEntry(id, NULL,  scope, line, VAR_LOCAL);
+        int tmpscope = scope;
+        entry = lookup_any_with_scope(&scpArr, tmpscope, id);
+        while(entry == NULL && tmpscope > 0){
+            entry = lookup_any_with_scope(&scpArr, tmpscope, id);
+            tmpscope--;
+        }
 
-        SymTable_put(symTable,id, entry);
-        insert_to_scopeArr(&scpArr, scope, entry);
+        if(entry == NULL){   
+            // lookup for a global matching symbol
+            entry = lookup_active_with_scope(&scpArr, 0, id);
+            // if you didn't find anything then create new symbol
+            if(entry == NULL){
+                SymbolType type = (scope == 0) ? VAR_GLOBAL : VAR_LOCAL;
+                entry = makeSymTableEntry(id, NULL,  scope, line, type);
+                SymTable_put(symTable,id, entry);
+                insert_to_scopeArr(&scpArr, scope, entry);
+            }
+            // else you found something active it means that the varible refers to it, so returned it as is
+            else{
+                *new_entry = entry;     // return but we use call by reference
+                return;
+            }
+        }
+        // if you found a matching non-active symbol then there is an error
+        else{
+            char errmsg[69];
+            sprintf(errmsg, "Cannot access local variable declared in line %d with scope %d", entry->value.varVal->line, entry->value.varVal->scope);
+            print_custom_error(errmsg , id, scope);
+            //fprintf(stderr, "ERROR in line %d: Cannot access local variable \'%s\' declared in line %u with scope %u\n"
+            //                        , yylineno, id, entry->value.varVal->line, entry->value.varVal->scope);
+            return;
+        }
     }
-    else
-        *new_entry = entry;
-
+    // else you found something active it means that the varible refers to it, so returned it as is
+    else {
+        *new_entry = entry;     // return but we use call by reference
+        return;
+    }
 }
 
 void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int line){
@@ -323,7 +352,11 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
     if(entry == NULL){
         entry = SymTable_lookup(symTable, id, isActive);
 
-        if(entry == NULL) {
+        if(entry != NULL && entry->type == LIBFUNC && scope != 0) {
+            print_custom_error("Cannot shadow a library function", id, scope);
+            return;
+        }
+        else {
             if(scope == 0)
                 entry = makeSymTableEntry(id, NULL,  scope, line, VAR_GLOBAL);
             else
@@ -331,10 +364,6 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
 
             SymTable_put(symTable,id, entry);
             insert_to_scopeArr(&scpArr, scope, entry);
-        }
-        else if(entry->type == LIBFUNC && entry->value.funcVal->scope != 0) {
-            fprintf(stderr, "ERROR: Cannot shadow a library function \'%s\'\n", id);
-            return;
         }
     }
     else
@@ -346,7 +375,7 @@ void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
     
     SymTableEntry* entry = lookup_active_with_scope(&scpArr, 0, id);
     if(entry == NULL){
-        fprintf(stderr, "ERROR 404: Global variable named \'%s\' not found\n", id);
+        print_custom_error("Global variable not found", id, 0);
         *new_entry = NULL;
         return;
     }
@@ -380,7 +409,7 @@ void Manage_primary_const(){
 
 void Manage_assignexpr(SymTableEntry* entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant make assignment to function",entry->value.funcVal->name);
+        print_custom_error("Cant make assignment to function",entry->value.funcVal->name,scope);
     }
     
 }
@@ -399,28 +428,28 @@ void Manage_term_notExpr(){
 
 void Manage_term_pluspluslvalue(SymTableEntry *entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name);
+        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
     printf("term -> ++lvalue\n");
 }
 
 void Manage_term_lvalueplusplus(SymTableEntry *entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name);
+        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
     printf("term -> lvalue++\n");
 }
 
 void Manage_term_minusminuslvalue(SymTableEntry *entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name);
+        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
     printf("term -> --lvalue\n");
 }
 
 void Manage_term_lvalueminusminus(SymTableEntry *entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name);
+        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
     printf("term -> lvalue--\n");
 }
@@ -496,6 +525,5 @@ void Manage_program_liststmt(){
 void Manage_program_empty(){
     printf("empty program\n");  
 }
-
 
 #endif

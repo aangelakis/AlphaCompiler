@@ -1,19 +1,15 @@
-x = input();
-g = 12.4;
-print(typeof(x));
-function foo(x,y){
-    print(x + y);  
-    local p = y;
-    ::print(p);  
-    function h(a) { 
-        return a + x + y; 
-    } 
-    y = h(::x);
-}
+//DONE
+i = 8;
+x = 10;
+y = 30;
 
-foo = 5;
-x();
-foo++;
-++foo;
---foo;
-foo--;
+function foo(x,y){
+    x = i;     
+    ::y = x;  
+
+    function g() {
+		::x = x;   //Error Cannot access x inside g
+		::y = y;   //Error Cannot access x inside g
+    }
+}
+//foo++;
