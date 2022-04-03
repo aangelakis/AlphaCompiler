@@ -265,7 +265,7 @@ void Manage_call_callElist(){
 }
 
 void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
-    if(entry->type!=USERFUNC && entry->type!=LIBFUNC){
+    if(entry->type != USERFUNC && entry->type != LIBFUNC){
         print_custom_error("Cant make call from a variable",entry->value.varVal->name,scope);
     }
     printf("call -> lvalue callsuffix\n");
@@ -321,6 +321,8 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
                 entry = makeSymTableEntry(id, NULL,  scope, line, type);
                 SymTable_put(symTable,id, entry);
                 insert_to_scopeArr(&scpArr, scope, entry);
+                *new_entry = entry;
+                return;
             }
             // else you found something active it means that the varible refers to it, so returned it as is
             else{
@@ -364,10 +366,14 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
 
             SymTable_put(symTable,id, entry);
             insert_to_scopeArr(&scpArr, scope, entry);
+            *new_entry = entry;
+            return;
         }
     }
-    else
+    else {
         *new_entry = entry;
+        return;
+    }
 }
 
 void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
