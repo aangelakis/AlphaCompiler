@@ -221,7 +221,7 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt(
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();   }
         ;
 
-funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" block {  Manage_funcdef_functionId($2,$5); }
+funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" {Manage_funcdef_functionId($2,$5);} block {  printf("function id (idlist) block\n"); }
         | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function($4);   }
         ;
 

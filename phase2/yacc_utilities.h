@@ -191,11 +191,11 @@ void Manage_funcdef_functionId(char *name,idList *args){
     }
     
     //insertion in the symtable and in the scopelist
-    SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC);
+    SymTableEntry* entry = makeSymTableEntry(name,args,scope-1,yylineno,USERFUNC);
     SymTable_put(symTable,name,entry);
-    insert_to_scopeArr(&scpArr,scope,entry);
+    insert_to_scopeArr(&scpArr,scope-1,entry);
 
-    printf("function id (idlist) block\n");
+    //printf("function id (idlist) block\n");
 }
 
 void Manage_funcdef_function(idList *args){
