@@ -180,7 +180,8 @@ primary:  lvalue            {   Manage_primary_lvalue();      }
 lvalue: ID                    { Manage_lvalue_id(&($$), $1, scope, yylineno);         } 
         | LOCAL ID            { Manage_lvalue_localID(&($$), $2, scope, yylineno);    }
         | DOUBLE_COLON ID     { Manage_lvalue_globalID(&($$), $2);                    }
-        | member              { Manage_lvalue_member();                            }
+        | member              { //$$ = makeSymTableEntry("dc",NULL,0,0,VAR_LOCAL);        // ultimate hackeria, saved infinite lines of code
+                                Manage_lvalue_member(); }
         ;
 
 member: lvalue "." ID           {   Manage_member_lvalueID($1);   }

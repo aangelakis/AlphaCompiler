@@ -17,6 +17,8 @@ int yyerror(char* yaccProvideMessage)
     fprintf(stderr , "\033[0;31mERROR\033[0m\n");
     fprintf(stderr, "\033[0;33m%s\033[0m -> at line %d, before token: \033[0;36m\'%s\'\033[0m\n",  yaccProvideMessage, yylineno, yytext);
     fprintf(stderr , "\033[0;31mINPUT NOT VALID\033[0m\n");
+
+    return 0;
 }
 
 int print_custom_error(char* yaccProvideMessage,const char* yaccProvideName,const int scope)
@@ -24,6 +26,8 @@ int print_custom_error(char* yaccProvideMessage,const char* yaccProvideName,cons
     fprintf(stderr , "\033[1;31mERROR\033[0m at line\033[0;35m %d\033[0m, with scope \033[0;35m%d \033[0m: ", yylineno,scope);
     fprintf(stderr, "\033[0;33m%s\033[0m -> at token: \033[0;36m\'%s\'\033[0m\n",  yaccProvideMessage, yaccProvideName);
     //fprintf(stderr , "\033[0;31mINPUT NOT VALID\033[0m\n");
+
+    return 0;
 }
 
 //if the the last who called this function is a block(0) and you are a block(0) => scope++
