@@ -180,9 +180,12 @@ void Manage_funcdef_functionId(char *name,idList *args){
         return;
     }
     //if it already exists in the same scope print error
-    if (lookup_active_with_scope(&scpArr,scope,name)!=NULL)
+    if ((search = lookup_active_with_scope(&scpArr,scope,name)) != NULL)
     {
-        print_custom_error("Function redefinition",name,scope);
+        if(IS_FUNCTION(search))
+            print_custom_error("Function redefinition",name,scope);
+        else
+            print_custom_error("Funtion declared with same name as variable",name,scope);
         return ;
     }
     
@@ -265,7 +268,9 @@ void Manage_call_callElist(){
 }
 
 void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
-    if(entry->type != USERFUNC && entry->type != LIBFUNC){
+    if(entry == NULL)
+        print_custom_error("Function not declared", "", scope);
+    else if(entry->type != USERFUNC && entry->type != LIBFUNC){
         print_custom_error("Cant make call from a variable",entry->value.varVal->name,scope);
     }
     printf("call -> lvalue callsuffix\n");
@@ -381,7 +386,7 @@ void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
     
     SymTableEntry* entry = lookup_active_with_scope(&scpArr, 0, id);
     if(entry == NULL){
-        print_custom_error("Global variable not found", id, 0);
+        print_custom_error("Global variable not found", id, scope);
         *new_entry = NULL;
         return;
     }
