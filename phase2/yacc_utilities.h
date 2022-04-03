@@ -281,11 +281,21 @@ void Manage_call_funcdefElist(){
     printf("call -> (funcdef)(elist)\n");
 }
 
-void Manage_member_lvalueID(){
+void Manage_member_lvalueID(SymTableEntry * entry){
+    if(entry == NULL)
+        {print_custom_error("lvalue not declared", "", scope);}
+    else if(entry->type == USERFUNC || entry->type == LIBFUNC){
+        print_custom_error("Cant use function name as an lvalue.id",entry->value.varVal->name,scope);
+    }
     printf("member -> lvalue.id\n");
 }
 
-void Manage_member_lvalueExpr(){
+void Manage_member_lvalueExpr(SymTableEntry * entry){
+    if(entry == NULL)
+        {print_custom_error("lvalue not declared", "", scope);}
+    else if(entry->type == USERFUNC || entry->type == LIBFUNC){
+        print_custom_error("Cant use function name as an lvalue[]",entry->value.varVal->name,scope);
+    }
     printf("member -> lvalue[expr]\n");
 }
 

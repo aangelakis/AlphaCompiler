@@ -183,8 +183,8 @@ lvalue: ID                    { Manage_lvalue_id(&($$), $1, scope, yylineno);   
         | member              { Manage_lvalue_member();                            }
         ;
 
-member: lvalue "." ID           {   Manage_member_lvalueID();   }
-        | lvalue "[" expr "]"   {   Manage_member_lvalueExpr(); }
+member: lvalue "." ID           {   Manage_member_lvalueID($1);   }
+        | lvalue "[" expr "]"   {   Manage_member_lvalueExpr($1); }
         | call "." ID           {   Manage_member_callID();     }
         | call "[" expr "]"     {   Manage_member_callExpr();   }
         ;
