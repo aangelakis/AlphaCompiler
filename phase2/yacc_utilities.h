@@ -180,6 +180,26 @@ void Manage_funcdef_functionId(char *name,idList *args){
         print_custom_error("User function shadows library function",name,scope);
         return;
     }
+    //if scope 2 , 3 etc 
+    if (scope>1)
+    {
+        //search in previus scope because u are one scope inside 
+        //and u need to check the name if given like this 
+        //function f(x){
+        //     function x(){}
+        //}
+        search = lookup_any_with_scope(&scpArr,scope-1,name);
+        if (search !=NULL)
+        {
+            print_custom_error("Variable already exists",name,scope);
+            return;
+        }
+        
+    }
+    
+    
+
+    
     //if it already exists in the same scope print error
     if ((search = lookup_active_with_scope(&scpArr,scope,name)) != NULL)
     {
