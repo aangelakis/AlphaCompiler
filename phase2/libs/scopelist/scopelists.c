@@ -118,7 +118,7 @@ scopeArray* checkScopeSize(scopeArray* array, int scope)
 }
 
 /*returns a pointer to a symtable entry if found otherwise null*/
-SymTableEntry* lookup_with_scope (scopeArray** array, int scope,  char* c)
+SymTableEntry* lookup_active_with_scope (scopeArray** array, int scope,  char* c)
 {
 
 	*array = checkScopeSize(*array, scope);
@@ -148,6 +148,38 @@ SymTableEntry* lookup_with_scope (scopeArray** array, int scope,  char* c)
 			
 		}
 		
+		//go to next zarkNode
+		iter = iter->next;
+	}
+	//if we reached here nothing was found
+	return NULL;
+}
+
+/*returns a pointer to any non global symtable entry that matches*/
+SymTableEntry* lookup_any_with_scope(scopeArray ** array,int scope , char* c){
+	*array = checkScopeSize(*array, scope);
+	zarkNode* iter = (*array)->scopes[scope]->head;
+	
+	//while loop
+	while (iter!=NULL)
+	{
+		
+		//if it is a libfunc or a userfunction
+		if ((getNodeContent->type==USERFUNC) || (getNodeContent->type==LIBFUNC))
+		{
+			//if it is what we are looking for
+			if (strcmp(getNodeContent->value.funcVal->name,c)==0)
+			{
+				return getNodeContent;
+			}
+		//else if it is a variable
+		}else{
+			//if it is what we are looking for
+			if (strcmp(getNodeContent->value.varVal->name,c)==0)
+			{
+				return getNodeContent;
+			}
+		}
 		//go to next zarkNode
 		iter = iter->next;
 	}

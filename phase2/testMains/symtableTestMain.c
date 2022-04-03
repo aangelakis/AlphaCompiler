@@ -34,10 +34,10 @@ int main(){
         SymTable_put(testTable, libraryFunctions[i], (void*)tmp);
         insert_to_scopeArr(&array,0,tmp);
     }
-    printf("lookup %s \n",lookup_with_scope(&array,0,"sin")->value.funcVal->name);
+    printf("lookup %s \n",lookup_active_with_scope(&array,0,"sin")->value.funcVal->name);
     
     soft_hide(&array,0);
-    if (lookup_with_scope(&array,0,"sin")==NULL)
+    if (lookup_active_with_scope(&array,0,"sin")==NULL)
     {
         printf("successfull hide\n");
     }
@@ -47,7 +47,7 @@ int main(){
 
 
     unhide(&array,0);
-    if (lookup_with_scope(&array,0,"sin")!=NULL)
+    if (lookup_active_with_scope(&array,0,"sin")!=NULL)
     {
         printf("successfull unhide\n");
     }

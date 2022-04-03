@@ -36,7 +36,9 @@ void insert_to_scopeArr(scopeArray** array, int scope, SymTableEntry* entry);
 /*checks if the given scope can exist in the given array*/
 scopeArray* checkScopeSize(scopeArray* array, int scope);
 
-/*returns a pointer to a symtable entry if found otherwise null*/
-SymTableEntry* lookup_with_scope (scopeArray** array, int scope,  char* c);
+/*returns a pointer to an active symtable entry if found otherwise null*/
+SymTableEntry* lookup_active_with_scope (scopeArray** array, int scope,  char* c);
 
+/*returns a pointer to any non global symtable entry that matches*/
+SymTableEntry* lookup_any_with_scope(scopeArray ** array,int scope , char* c);
 #endif

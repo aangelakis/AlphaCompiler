@@ -98,14 +98,14 @@ void Manage_idlist_empty(idList ** dest){
 
 void Manage_idlist_idlistId(idList ** dest , idList * old_list , char * new_element){
     //if it already exists in the global scope as an lib func
-    SymTableEntry* search = lookup_with_scope(&scpArr,0,new_element);
+    SymTableEntry* search = lookup_active_with_scope(&scpArr,0,new_element);
     if (search!=NULL && search->type==LIBFUNC)
     {
         print_custom_error("Formal argument shadows library function",new_element);
         return;
     }
     //if it already exists in the same scope
-    search = lookup_with_scope(&scpArr,scope,new_element);
+    search = lookup_active_with_scope(&scpArr,scope,new_element);
     if (search!=NULL)
     {
         print_custom_error("Formal argument already exists in given scope",new_element);        
@@ -125,14 +125,14 @@ void Manage_idlist_idlistId(idList ** dest , idList * old_list , char * new_elem
 
 void Manage_idlist_id(idList ** dest , char * new_element){
     //if it already exists in the global scope as an lib func
-    SymTableEntry* search = lookup_with_scope(&scpArr,0,new_element);
+    SymTableEntry* search = lookup_active_with_scope(&scpArr,0,new_element);
     if (search!=NULL && search->type==LIBFUNC)
     {
         print_custom_error("Formal argument shadows library function",new_element);
         return;
     }
     //if it already exists in the same scope
-    search = lookup_with_scope(&scpArr,scope,new_element);
+    search = lookup_active_with_scope(&scpArr,scope,new_element);
     if (search!=NULL)
     {
         print_custom_error("Formal argument already exists in given scope",new_element);        
@@ -173,14 +173,14 @@ void Manage_const_false(){
 
 void Manage_funcdef_functionId(char *name,idList *args){
     //if it already exists in the global scope as an lib func
-    SymTableEntry* search = lookup_with_scope(&scpArr,0,name);
+    SymTableEntry* search = lookup_active_with_scope(&scpArr,0,name);
     if (search!=NULL && search->type==LIBFUNC)
     {
         print_custom_error("User function shadows library function",name);
         return;
     }
     //if it already exists in the same scope print error
-    if (lookup_with_scope(&scpArr,scope,name)!=NULL)
+    if (lookup_active_with_scope(&scpArr,scope,name)!=NULL)
     {
         print_custom_error("Function redefinition",name);
         return ;
@@ -296,9 +296,9 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
     printf("I am called with id=%s\n", id);
 
     int tmpscope = scope;
-    SymTableEntry* entry = lookup_with_scope(&scpArr, scope, id);
+    SymTableEntry* entry = lookup_active_with_scope(&scpArr, scope, id);
     while(entry == NULL && tmpscope > -1){
-        entry = lookup_with_scope(&scpArr, tmpscope, id);
+        entry = lookup_active_with_scope(&scpArr, tmpscope, id);
         tmpscope--;
     }
 
@@ -319,7 +319,7 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
 void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int line){
     printf("lvalue -> local id\n");
 
-    SymTableEntry* entry = lookup_with_scope(&scpArr, scope, id);
+    SymTableEntry* entry = lookup_active_with_scope(&scpArr, scope, id);
     if(entry == NULL){
         entry = SymTable_lookup(symTable, id, isActive);
 
@@ -344,7 +344,7 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
 void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
     printf("lvalue -> ::id\n");
     
-    SymTableEntry* entry = lookup_with_scope(&scpArr, 0, id);
+    SymTableEntry* entry = lookup_active_with_scope(&scpArr, 0, id);
     if(entry == NULL){
         fprintf(stderr, "ERROR 404: Global variable named \'%s\' not found\n", id);
         *new_entry = NULL;

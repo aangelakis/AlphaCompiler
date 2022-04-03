@@ -50,7 +50,7 @@ int main(){
         insert_to_scopeArr(&array,0,tmp);
     }
 
-    if(lookup_with_scope(&array, scope, "x") == NULL){
+    if(lookup_active_with_scope(&array, scope, "x") == NULL){
         SymTableEntry *x = makeSymTableEntry("x", NULL,  scope, 1, VAR_GLOBAL);
         SymTable_put(testTable,"x",x);
         insert_to_scopeArr(&array,scope,x);   
@@ -63,7 +63,7 @@ int main(){
     }*/
 
 
-    if(lookup_with_scope(&array, scope, "g") == NULL){
+    if(lookup_active_with_scope(&array, scope, "g") == NULL){
         SymTableEntry *g = makeSymTableEntry("g", NULL,  scope, 2, VAR_GLOBAL);
         SymTable_put(testTable,"g",g);
         insert_to_scopeArr(&array,scope,g);
@@ -88,21 +88,21 @@ int main(){
     zarklist_insert(f_arguments,"y");
     
     //to look up gia print(x + y)
-    if (lookup_with_scope(&array,scope,"y")==NULL ||lookup_with_scope(&array,scope,"x")==NULL)
+    if (lookup_active_with_scope(&array,scope,"y")==NULL ||lookup_active_with_scope(&array,scope,"x")==NULL)
     {
       printf("failure couldnt find x or y in this scope \n");
       return -1;
     }
 
     //to look up gia p = y
-    if (lookup_with_scope(&array,scope,"y")==NULL)
+    if (lookup_active_with_scope(&array,scope,"y")==NULL)
     {
       printf("failure couldnt find y in this scope \n");
       return -1;
     }
 
     //to look up gia to p
-    if (lookup_with_scope(&array,scope,"p")!=NULL)
+    if (lookup_active_with_scope(&array,scope,"p")!=NULL)
     {
       printf("failure p already exists in this scope \n");
       return -1;
@@ -113,14 +113,14 @@ int main(){
     insert_to_scopeArr(&array,scope,p);
 
     //to look up gia to p
-    if (lookup_with_scope(&array,scope,"p")==NULL)
+    if (lookup_active_with_scope(&array,scope,"p")==NULL)
     {
       printf("failure couldnt find p in this scope \n");
       return -1;
     }
 
     //to look up gia ::print
-    if (lookup_with_scope(&array,0,"print")==NULL)
+    if (lookup_active_with_scope(&array,0,"print")==NULL)
     {
       printf("failure couldnt find local in global scope \n");
       return -1;
@@ -136,18 +136,18 @@ int main(){
     insert_to_scopeArr(&array,scope,a);
 	zarklist_insert(h_idlist,"a");
 	//to look up gia a
-    if (lookup_with_scope(&array,scope,"a")==NULL)
+    if (lookup_active_with_scope(&array,scope,"a")==NULL)
     {
 		printf("failure couldnt find local a in this scope \n");
 		return -1;
     }
 
-	if (lookup_with_scope(&array,scope,"x")==NULL)
+	if (lookup_active_with_scope(&array,scope,"x")==NULL)
     {
 		printf("AUTO EINAI SWSTO => failure couldnt find local x in this scope \n");
     }
 
-	if (lookup_with_scope(&array,scope,"y")==NULL)
+	if (lookup_active_with_scope(&array,scope,"y")==NULL)
     {
 		printf("AUTO EINAI SWSTO => failure couldnt find local y in this scope \n");
     }
@@ -165,12 +165,12 @@ int main(){
 	//11 y = h(::x);
 	//12 }
 
-	if (lookup_with_scope(&array,scope,"h")==NULL)
+	if (lookup_active_with_scope(&array,scope,"h")==NULL)
     {
 		printf("failure couldnt find h function in this scope \n");
 		return -1;
     }
-	if (lookup_with_scope(&array,0,"x")==NULL)
+	if (lookup_active_with_scope(&array,0,"x")==NULL)
     {
 		printf("failure couldnt find x in global scope \n");
 		return -1;
