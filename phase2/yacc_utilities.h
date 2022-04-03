@@ -52,6 +52,7 @@ void ScopeUp(int callee){
     
 }
 void ScopeDown(int callee){
+    //printf("%d\n",scope);
     hard_hide(&scpArr,scope); //hide the current scope
     printf("Scope down to %d\n",--scope);   //print tha we go a scope down
     unhide(&scpArr,scope);  //unhide the scope
@@ -269,7 +270,7 @@ void Manage_call_callElist(){
 
 void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
     if(entry == NULL)
-        print_custom_error("Function not declared", "", scope);
+        {print_custom_error("Function not declared", "", scope);}
     else if(entry->type != USERFUNC && entry->type != LIBFUNC){
         print_custom_error("Cant make call from a variable",entry->value.varVal->name,scope);
     }
@@ -344,6 +345,7 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
                 sprintf(errmsg, "Cannot access local variable declared in line %d with scope %d", entry->value.varVal->line, entry->value.varVal->scope);
             }
             print_custom_error(errmsg , id, scope);
+            *new_entry = NULL;
             return;
         }
     }
@@ -363,6 +365,7 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
 
         if(entry != NULL && entry->type == LIBFUNC && scope != 0) {
             print_custom_error("Cannot shadow a library function", id, scope);
+            *new_entry = NULL;
             return;
         }
         else {
@@ -389,7 +392,7 @@ void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
     SymTableEntry* entry = lookup_active_with_scope(&scpArr, 0, id);
     if(entry == NULL){
         print_custom_error("Global variable not found", id, scope);
-        //*new_entry = NULL;
+        *new_entry = NULL;
         return;
     }
     else
@@ -421,6 +424,7 @@ void Manage_primary_const(){
 }
 
 void Manage_assignexpr(SymTableEntry* entry){
+    if(entry == NULL){return;}
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant make assignment to function",entry->value.funcVal->name,scope);
     }
@@ -440,6 +444,7 @@ void Manage_term_notExpr(){
 }
 
 void Manage_term_pluspluslvalue(SymTableEntry *entry){
+    if(entry == NULL){return;}
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
@@ -447,6 +452,7 @@ void Manage_term_pluspluslvalue(SymTableEntry *entry){
 }
 
 void Manage_term_lvalueplusplus(SymTableEntry *entry){
+    if(entry == NULL){return;}
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
@@ -454,6 +460,7 @@ void Manage_term_lvalueplusplus(SymTableEntry *entry){
 }
 
 void Manage_term_minusminuslvalue(SymTableEntry *entry){
+    if(entry == NULL){return;}
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
@@ -461,6 +468,7 @@ void Manage_term_minusminuslvalue(SymTableEntry *entry){
 }
 
 void Manage_term_lvalueminusminus(SymTableEntry *entry){
+    if(entry == NULL){return;}
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
