@@ -9,9 +9,7 @@
 	extern char* yytext;
 	int scope = 0;
 	int flag_scope = 0 ; // 0 == block ; 1 == function
-        int inwhile = 0;
-        int infor = 0;
-        int infunc = 0;
+
     /* TODO */
     //int blocks_active = 0;
     //int nested_start_block_line[1024];
@@ -231,8 +229,8 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt(
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();   }
         ;
 
-funcdef: FUNCTION ID {infunc = 1; ScopeUp(1);} "("idlist")" {Manage_funcdef_functionId($2,$5);} block {  fprintf(yacc_out, "function id (idlist) block\n"); infunc = 0;}
-        | FUNCTION{infunc = 1; ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function($4);  infunc = 0; }
+funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" {Manage_funcdef_functionId($2,$5);} block {  fprintf(yacc_out, "function id (idlist) block\n"); }
+        | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function($4);   }
         ;
 
 const:  INT       { Manage_const_number();    }
@@ -252,9 +250,9 @@ ifstmt: IF "(" expr ")" stmt ELSE stmt {   Manage_ifstmt_ifelse();  }
         | IF "(" expr ")" stmt         {    Manage_ifstmt_if();     }
         ;
 
-whilestmt: WHILE {inwhile = 1;}  "(" expr ")" stmt     {    Manage_whilestmt();  inwhile = 0;};
+whilestmt: WHILE  "(" expr ")" stmt     {    Manage_whilestmt();  };
 
-forstmt: FOR {infor = 1;} "(" elist ";" expr ";" elist ")" stmt  {   Manage_forstmt();  infor = 0;};
+forstmt: FOR "(" elist ";" expr ";" elist ")" stmt  {   Manage_forstmt();  };
 
 returnstmt: RETURN expr";"  {   Manage_returnstmt_returnexpr(); }
             | RETURN";"     {   Manage_returnstmt_return();     }

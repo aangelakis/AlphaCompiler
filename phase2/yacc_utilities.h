@@ -12,9 +12,7 @@ extern scopeArray* scpArr;
 extern SymTable_T symTable;
 extern FILE* yacc_out; 
 unsigned int invalid_funcname_number  = 0;
-extern int inwhile;
-extern int infor;
-extern int infunc;
+
 int yyerror(char* yaccProvideMessage)
 {
     fprintf(stderr , "\033[0;31mERROR\033[0m\n");
@@ -76,16 +74,10 @@ char* invalid_funcname_generator(){
 }
 
 void Manage_returnstmt_returnexpr(){
-    if(infunc==0){
-        print_custom_error("can't use return outside of a function","return",scope);
-    }
     fprintf(yacc_out,"returnstmt -> return expr;\n");
 } 
 
 void Manage_returnstmt_return(){
-    if(infunc==0){
-        print_custom_error("can't use return outside of a function","return",scope);
-    }
     fprintf(yacc_out,"returnstmt -> return;\n");
 }
 
@@ -568,16 +560,10 @@ void Manage_stmt_returnstmt(){
 }
 
 void Manage_stmt_break(){
-    if(inwhile==0 && infor==0){
-        print_custom_error("Cant use break outside of loop","break",scope);
-    }
     fprintf(yacc_out,"stmt -> break;\n");
 }
 
 void Manage_stmt_continue(){
-    if(inwhile==0 && infor==0){
-        print_custom_error("Cant use continue outside of loop","continue",scope);
-    }
     fprintf(yacc_out,"stmt -> continue;\n");
 }
 
