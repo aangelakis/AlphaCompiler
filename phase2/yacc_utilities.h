@@ -179,9 +179,12 @@ void Manage_const_false(){
 void Manage_funcdef_functionId(char *name,idList *args){
     //if it already exists in the global scope as an lib func
     SymTableEntry* search = lookup_active_with_scope(&scpArr,0,name);
-    if (search!=NULL && search->type==LIBFUNC)
+    if (search!=NULL)
     {
-        print_custom_error("User function shadows library function",name,scope);
+        if(search->type==LIBFUNC)
+            print_custom_error("User function shadows library function",name,scope);
+        else
+            print_custom_error("Variable already exists",name,scope);
         return;
     }
     //if scope 2 , 3 etc 
