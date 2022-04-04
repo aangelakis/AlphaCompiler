@@ -12,6 +12,8 @@ typedef struct scopeArray {
     int size;
 } scopeArray;
 
+extern scopeArray* globalScopeArr;
+
 /*hides the elements of the given scope */
 void soft_hide(scopeArray** array, int scope);
 

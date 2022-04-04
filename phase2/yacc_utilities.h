@@ -3,13 +3,14 @@
 #include "libs/scopelist/scopelists.h"
 #include "libs/SymTableEntry/SymTableEntry.h"
 #include "libs/symtable/symtable.h"
-#include "libs/zarkList/zarkList.h"
+#include "libs/zarkList/zarkList.h" 
 extern int yylineno;
 extern char* yytext;
 extern int scope;
 extern int flag_scope;
 extern scopeArray* scpArr;
-extern SymTable_T symTable; 
+extern SymTable_T symTable;
+extern FILE* yacc_out; 
 unsigned int invalid_funcname_number  = 0;
 
 int yyerror(char* yaccProvideMessage)
@@ -38,7 +39,7 @@ void ScopeUp(int callee){
     {
         //we dont soft hide inside the block
         scope ++;
-        printf("Scope up to %d\n",scope);
+        fprintf(yacc_out,"Scope up to %d\n",scope);
     }else if (callee == 1){
         //inside one function we soft hide every other scope except the latest scope
         scope ++;
@@ -47,7 +48,7 @@ void ScopeUp(int callee){
             soft_hide(&scpArr,i);
         }
         flag_scope = 1 ;
-        printf("Scope up to %d\n",scope);
+        fprintf(yacc_out,"Scope up to %d\n",scope);
     }else {
         //this is again inside a block so we dont soft hide the previous
         flag_scope = 0;
@@ -58,7 +59,8 @@ void ScopeUp(int callee){
 void ScopeDown(int callee){
     //printf("%d\n",scope);
     hard_hide(&scpArr,scope); //hide the current scope
-    printf("Scope down to %d\n",--scope);   //print tha we go a scope down
+    scope--;
+    // fprintf(yacc_out,"Scope down to %d\n",--scope);   //print tha we go a scope down
     unhide(&scpArr,scope);  //unhide the scope
     
 }
@@ -72,33 +74,33 @@ char* invalid_funcname_generator(){
 }
 
 void Manage_returnstmt_returnexpr(){
-    printf("returnstmt -> return expr;\n");
+    fprintf(yacc_out,"returnstmt -> return expr;\n");
 } 
 
 void Manage_returnstmt_return(){
-    printf("returnstmt -> return;\n");
+    fprintf(yacc_out,"returnstmt -> return;\n");
 }
 
 void Manage_forstmt(){
-    printf("forstmt -> for(elist;expr;elist) stmt\n");
+    fprintf(yacc_out,"forstmt -> for(elist;expr;elist) stmt\n");
 }
 
 void Manage_whilestmt(){
-    printf("whilestmt -> while(expr) stmt\n");
+    fprintf(yacc_out,"whilestmt -> while(expr) stmt\n");
 }
 
 void Manage_ifstmt_ifelse(){
-    printf("ifstmt -> if (expr) stmt else\n");
+    fprintf(yacc_out,"ifstmt -> if (expr) stmt else\n");
 }
 
 void Manage_ifstmt_if(){
-    printf("ifstmt -> if (expr)\n"); 
+    fprintf(yacc_out,"ifstmt -> if (expr)\n"); 
 }
 
 void Manage_idlist_empty(idList ** dest){
     //making an empty idlist
     *dest = zarklist_initialize(0);
-    printf("idlist -> ε\n"); 
+    fprintf(yacc_out,"idlist -> ε\n"); 
 }
 
 void Manage_idlist_idlistId(idList ** dest , idList * old_list , char * new_element){
@@ -125,7 +127,7 @@ void Manage_idlist_idlistId(idList ** dest , idList * old_list , char * new_elem
     //insertion in the idlist and saving the idlist
     zarklist_insert(old_list,new_element);
     dest = &old_list;
-    printf("idlist -> id,id*\n");
+    fprintf(yacc_out,"idlist -> id,id*\n");
 }
 
 void Manage_idlist_id(idList ** dest , char * new_element){
@@ -153,31 +155,31 @@ void Manage_idlist_id(idList ** dest , char * new_element){
     
     *dest = zarklist_initialize(0);
     zarklist_insert(*dest,new_element);
-    printf("idlist -> id,id*\n");
+    fprintf(yacc_out,"idlist -> id,id*\n");
 }
 
 void Manage_const_number(){
-    printf("const -> number\n");
+    fprintf(yacc_out,"const -> number\n");
 }
 
 void Manage_const_string(){
-    printf("const -> string\n");
+    fprintf(yacc_out,"const -> string\n");
 }
 
 void Manage_const_nil(){
-    printf("const -> nil\n");
+    fprintf(yacc_out,"const -> nil\n");
 }
 
 void Manage_const_true(){
-    printf("const -> true\n");
+    fprintf(yacc_out,"const -> true\n");
 }
 
 void Manage_const_false(){
-    printf("const -> false\n");
+    fprintf(yacc_out,"const -> false\n");
 }
 
 void Manage_funcdef_functionId(char *name,idList *args){
-    printf("scope is =%d\n",scope);
+    fprintf(yacc_out,"scope is =%d\n",scope);
     //if it already exists in the global scope as an lib func
     SymTableEntry* search = lookup_active_with_scope(&scpArr,0,name);
     if (search!=NULL)
@@ -240,67 +242,67 @@ void Manage_funcdef_function(idList *args){
     SymTable_put(symTable,name,entry);
     insert_to_scopeArr(&scpArr,scope,entry);
 
-    printf("function (idlist) block\n");
+    fprintf(yacc_out,"function (idlist) block\n");
 }
 
 void Manage_block_liststmt(){
-    printf("block -> stmt*\n");
+    fprintf(yacc_out,"block -> stmt*\n");
 }
 
 void Manage_block_emptyblock(){
-    printf("block -> {}\n");
+    fprintf(yacc_out,"block -> {}\n");
 }
 
 void Manage_indexedelem(){
-    printf("indexedelem -> {expr:expr}\n");
+    fprintf(yacc_out,"indexedelem -> {expr:expr}\n");
 }
 
 void Manage_indexed_indexedIndexedelem(){
-    printf("indexed -> indexed,indexedelem\n");
+    fprintf(yacc_out,"indexed -> indexed,indexedelem\n");
 }
 
 void Manage_indexed_indexedelem(){
-    printf("indexed -> indexedelem\n");
+    fprintf(yacc_out,"indexed -> indexedelem\n");
 }
 
 void Manage_objectdef_elist(){
-    printf("objectdef -> [elist]\n");
+    fprintf(yacc_out,"objectdef -> [elist]\n");
 }
 
 void Manage_objectdef_indexed(){
-    printf("objectdef -> [indexed]\n");
+    fprintf(yacc_out,"objectdef -> [indexed]\n");
 }
 
 void Manage_elist_empty(){
-    printf("elist -> ε\n");
+    fprintf(yacc_out,"elist -> ε\n");
 }
 
 void Manage_elist_elistExpr(){
-    printf("elist -> elist,expr\n");
+    fprintf(yacc_out,"elist -> elist,expr\n");
 }
 
 void Manage_elist_expr(){
-    printf("elist -> epxr\n");
+    fprintf(yacc_out,"elist -> epxr\n");
 }
 
 void Manage_methodcall(){
-    printf("methodcall -> ..id(elist)\n");
+    fprintf(yacc_out,"methodcall -> ..id(elist)\n");
 }
 
 void Manage_normcall(){
-    printf("normcall -> (elist)\n");
+    fprintf(yacc_out,"normcall -> (elist)\n");
 }
 
 void Manage_callsuffix_normcall(){
-    printf("callsuffix -> normcall\n");
+    fprintf(yacc_out,"callsuffix -> normcall\n");
 }
 
 void Manage_callsuffix_methodcall(){
-    printf("callsuffix -> methodcall\n");
+    fprintf(yacc_out,"callsuffix -> methodcall\n");
 }
 
 void Manage_call_callElist(){
-    printf("call -> call(elist)\n");
+    fprintf(yacc_out,"call -> call(elist)\n");
 }
 
 void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
@@ -309,11 +311,11 @@ void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
     //else if(entry->type != USERFUNC && entry->type != LIBFUNC){
     //    print_custom_error("Cant make call from a variable",entry->value.varVal->name,scope);
     //}
-    printf("call -> lvalue callsuffix\n");
+    fprintf(yacc_out,"call -> lvalue callsuffix\n");
 }
 
 void Manage_call_funcdefElist(){
-    printf("call -> (funcdef)(elist)\n");
+    fprintf(yacc_out,"call -> (funcdef)(elist)\n");
 }
 
 void Manage_member_lvalueID(SymTableEntry * entry){
@@ -322,7 +324,7 @@ void Manage_member_lvalueID(SymTableEntry * entry){
     else if(entry->type == USERFUNC || entry->type == LIBFUNC){
         print_custom_error("Cant use function name as an lvalue.id",entry->value.varVal->name,scope);
     }
-    printf("member -> lvalue.id\n");
+    fprintf(yacc_out,"member -> lvalue.id\n");
 }
 
 void Manage_member_lvalueExpr(SymTableEntry * entry){
@@ -331,19 +333,19 @@ void Manage_member_lvalueExpr(SymTableEntry * entry){
     else if(entry->type == USERFUNC || entry->type == LIBFUNC){
         print_custom_error("Cant use function name as an lvalue[]",entry->value.varVal->name,scope);
     }
-    printf("member -> lvalue[expr]\n");
+    fprintf(yacc_out,"member -> lvalue[expr]\n");
 }
 
 void Manage_member_callID(){
-    printf("member -> call.id\n");
+    fprintf(yacc_out,"member -> call.id\n");
 }
 
 void Manage_member_callExpr(){
-    printf("member -> call[expr]\n");
+    fprintf(yacc_out,"member -> call[expr]\n");
 }
 
 void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
-    printf("lvalue -> id\n");
+    fprintf(yacc_out,"lvalue -> id\n");
     
     // search bottom-up for active matching symbols in all scopes except global
     int tmpscope = scope;
@@ -403,7 +405,7 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
 }
 
 void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int line){
-    printf("lvalue -> local id\n");
+    fprintf(yacc_out,"lvalue -> local id\n");
 
     SymTableEntry* entry = lookup_active_with_scope(&scpArr, scope, id);
     if(entry == NULL){
@@ -433,7 +435,7 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
 }
 
 void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
-    printf("lvalue -> ::id\n");
+    fprintf(yacc_out,"lvalue -> ::id\n");
     
     SymTableEntry* entry = lookup_active_with_scope(&scpArr, 0, id);
     if(entry == NULL){
@@ -446,27 +448,27 @@ void Manage_lvalue_globalID(SymTableEntry** new_entry, char* id){
 }
 
 void Manage_lvalue_member(){
-    printf("lvalue -> member\n");
+    fprintf(yacc_out,"lvalue -> member\n");
 }
 
 void Manage_primary_lvalue(){
-    printf("primary -> lvalue\n");
+    fprintf(yacc_out,"primary -> lvalue\n");
 }
 
 void Manage_primary_call(){
-    printf("primary -> call\n");
+    fprintf(yacc_out,"primary -> call\n");
 }
 
 void Manage_primary_objectdef(){
-    printf("primary -> objectdef\n");
+    fprintf(yacc_out,"primary -> objectdef\n");
 }
 
 void Manage_primary_funcdef(){
-    printf("primary -> (funcdec)\n"); 
+    fprintf(yacc_out,"primary -> (funcdec)\n"); 
 }
 
 void Manage_primary_const(){
-    printf("primary -> const\n");
+    fprintf(yacc_out,"primary -> const\n");
 }
 
 void Manage_assignexpr(SymTableEntry* entry){
@@ -478,15 +480,15 @@ void Manage_assignexpr(SymTableEntry* entry){
 }
 
 void Manage_term_expr(){
-    printf("term -> (expr)\n");
+    fprintf(yacc_out,"term -> (expr)\n");
 }
 
 void Manage_term_uminusExpr(){
-    printf("term -> -expr\n");
+    fprintf(yacc_out,"term -> -expr\n");
 }
 
 void Manage_term_notExpr(){
-    printf("term -> not expr\n");
+    fprintf(yacc_out,"term -> not expr\n");
 }
 
 void Manage_term_pluspluslvalue(SymTableEntry *entry){
@@ -494,7 +496,7 @@ void Manage_term_pluspluslvalue(SymTableEntry *entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
-    printf("term -> ++lvalue\n");
+    fprintf(yacc_out,"term -> ++lvalue\n");
 }
 
 void Manage_term_lvalueplusplus(SymTableEntry *entry){
@@ -502,7 +504,7 @@ void Manage_term_lvalueplusplus(SymTableEntry *entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
-    printf("term -> lvalue++\n");
+    fprintf(yacc_out,"term -> lvalue++\n");
 }
 
 void Manage_term_minusminuslvalue(SymTableEntry *entry){
@@ -510,7 +512,7 @@ void Manage_term_minusminuslvalue(SymTableEntry *entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
-    printf("term -> --lvalue\n");
+    fprintf(yacc_out,"term -> --lvalue\n");
 }
 
 void Manage_term_lvalueminusminus(SymTableEntry *entry){
@@ -518,79 +520,79 @@ void Manage_term_lvalueminusminus(SymTableEntry *entry){
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
     }
-    printf("term -> lvalue--\n");
+    fprintf(yacc_out,"term -> lvalue--\n");
 }
 
 void Manage_term_primary(){
-    printf("term -> primary\n");
+    fprintf(yacc_out,"term -> primary\n");
 }
 
 void Manage_expr_exprOPexpr(char* op){
-    printf("expr -> expr %s expr\n", op);
+    fprintf(yacc_out,"expr -> expr %s expr\n", op);
 }
 
 void Manage_expr_term(){
-    printf("expr -> term\n");
+    fprintf(yacc_out,"expr -> term\n");
 }
 
 void Manage_expr_assignexpr(){
-    printf("expr -> assignexpr\n");
+    fprintf(yacc_out,"expr -> assignexpr\n");
 }
 
 void Manage_stmt_expr(){
-    printf("stmt -> expr;\n");
+    fprintf(yacc_out,"stmt -> expr;\n");
 }
 
 void Manage_stmt_ifstmt(){
-    printf("stmt -> ifstmt\n");
+    fprintf(yacc_out,"stmt -> ifstmt\n");
 }
 
 void Manage_stmt_whilestmt(){
-    printf("stmt -> whilestmt\n");
+    fprintf(yacc_out,"stmt -> whilestmt\n");
 }
 
 void Manage_stmt_forstmt(){
-    printf("stmt -> forstmt\n");
+    fprintf(yacc_out,"stmt -> forstmt\n");
 }
 
 void Manage_stmt_returnstmt(){
-    printf("stmt -> returnstmt\n");
+    fprintf(yacc_out,"stmt -> returnstmt\n");
 }
 
 void Manage_stmt_break(){
-    printf("stmt -> break;\n");
+    fprintf(yacc_out,"stmt -> break;\n");
 }
 
 void Manage_stmt_continue(){
-    printf("stmt -> continue;\n");
+    fprintf(yacc_out,"stmt -> continue;\n");
 }
 
 void Manage_stmt_block(){
-    printf("stmt -> block\n"); 
+    fprintf(yacc_out,"stmt -> block\n"); 
 }
 
 void Manage_stmt_funcdef(){
-    printf("stmt -> funcdef\n");
+    fprintf(yacc_out,"stmt -> funcdef\n");
 }
 
 void Manage_stmt_semicolon(){
-    printf("stmt -> ;\n");
+    fprintf(yacc_out,"stmt -> ;\n");
 }
 
 void Manage_liststmt_liststmtStmt(){
-    printf("liststmt -> liststmt stmt\n");
+    fprintf(yacc_out,"liststmt -> liststmt stmt\n");
 }
 
 void Manage_liststmt_stmt(){
-    printf("liststmt -> stmt\n");
+    fprintf(yacc_out,"liststmt -> stmt\n");
 }
 
 void Manage_program_liststmt(){
-    printf("program -> stmt+\n");
+    fprintf(yacc_out,"program -> stmt+\n");
 }
 
 void Manage_program_empty(){
-    printf("empty program\n");  
+    fprintf(yacc_out,"empty program\n");  
 }
 
 #endif

@@ -39,7 +39,7 @@ void printSymTableEntry(void* entry)
     if(IS_FUNCTION(symtab)){
         printf("\"%s\" [%s]", symtab->value.funcVal->name,symTypes[type]);
         
-        printf("(line %u) (scope %u)\n",  symtab->value.funcVal->line, symtab->value.funcVal->scope);
+        printf(" (line %u) (scope %u)\n",  symtab->value.funcVal->line, symtab->value.funcVal->scope);
     }
     else{
         printf("\"%s\" [%s] (line %u) (scope %u)\n"\

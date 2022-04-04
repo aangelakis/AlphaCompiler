@@ -8,6 +8,8 @@
 SymTable_T symTable;
 scopeArray* scpArr;
 
+scopeArray* globalScopeArr;
+
 char libraryFunctions[12][24]={
     "print",
     "input",
@@ -27,6 +29,7 @@ int main(int argc, char *argv[]){
     // initialize necessary global structures
 	symTable = SymTable_new();
 	scpArr = scope_initialize();
+	globalScopeArr = scope_initialize();
     SymTableEntry* tmp;
     
     if (argc > 1)
@@ -51,8 +54,20 @@ int main(int argc, char *argv[]){
     }
 
     yyparse();
-    puts("\n\n\n"); 
-    puts("----------------Symbol Table Entries-------------------------\n");
-    SymTable_quickApply(symTable, printSymTableEntry);
+    puts("----------------Symbol Table Entries-------------------------");
+    //SymTable_quickApply(symTable, printSymTableEntry);
+    int len = globalScopeArr->size;
+    for(int i = 0; i < len; i++) {
+        if(globalScopeArr->scopes[i]->size != 0) {
+            char scopeStr[1024];
+            sprintf(scopeStr, "\n-----------\tScope #%d\t-----------", i);
+            puts(scopeStr);
+            zarklist_apply(globalScopeArr->scopes[i], printSymTableEntry);
+        }
+    }
+
+    SymTable_free(symTable);
+    free_scopeArr(scpArr);
+    free_scopeArr(globalScopeArr);
     return 24;
 }

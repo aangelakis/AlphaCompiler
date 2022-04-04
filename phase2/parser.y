@@ -2,12 +2,14 @@
 	
 	#include "yacc_utilities.h"
 	
+        FILE* yacc_out; 
 	int yylex();
 
 	extern int yylineno;
 	extern char* yytext;
 	int scope = 0;
 	int flag_scope = 0 ; // 0 == block ; 1 == function
+
     /* TODO */
     //int blocks_active = 0;
     //int nested_start_block_line[1024];
@@ -24,6 +26,11 @@
 	SymTableEntry* symEntr;
 	idList* args;
 }
+
+%initial-action
+{
+    yacc_out = fopen("yacc_output.txt", "w");
+};
 
 %start program
 %expect 1
@@ -121,8 +128,8 @@
 
 %%
 
-program: liststmt   {   Manage_program_liststmt();      }
-        |%empty     {   Manage_program_empty();         }
+program: liststmt   {   Manage_program_liststmt();     fclose(yacc_out); fclose(yacc_out); }
+        |%empty     {   Manage_program_empty();        fclose(yacc_out); fclose(yacc_out); }
         ;
 
 liststmt: liststmt stmt {  Manage_liststmt_liststmtStmt();      }
@@ -222,7 +229,7 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt(
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();   }
         ;
 
-funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" {Manage_funcdef_functionId($2,$5);} block {  printf("function id (idlist) block\n"); }
+funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" {Manage_funcdef_functionId($2,$5);} block {  fprintf(yacc_out, "function id (idlist) block\n"); }
         | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function($4);   }
         ;
 
@@ -252,4 +259,3 @@ returnstmt: RETURN expr";"  {   Manage_returnstmt_returnexpr(); }
             ;
 
 %%
-

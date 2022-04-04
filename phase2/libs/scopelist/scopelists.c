@@ -99,9 +99,15 @@ void free_scopeArr(scopeArray* array)
 /*puts in the scopeArray at the end of the scope list the entry*/
 void insert_to_scopeArr(scopeArray** array, int scope, SymTableEntry* entry)
 {
+	//to save into the global scp that we will print at the end
+	globalScopeArr = checkScopeSize(globalScopeArr,scope);
+	zarklist_insert((globalScopeArr)->scopes[scope],(SymTableEntry*)entry);
+
+
 	*array = checkScopeSize(*array,scope);
 	//printf("check inside insert = > size %d\n",array->size);
 	zarklist_insert((*array)->scopes[scope],(SymTableEntry*)entry);
+	
 }
 
 /* checks if the given scope can exist in the given array, returns a new array if needed,
