@@ -128,8 +128,8 @@
 
 %%
 
-program: liststmt   {   Manage_program_liststmt();     fclose(yacc_out); fclose(yacc_out); }
-        |%empty     {   Manage_program_empty();        fclose(yacc_out); fclose(yacc_out); }
+program: liststmt   {   Manage_program_liststmt();     fclose(yacc_out); }
+        |%empty     {   Manage_program_empty();        fclose(yacc_out); }
         ;
 
 liststmt: liststmt stmt {  Manage_liststmt_liststmtStmt();      }
