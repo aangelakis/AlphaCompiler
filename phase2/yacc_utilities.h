@@ -177,16 +177,24 @@ void Manage_const_false(){
 }
 
 void Manage_funcdef_functionId(char *name,idList *args){
+    printf("scope is =%d\n",scope);
     //if it already exists in the global scope as an lib func
     SymTableEntry* search = lookup_active_with_scope(&scpArr,0,name);
     if (search!=NULL)
     {
-        if(search->type==LIBFUNC)
+        if(search->type==LIBFUNC){
             print_custom_error("User function shadows library function",name,scope);
-        else
-            print_custom_error("Variable already exists",name,scope);
-        return;
+            return;
+        }else if(scope-1 == 0){
+            print_custom_error("Already found a symbol with same name",name,0);
+            return;
+        }
+        
+        
     }
+
+
+
     //if scope 2 , 3 etc 
     if (scope>1)
     {
@@ -336,7 +344,7 @@ void Manage_member_callExpr(){
 
 void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
     printf("lvalue -> id\n");
-
+    
     // search bottom-up for active matching symbols in all scopes except global
     int tmpscope = scope;
     SymTableEntry* entry = lookup_active_with_scope(&scpArr, tmpscope, id);

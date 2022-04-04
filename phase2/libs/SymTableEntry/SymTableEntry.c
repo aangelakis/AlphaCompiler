@@ -37,13 +37,13 @@ void printSymTableEntry(void* entry)
     int type = symtab->type;
     
     if(IS_FUNCTION(symtab)){
-        printf("SymTableEntry: <name>=%s, <args>=(", symtab->value.funcVal->name);
-        zarklist_print(symtab->value.funcVal->args, idListContent_to_string);
-        printf("), <scope>=%u, <line>=%u, <type>=%s\n", symtab->value.funcVal->scope, symtab->value.funcVal->line, symTypes[type]);
+        printf("\"%s\" [%s]", symtab->value.funcVal->name,symTypes[type]);
+        
+        printf("(line %u) (scope %u)\n",  symtab->value.funcVal->line, symtab->value.funcVal->scope);
     }
     else{
-        printf("SymTableEntry: <name>=%s, <scope>=%u, <line>=%u, <type>=%s\n"\
-        , symtab->value.varVal->name, symtab->value.varVal->scope, symtab->value.varVal->line, symTypes[type]);
+        printf("\"%s\" [%s] (line %u) (scope %u)\n"\
+        , symtab->value.varVal->name, symTypes[type] , symtab->value.varVal->line, symtab->value.varVal->scope );
     }
 }
 
