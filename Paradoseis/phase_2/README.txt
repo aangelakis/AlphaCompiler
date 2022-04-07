@@ -9,7 +9,7 @@ How to compile and run:
     make;
     ./a.out name_of_test_file;
 
-How to compile and run our tests in folder "/testMains":
+How to compile and run our tests in folder "/testMains" (There is a Makefile in this folder for the tests):
     make all; -> For compiling and running all the tests one by one.
     make test_total; -> For compiling and running the TotalTestMain.c test file.
     make test_scopeList; -> For compiling and running the scopelistTestMain.c test file.
