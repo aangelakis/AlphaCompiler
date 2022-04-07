@@ -10,10 +10,6 @@
 	int scope = 0;
 	int flag_scope = 0 ; // 0 == block ; 1 == function
 
-    /* TODO */
-    //int blocks_active = 0;
-    //int nested_start_block_line[1024];
-
 %}
 
 %output "parser.c"
