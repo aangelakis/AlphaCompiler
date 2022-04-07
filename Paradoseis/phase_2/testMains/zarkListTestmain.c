@@ -12,9 +12,9 @@ int string_compare(void* s1, void* s2){
 
 int main(){
     zarkList* zarkoulhs = zarklist_initialize(1);
-    char *dodos=strdup("dodos");
-    char *alex=strdup("aliekmonas\n");
-    char *czark=strdup("zarkoulis");
+    char *dodos=strdup("gro8os1");
+    char *alex=strdup("peospeosp\teospeospeospeo\tspeospeospeos\npeospeospeospeospeo\tspeospeospeos:\n");
+    char *czark=strdup("gro8os2");
     
     zarklist_insert(zarkoulhs, (void*) dodos);
     zarklist_insert(zarkoulhs, (void*) alex);
@@ -35,7 +35,7 @@ int main(){
     printf("Size=%d\n", zarklist_getsize(zarkoulhs));
     zarklist_apply(zarkoulhs, print_string);
     
-    dodos=strdup("eeeee");
+    dodos=strdup("gro8os1");
     zarklist_insert(zarkoulhs, (void*) dodos);
     puts("************");
     printf("Size=%d\n", zarklist_getsize(zarkoulhs));
