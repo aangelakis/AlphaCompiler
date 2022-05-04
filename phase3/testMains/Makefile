@@ -21,9 +21,13 @@ test_zarkList:
 	gcc zarkListTestMain.c ../libs/zarkList/zarkList.c -o zarkList
 	./zarkList
 
+test_stack:
+	gcc stackTestMain.c ../libs/stack/stack.c -o stack
+	./stack
+
 test_total:
 	gcc TotalTestMain.c ../libs/scopelist/scopelists.c  ../libs/zarkList/zarkList.c ../libs/SymTableEntry/SymTableEntry.c ../libs/symtable/symtablehash.c -o total
 	./total
 
 clean:
-	rm -rf zarkList scopeList total symtable
+	rm -rf zarkList scopeList total symtable stack
