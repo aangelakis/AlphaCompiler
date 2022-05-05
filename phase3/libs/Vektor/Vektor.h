@@ -47,7 +47,7 @@ void* vektor_get_element(Vektor *vektor, int index);
 /* Expands the vektor */
 void vektor_expand(Vektor *vektor, int size);
 
-/* Applys function 'apply(void*)' to the content of each zarkNode of the zarkList */
+/* Applys function 'apply(void*)' to the content of each data of the vektor */
 void vektor_apply(Vektor *vektor, void (*apply)(void*));
 
 #endif
