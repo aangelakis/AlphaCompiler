@@ -106,9 +106,6 @@ void* vektor_get_element(Vektor *vektor, int index){
 void vektor_apply(Vektor *vektor, void (*apply)(void*)){
 	for (int i = 0; i < vektor->cur_size; i++)
 	{
-		if (vektor->data[i] != NULL)
-		{
-			apply(vektor->data[i]);
-		}
+		apply(vektor->data[i]);
 	}
 }
