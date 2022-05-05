@@ -8,7 +8,7 @@ void print_string(void *s){
 
 
 int main(){
-    stack_t* alexoukos = stack_t_init();
+    alpha_stack* alexoukos = alpha_stack_init();
     
     char *dodos=strdup("dodos");
     char *alex=strdup("aliekmonas");

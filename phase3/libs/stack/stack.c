@@ -5,9 +5,9 @@
 #include "stack.h"
 
 
-stack_t* stack_t_init(){
-    stack_t* new_stack;
-    new_stack = (stack_t*)malloc(sizeof(stack_t));
+alpha_stack* alpha_stack_init(){
+    alpha_stack* new_stack;
+    new_stack = (alpha_stack*)malloc(sizeof(alpha_stack));
 
     if(new_stack == NULL){
         return NULL;
@@ -18,12 +18,12 @@ stack_t* stack_t_init(){
     return new_stack;
 }
 
-int stack_is_empty(stack_t* stack){
+int stack_is_empty(alpha_stack* stack){
     assert(stack != NULL);
     return (stack->size == 0);
 }
 
-int stack_push(stack_t* stack, void* value){
+int stack_push(alpha_stack* stack, void* value){
     stack_node* new_node;
 
     assert(stack != NULL);
@@ -42,7 +42,7 @@ int stack_push(stack_t* stack, void* value){
     return 0;
 }
 
-void* stack_pop(stack_t* stack){
+void* stack_pop(alpha_stack* stack){
     void* tmp_val;
     stack_node* tmp_node;
 
@@ -64,7 +64,7 @@ void* stack_pop(stack_t* stack){
     return tmp_val;
 }
 
-void* stack_top(stack_t* stack){
+void* stack_top(alpha_stack* stack){
     assert(stack != NULL);
 
     if(stack_is_empty(stack)){
@@ -74,7 +74,7 @@ void* stack_top(stack_t* stack){
     return (stack->top->value);
 }
 
-void stack_free(stack_t* stack){
+void stack_free(alpha_stack* stack){
     assert(stack != NULL);
 
     stack->top = NULL;
@@ -82,13 +82,13 @@ void stack_free(stack_t* stack){
     free(stack);
 }
 
-unsigned int stack_get_size(stack_t* stack){
+unsigned int stack_get_size(alpha_stack* stack){
     assert(stack);
 
     return stack->size;
 }
 
-void stack_apply(stack_t* stack, void (*apply)(void*)){
+void stack_apply(alpha_stack* stack, void (*apply)(void*)){
     assert(stack);
 
     stack_node *iter = stack->top;
@@ -100,7 +100,7 @@ void stack_apply(stack_t* stack, void (*apply)(void*)){
 }
 
 /* Isos xreiastei na valoume kai to isFreeable se periptosi poy exoume kapoio string os value */
-void stack_clear(stack_t* stack){
+void stack_clear(alpha_stack* stack){
     assert(stack);
 
     stack_node *iter = stack->top, *tmp;
