@@ -1,8 +1,8 @@
 #ifndef VEKTOR_HEADER
 #define VEKTOR_HEADER
 
-#define VEKTOR_SIZE 5
-#define VEKTOR_SIZE_GROWTH 2
+#define VEKTOR_SIZE 1024
+
 #include<stdlib.h>
 #include<stdio.h>
 #include<assert.h>
@@ -19,6 +19,9 @@ Vektor* vektor_initialize();
 
 /* Adds element inside the vektor*/
 void vektor_add(Vektor *vektor, void *data);
+
+/* Adds element at index inside the vektor*/
+void vektor_set_element(Vektor *vektor, int index, void *data);
 
 /* Pops element from inside the vektor given the index of the array*/
 void* vektor_pop_element_at_index(Vektor *vektor, int index);
@@ -42,5 +45,5 @@ int vektor_search(Vektor *vektor, void *data);
 void* vektor_get_element(Vektor *vektor, int index);
 
 /* Expands the vektor */
-void vektor_expand(Vektor *vektor);
+void vektor_expand(Vektor *vektor, int size);
 #endif

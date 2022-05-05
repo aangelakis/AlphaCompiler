@@ -8,15 +8,15 @@ Vektor* vektor_initialize(){
 	return v;
 }
 
-void vektor_expand(Vektor* v){
-	if(v->cur_size == v->max_size){
-		v->max_size *= VEKTOR_SIZE_GROWTH;
+void vektor_expand(Vektor* v,int size){
+	while(size > v->max_size){
+		v->max_size += VEKTOR_SIZE;
 		v->data = realloc(v->data, sizeof(void*) * v->max_size);
 	}
 }
 
 void vektor_add(Vektor* v, void* data){
-	vektor_expand(v);
+	vektor_expand(v, v->cur_size);
 	for (int i = 0; i < v->cur_size; i++)
 	{
 		if (v->data[i]==NULL)
@@ -29,6 +29,17 @@ void vektor_add(Vektor* v, void* data){
 	
 	v->data[v->cur_size] = data;
 	v->cur_size++;
+}
+
+void vektor_set_element(Vektor *vektor, int index, void *data){
+	vektor_expand(vektor,index);
+	if(index >= vektor->cur_size){
+		vektor->data[index] = data;
+		vektor->cur_size = index + 1;
+	}
+	else{
+		vektor->data[index] = data;
+	}
 }
 
 void* vektor_pop_element_at_index(Vektor* v, int index){
