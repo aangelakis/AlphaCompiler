@@ -1,0 +1,71 @@
+sto scope up o counter tou generator gia onomata metablitwn kanei reset kai apothikeuei
+ta proigumena se ena stack etsi wste otan epistrepsei ekei me scope down kai hard hide
+na sinexizei apo opu emeine.
+
+FILE output for quads.
+
+x = 3; // assing expr
+y = 5; // assing expr 
+z = x+y; /// assign (expr add expr)
+
+
+x = 3 
+_t0 = x
+y = 5
+_t0 = y
+_t0 = x + y
+z = _t0
+_t1 = z
+
+// 3 global variables with corresponding names and scope = 0 in the symtable
+// Quads:
+quad#  |      op      |     result/label    |    arg1    |   arg2    
+1      |    ASSIGN    |         x           |     3      |   NULL
+2      |    ASSIGN    |         _t0         |     x      |   NULL
+3      |    ASSIGN    |         y           |     5      |   NULL
+4      |    ASSIGN    |         _t0         |     y      |   NULL
+5      |    ADD       |         _t0         |     x      |   y
+6      |    ASSIGN    |         z           |     _t0    |   NULL
+7      |    ASSIGN    |         _t1         |     z      |   NULL
+
+
+1: assign x 3 [line 1]
+2: assign ^0 x IGNORE QUAD [line 1]
+3: assign y 5 [line 2]
+4: assign ^0 y IGNORE QUAD [line 2]
+5: add ^0 x y [line 3]
+6: assign z ^0 [line 3]
+7: assign ^1 z [line 3]
+
+
+x = 5 ;
+y = 3 ;
+z = x + y;
+{ k1 = 3 ;} //exit block
+{ k2 = 3 ;}
+k1 = z; // _t0
+
+-----------     Scope #0     -----------
+[library function] "print" (line 0) (scope 0)
+[library function] "input" (line 0) (scope 0)
+[library function] "objectmemberkeys" (line 0) (scope 0)
+[library function] "objecttotalmembers" (line 0) (scope 0)
+[library function] "objectcopy" (line 0) (scope 0)
+[library function] "totalarguments" (line 0) (scope 0)
+[library function] "argument" (line 0) (scope 0)
+[library function] "typeof" (line 0) (scope 0)
+[library function] "strtonum" (line 0) (scope 0)
+[library function] "sqrt" (line 0) (scope 0)
+[library function] "cos" (line 0) (scope 0)
+[library function] "sin" (line 0) (scope 0)
+[global variable] "x" (line 1) (scope 0)
+[local variable] "^0" (line 0) (scope 0)
+[global variable] "y" (line 2) (scope 0)
+[global variable] "z" (line 3) (scope 0)
+[local variable] "^1" (line 0) (scope 0)
+
+-----------     Scope #1     -----------
+[local variable] "k1" (line 4) (scope 1)
+[local variable] "^0" (line 0) (scope 1)
+[local variable] "k2" (line 5) (scope 1)
+[local variable] "^0" (line 0) (scope 1)

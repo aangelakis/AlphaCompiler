@@ -2,34 +2,34 @@
 #include <stdio.h>
 #include <string.h>
 
-void print_string(void *s){
-    puts((char*)s);
+void print_int(void *s){
+    printf("%d\n", *(int*)s);
 }
 
 
 int main(){
     alpha_stack* alexoukos = alpha_stack_init();
     
-    char *dodos=strdup("dodos");
-    char *alex=strdup("aliekmonas");
-    char *czark=strdup("zarkoulis");
+    int dodos= 69;
+    int alex= 420;
+    int czark= 69420;
 
-    stack_push(alexoukos, (void*) dodos);
-    stack_push(alexoukos, (void*) alex);
-    stack_push(alexoukos, (void*) czark);
+    stack_push(alexoukos, (void*) &dodos);
+    stack_push(alexoukos, (void*) &alex);
+    stack_push(alexoukos, (void*) &czark);
 
     printf("Size=%u\n", stack_get_size(alexoukos));
-    printf("Top=%s\n", (char*)stack_top(alexoukos));
+    printf("Top=%d\n", *((int*)stack_top(alexoukos)));
     
-    stack_apply(alexoukos, print_string);
+    stack_apply(alexoukos, print_int);
 
     void* lol = stack_pop(alexoukos);
-    printf("stack_pop returned:%s\n", (char*)lol);
+    printf("stack_pop returned:%d\n", *((int*)lol));
 
     printf("Is empty:%d\n", stack_is_empty(alexoukos));
 
     printf("Size=%u\n", stack_get_size(alexoukos));
-    printf("Top=%s\n", (char*)stack_top(alexoukos));
+    printf("Top=%d\n", *((int*)stack_top(alexoukos)));
 
     stack_clear(alexoukos);
     printf("Size=%u\n", stack_get_size(alexoukos));

@@ -12,6 +12,7 @@ extern scopeArray* scpArr;
 extern SymTable_T symTable;
 extern FILE* yacc_out; 
 unsigned int invalid_funcname_number  = 0;
+unsigned int temp_counter = 0;
 
 int yyerror(char* yaccProvideMessage)
 {
@@ -71,6 +72,18 @@ char* invalid_funcname_generator(){
     sprintf(invalid_name, "_$f%u", invalid_funcname_number++);
     
     return invalid_name;
+}
+
+/* Generates a new temporary name for a temporary variable for the quads */
+char* new_temp_name(){
+    char* temp_name = malloc(1024*sizeof(char));
+    sprintf(temp_name, "_t%u", temp_counter++);
+
+    return temp_name;
+}
+
+void reset_temp_counter(){
+    temp_counter = 0;
 }
 
 void Manage_returnstmt_returnexpr(){
