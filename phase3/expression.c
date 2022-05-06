@@ -9,25 +9,25 @@ expr* newexpr(expr_t t){
 
 
 expr* newexpr_conststring(char* s){
-    expr* e = new_expr(conststring_e);
+    expr* e = newexpr(conststring_e);
     e->strConst = strdup(s);
     return e;
 }
 
 
 expr* newexpr_constnumber(double i){
-    expr* e = new_expr(costnum_e);
+    expr* e = newexpr(costnum_e);
     e->numConst = i;
     return e;
 }
 
 expr* newexpr_constnil(){
-    expr* e = new_expr(nil_e);
+    expr* e = newexpr(nil_e);
     return e;
 }
 
 expr* newexpr_constbool(unsigned char b){
-    expr* e = new_expr(constbool_e);
+    expr* e = newexpr(constbool_e);
     e->boolConst = b;
     return e;
 }

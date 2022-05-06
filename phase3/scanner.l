@@ -6,6 +6,7 @@
 #include "libs/zarkList/zarkList.h"
 #include<stdio.h>
 #include"parser.h"
+#include "expression.h"
 
 int num_token = 0;
 int start_comments = 0;
