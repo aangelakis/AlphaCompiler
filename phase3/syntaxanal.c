@@ -2,6 +2,7 @@
 #include "libs/SymTableEntry/SymTableEntry.h"
 #include "libs/symtable/symtable.h"
 #include "libs/zarkList/zarkList.h"
+#include "expression.h"
 #include "parser.h"
 #include "scanner.h"
 

@@ -1,5 +1,5 @@
-#ifndef EXPRESSION_HEADER
-#define EXPRESSION_HEADER
+#ifndef EXPRESSION_CUSTOM_HEADER
+#define EXPRESSION_CUSTOM_HEADER
 #include <stdlib.h>
 #include <string.h>
 #include "libs/SymTableEntry/SymTableEntry.h"

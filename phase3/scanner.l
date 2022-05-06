@@ -4,9 +4,10 @@
 #include "libs/SymTableEntry/SymTableEntry.h"
 #include "libs/symtable/symtable.h"
 #include "libs/zarkList/zarkList.h"
+#include "expression.h"
 #include <stdio.h>
 #include "parser.h"
-#include "expression.h"
+
 
 int num_token = 0;
 int start_comments = 0;
