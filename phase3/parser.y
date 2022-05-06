@@ -15,12 +15,13 @@
 %defines
 
 %union {
-    char*   strVal;
-    int     intVal;
-    double  realVal;
-	SymTableEntry* symEntr;
-    idList* args;
-    expr*   express;
+    char*               strVal;
+    int                 intVal;
+    double              realVal;
+    unsigned char       boolVal;
+    SymTableEntry*      symEntr;
+    idList*             args;
+    expr*               express;
 }
 
 %initial-action
@@ -39,6 +40,8 @@
 %token<strVal> STRING
 %token<intVal> INT
 %token<realVal> DOUBLE
+%token<boolVal> TRUE
+%token<boolVal> FALSE
 
 %token LE              "<="
 %token LT              "<"
@@ -67,8 +70,8 @@
 %token NOT             "not"
 %token OR              "or"
 %token LOCAL           "local"
-%token TRUE            "true"
-%token FALSE           "false"
+//%token TRUE            "true"
+//%token FALSE           "false"
 %token NIL             "nil"
 
 %token LEFT_BRACKET        "["
@@ -236,8 +239,8 @@ const:  INT       { $$ = Manage_const_number($1);    }
         | DOUBLE  { $$ = Manage_const_number($1);    }
         | STRING  { $$ = Manage_const_string($1);    }
         | NIL     { $$ = Manage_const_nil();       }
-        | TRUE    { $$ = Manage_const_bool($1);      }
-        | FALSE   { $$ = Manage_const_bool($1);     }
+        | TRUE    { $$ = Manage_const_bool(1);      }
+        | FALSE   { $$ = Manage_const_bool(0);     }
         ;
 
 idlist: %empty          {   Manage_idlist_empty(&($$));      }

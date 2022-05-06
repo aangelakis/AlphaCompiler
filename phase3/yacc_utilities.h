@@ -190,7 +190,7 @@ expr* Manage_const_string(char* s){
 expr* Manage_const_nil(){
     fprintf(yacc_out,"const -> nil\n");
     puts("NULL");
-    return newexpr_constnil;
+    return newexpr_constnil();
 }
 
 expr* Manage_const_bool(unsigned char c){
