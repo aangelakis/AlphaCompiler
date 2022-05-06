@@ -4,6 +4,7 @@
 #include "libs/SymTableEntry/SymTableEntry.h"
 #include "libs/symtable/symtable.h"
 #include "libs/zarkList/zarkList.h"
+#include "libs/Vektor/Vektor.h"
 #include "expression.h" 
 #include "quads.h"
 
