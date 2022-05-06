@@ -5,6 +5,7 @@
 #include "libs/symtable/symtable.h"
 #include "libs/zarkList/zarkList.h" 
 #include "quads.h"
+#include "expression.h"
 
 extern int yylineno;
 extern char* yytext;
@@ -199,7 +200,7 @@ expr* Manage_const_bool(unsigned char c){
         puts("TRUE");
     }
     else {
-        puts("FALSE")
+        puts("FALSE");
         fprintf(yacc_out,"const -> false\n");
     }
     newexpr_constbool(c);

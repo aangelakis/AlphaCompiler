@@ -1,6 +1,8 @@
 #ifndef EXPRESSION_HEADER
 #define EXPRESSION_HEADER
-
+#include <stdlib.h>
+#include <string.h>
+#include "libs/SymTableEntry/SymTableEntry.h"
 typedef enum expr_t {
     var_e,
     tableitem_e,

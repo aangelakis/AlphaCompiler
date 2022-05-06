@@ -9,7 +9,7 @@ expr* newexpr(expr_t t){
 
 
 expr* newexpr_conststring(char* s){
-    expr* e = new_expr(conststring_e)l
+    expr* e = new_expr(conststring_e);
     e->strConst = strdup(s);
     return e;
 }
