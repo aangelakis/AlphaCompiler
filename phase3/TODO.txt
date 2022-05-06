@@ -4,6 +4,14 @@ na sinexizei apo opu emeine.
 
 FILE output for quads.
 
+
+mia nea sinartisi newtemp i opoia 8a kalei tin newtempname kai 8a kanei ayti to lookup.
+
+
+
+
+
+
 x = 3; // assing expr
 y = 5; // assing expr 
 z = x+y; /// assign (expr add expr)

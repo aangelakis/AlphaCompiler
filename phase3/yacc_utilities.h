@@ -4,6 +4,8 @@
 #include "libs/SymTableEntry/SymTableEntry.h"
 #include "libs/symtable/symtable.h"
 #include "libs/zarkList/zarkList.h" 
+#include "quads.h"
+
 extern int yylineno;
 extern char* yytext;
 extern int scope;
@@ -13,6 +15,8 @@ extern SymTable_T symTable;
 extern FILE* yacc_out; 
 unsigned int invalid_funcname_number  = 0;
 unsigned int temp_counter = 0;
+
+extern Vektor* quads;
 
 int yyerror(char* yaccProvideMessage)
 {
@@ -171,24 +175,34 @@ void Manage_idlist_id(idList ** dest , char * new_element){
     fprintf(yacc_out,"idlist -> id,id*\n");
 }
 
-void Manage_const_number(){
+expr* Manage_const_number(double n){
     fprintf(yacc_out,"const -> number\n");
+    printf("%ld\n", n);
+    return newexpr_constnumber(n);
 }
 
-void Manage_const_string(){
+expr* Manage_const_string(char* s){
     fprintf(yacc_out,"const -> string\n");
+    printf("%s\n", s);
+    return newexpr_conststring(s);
 }
 
-void Manage_const_nil(){
+expr* Manage_const_nil(){
     fprintf(yacc_out,"const -> nil\n");
+    puts("NULL");
+    return newexpr_constnil;
 }
 
-void Manage_const_true(){
-    fprintf(yacc_out,"const -> true\n");
-}
-
-void Manage_const_false(){
-    fprintf(yacc_out,"const -> false\n");
+expr* Manage_const_bool(unsigned char c){
+    if(c) {
+        fprintf(yacc_out,"const -> true\n");
+        puts("TRUE");
+    }
+    else {
+        puts("FALSE")
+        fprintf(yacc_out,"const -> false\n");
+    }
+    newexpr_constbool(c);
 }
 
 void Manage_funcdef_functionId(char *name,idList *args){
@@ -484,11 +498,12 @@ void Manage_primary_const(){
     fprintf(yacc_out,"primary -> const\n");
 }
 
-void Manage_assignexpr(SymTableEntry* entry){
+void Manage_assignexpr(SymTableEntry* entry, express* expr){
     if(entry == NULL){return;}
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant make assignment to function",entry->value.funcVal->name,scope);
     }
+    
     
 }
 

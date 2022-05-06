@@ -2,18 +2,13 @@
 	
 	#include "yacc_utilities.h"
 	
-        FILE* yacc_out; 
+    FILE* yacc_out; 
 	int yylex();
 
 	extern int yylineno;
 	extern char* yytext;
 	int scope = 0;
 	int flag_scope = 0 ; // 0 == block ; 1 == function
-
-    /* TODO */
-    //int blocks_active = 0;
-    //int nested_start_block_line[1024];
-
 %}
 
 %output "parser.c"
@@ -22,14 +17,18 @@
 %union {
     char*   strVal;
     int     intVal;
-	double  realVal;
+    double  realVal;
 	SymTableEntry* symEntr;
-	idList* args;
+    idList* args;
+    expr*   express;
 }
 
 %initial-action
 {
     yacc_out = fopen("yacc_output.txt", "w");
+
+    quads = vektor_initialize();
+    
 };
 
 %start program
@@ -105,11 +104,11 @@
 %type<symEntr> lvalue
 
 %type stmt
-%type expr
-%type term
-%type assignexpr
-%type primary
-%type member
+%type<express> expr
+%type<express> term
+%type<express> assignexpr
+%type<express> primary
+%type<express> member
 %type call
 %type callsuffix
 %type normcall
@@ -120,7 +119,7 @@
 %type indexedelem
 %type block
 %type funcdef
-%type const
+%type<express> const
 %type ifstmt
 %type whilestmt
 %type forstmt
@@ -175,7 +174,7 @@ term:   "(" expr ")"            {   Manage_term_expr();                 }
         | primary               {   Manage_term_primary();              }
         ;
 
-assignexpr: lvalue"="expr       {   Manage_assignexpr($1);  };
+assignexpr: lvalue"="expr       {   Manage_assignexpr($1,$3);  };
 
 primary:  lvalue            {   Manage_primary_lvalue();      }
           | call            {   Manage_primary_call();        }
@@ -233,12 +232,12 @@ funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" {Manage_funcdef_functionId($2,$5
         | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function($4);   }
         ;
 
-const:  INT       { Manage_const_number();    }
-        | DOUBLE  { Manage_const_number();    }
-        | STRING  { Manage_const_string();    }
-        | NIL     { Manage_const_nil();       }
-        | TRUE    { Manage_const_true();      }
-        | FALSE   { Manage_const_false();     }
+const:  INT       { $$ = Manage_const_number($1);    }
+        | DOUBLE  { $$ = Manage_const_number($1);    }
+        | STRING  { $$ = Manage_const_string($1);    }
+        | NIL     { $$ = Manage_const_nil();       }
+        | TRUE    { $$ = Manage_const_bool($1);      }
+        | FALSE   { $$ = Manage_const_bool($1);     }
         ;
 
 idlist: %empty          {   Manage_idlist_empty(&($$));      }

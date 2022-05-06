@@ -8,6 +8,8 @@ char* new_temp_name(){
     char* temp_name = malloc(1024*sizeof(char));
     sprintf(temp_name, "_t%u", temp_counter++);
 
+    // lookup(temp_name)
+
     return temp_name;
 }
 
