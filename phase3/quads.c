@@ -39,9 +39,9 @@ void const_to_string(char *arg, expr* e, expr_t t){
 
 void print_quad(void* voidquad){
     quad* q = (quad*) voidquad;
-    // if(q==NULL){
-    //     return;
-    // }
+    if(q==NULL){
+        return;
+    }
     char *opcode = quad_opcode_names[q->op];
     char *result = NULL, *arg1 = NULL, *arg2 = NULL;
     

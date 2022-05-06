@@ -20,7 +20,7 @@ unsigned int temp_counter = 0;
 // phase3 staff
 extern Vektor* quads;
 unsigned total;
-unsigned int currQuad;
+unsigned int currQuad = 1;
 
 void emit(
         iopcode     op,
