@@ -16,7 +16,7 @@ typedef enum expr_t {
     assignexpr_e,
     newtable_e,
 
-    costdouble_e,
+    constdouble_e,
     constint_e,
     constbool_e,
     conststring_e,

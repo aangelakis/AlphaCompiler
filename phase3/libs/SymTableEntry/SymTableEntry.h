@@ -12,12 +12,20 @@ char *idListContent_to_string(void* content);
 
 extern char symTypes[5][20];
 
-/* Symbol Table Entries */
+/* Scope space name enum*/
+typedef enum scopespace_t{
+    programvar,
+    functionlocal,
+    formalarg
+} scopespace_t;
 
+/* Symbol Table Entries */
 typedef struct Variable {
     const char *name;
     unsigned int scope;
     unsigned int line;
+    scopespace_t scopespace;
+    unsigned int offset;
 } Variable;
 
 typedef struct Function {
@@ -25,6 +33,7 @@ typedef struct Function {
     idList* args;   //List of arguments
     unsigned int scope;
     unsigned int line;
+    unsigned int nOfLocalVars;  // that is going to be equal to the offset when exiting the function body block
 } Function;
 
 typedef enum SymbolType {

@@ -8,7 +8,6 @@
 #include "expression.h" 
 #include "quads.h"
 
-
 extern int yylineno;
 extern char* yytext;
 extern int scope;
@@ -18,6 +17,33 @@ extern SymTable_T symTable;
 extern FILE* yacc_out; 
 unsigned int invalid_funcname_number  = 0;
 unsigned int temp_counter = 0;
+// phase3 staff
+extern Vektor* quads;
+unsigned total;
+unsigned int currQuad;
+
+void emit(
+        iopcode     op,
+        expr*       result,
+        expr*       arg1,
+        expr*       arg2,
+        unsigned    label,
+        unsigned    line
+        )
+{
+
+    quad* p     = malloc(sizeof(quad));
+    assert(p);
+    p->result   = result;
+    p->arg1     = arg1;
+    p->arg2     = arg2;
+    p->label    = label;
+    p->line     = line;
+    p->op       = op;
+    vektor_set_element(quads, currQuad, (void*) p);
+    currQuad++;
+}
+
 
 int yyerror(char* yaccProvideMessage)
 {
@@ -46,7 +72,7 @@ void ScopeUp(int callee){
         //we dont soft hide inside the block
         scope ++;
         fprintf(yacc_out,"Scope up to %d\n",scope);
-    }else if (callee == 1){
+    } else if (callee == 1){
         //inside one function we soft hide every other scope except the latest scope
         scope ++;
         for (int i = 1; i < scope; i++)
@@ -55,13 +81,12 @@ void ScopeUp(int callee){
         }
         flag_scope = 1 ;
         fprintf(yacc_out,"Scope up to %d\n",scope);
-    }else {
+    } else {
         //this is again inside a block so we dont soft hide the previous
         flag_scope = 0;
     }
-    
-    
 }
+
 void ScopeDown(int callee){
     //printf("%d\n",scope);
     hard_hide(&scpArr,scope); //hide the current scope
@@ -98,11 +123,13 @@ SymTableEntry* new_temp(){
     // mporei mia temporary metabliti na einai typou VAR_FORMAL?
     if(sym == NULL){
             SymbolType type = (scope == 0) ? VAR_GLOBAL : VAR_LOCAL;
-            SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,type);
+            SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,type); //create new entry
+            SymTable_put(symTable, name, entry); //put it inside the global symtable
+            insert_to_scopeArr(&scpArr,scope,entry); //and inside the scope array
             return entry;
     }
-
-    return sym;
+    
+    return sym; //return the entry
 }
 
 void Manage_returnstmt_returnexpr(){
@@ -525,11 +552,14 @@ expr* Manage_assignexpr(expr* lvalue, expr* rvalue){
     if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
         print_custom_error("Cant make assignment to function",lvalue->sym->value.funcVal->name,scope);
     }
-    expr* e = newexpr(assignexpr_e);
-    e->sym = lvalue->sym; //tmp
-
-    printf("EDW THA MPEI EMIT\n");
-    return e;
+    emit(assign, lvalue, rvalue, NULL, -1, currQuad); // x = y;
+    
+    SymTableEntry *tmp = new_temp(); // create new tmp variable
+    expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
+    
+    
+    emit(assign, tmp_expr, lvalue, NULL, -1, currQuad); // _t0 = x;
+    return tmp_expr;
 }
 
 void Manage_term_expr(){
@@ -580,8 +610,74 @@ void Manage_term_primary(){
     fprintf(yacc_out,"term -> primary\n");
 }
 
-void Manage_expr_exprOPexpr(char* op){
+expr* Manage_expr_exprOPexpr(expr* arg1,char* op, expr* arg2){
     fprintf(yacc_out,"expr -> expr %s expr\n", op);
+    SymTableEntry *tmp = new_temp(); // create new tmp variable
+    expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
+    
+    switch (op[0])
+    {
+    case '+':
+        emit(add, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    case '-':
+        emit(sub, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    case '*':
+        emit(mul, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    case '/':
+        emit(_div, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    case '%':
+        emit(mod, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    case '>':
+        if (strcmp(op, ">=") == 0) 
+        {
+            emit(if_greatereq, tmp_expr, arg1, arg2, -1, currQuad);
+            return tmp_expr;
+        }else{
+            emit(if_greater, tmp_expr, arg1, arg2, -1, currQuad);
+            return tmp_expr;
+        }
+        break;
+    case '<':
+        if (strcmp(op, "<=") == 0) 
+        {
+            emit(if_lesseq, tmp_expr, arg1, arg2, -1, currQuad);
+            return tmp_expr;
+        }else{
+            emit(if_less, tmp_expr, arg1, arg2, -1, currQuad);
+            return tmp_expr;
+        }
+        break;
+    case '=':
+        emit(if_eq, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    case '!':
+        emit(if_noteq, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    case 'a':
+        emit(and, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    case 'o':
+        emit(or, tmp_expr, arg1, arg2, -1, currQuad);
+        return tmp_expr;
+        break;
+    default:
+        printf("Invalid operator\n");
+        return NULL;
+        break;
+    }
 }
 
 void Manage_expr_term(){

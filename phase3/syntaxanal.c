@@ -4,10 +4,14 @@
 #include "libs/zarkList/zarkList.h"
 #include "expression.h"
 #include "parser.h"
+#include "libs/Vektor/Vektor.h"
+#include "expression.h" 
+#include "quads.h"
 #include "scanner.h"
 
 SymTable_T symTable;
 scopeArray* scpArr;
+Vektor* quads;
 
 scopeArray* globalScopeArr;
 
@@ -31,6 +35,8 @@ int main(int argc, char *argv[]){
 	symTable = SymTable_new();
 	scpArr = scope_initialize();
 	globalScopeArr = scope_initialize();
+    quads = vektor_initialize();
+
     SymTableEntry* tmp;
     
     if (argc > 1)
@@ -66,6 +72,11 @@ int main(int argc, char *argv[]){
             zarklist_apply(globalScopeArr->scopes[i], printSymTableEntry);
         }
     }
+
+    printf("%d\n", quads->cur_size);
+    printf("%d\n", quads->max_size);
+    puts("quad#\t\topcode\t\t\t\t\t  result\t\targ1\t\targ2\t\tlabel");
+    vektor_apply(quads, print_quad);
 
     SymTable_free(symTable);
     free_scopeArr(scpArr);

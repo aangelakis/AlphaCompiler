@@ -4,6 +4,10 @@
 #include"libs/Vektor/Vektor.h"
 #include"libs/SymTableEntry/SymTableEntry.h"
 
+
+extern char quad_opcode_names[25][15];
+
+//NA DUME TO DIV STO ENUM
 typedef enum iopcode {
     assign, add, sub, 
     mul, _div, mod, 
@@ -25,10 +29,6 @@ typedef struct quad {
     unsigned    line;
 } quad;
 
-extern Vektor* quads;
-extern unsigned total;
-extern unsigned int currQuad;
-
-void emit(iopcode, expr*, expr*, expr*, unsigned, unsigned);
+void print_quad(void*);
 
 #endif

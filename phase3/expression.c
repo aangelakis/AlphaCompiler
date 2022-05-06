@@ -16,7 +16,7 @@ expr* newexpr_conststring(char* s){
 
 
 expr* newexpr_constdouble(double i){
-    expr* e = newexpr(costdouble_e);
+    expr* e = newexpr(constdouble_e);
     e->content.doubleConst = i;
     return e;
 }

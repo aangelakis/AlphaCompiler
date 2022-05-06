@@ -27,10 +27,7 @@
 
 %initial-action
 {
-    yacc_out = fopen("yacc_output.txt", "w");
-
-    quads = vektor_initialize();
-    
+    yacc_out = fopen("yacc_output.txt", "w");    
 };
 
 %start program
@@ -139,7 +136,7 @@ liststmt: liststmt stmt {  Manage_liststmt_liststmtStmt();      }
           | stmt        {   Manage_liststmt_stmt();             }
           ;
 
-stmt: expr ";"      {   Manage_stmt_expr();         }
+stmt: expr ";"      {   Manage_stmt_expr();   reset_temp_counter();      }
       | ifstmt      {   Manage_stmt_ifstmt();       }
       | whilestmt   {   Manage_stmt_whilestmt();    }
       | forstmt     {   Manage_stmt_forstmt();      }
@@ -148,24 +145,24 @@ stmt: expr ";"      {   Manage_stmt_expr();         }
       | CONTINUE ";"{   Manage_stmt_continue();     }
       | block       {   Manage_stmt_block();        }
       | funcdef     {   Manage_stmt_funcdef();      }
-      | ";"         {   Manage_stmt_semicolon();    }
+      | ";"         {   Manage_stmt_semicolon();   reset_temp_counter(); }
       ;
 
 expr:   assignexpr        {     Manage_expr_assignexpr();       }
         | term            {     Manage_expr_term();             }
-        | expr PLUS expr  {     Manage_expr_exprOPexpr("+");    }
-        | expr MINUS expr {     Manage_expr_exprOPexpr("-");    }
-        | expr MULT expr  {     Manage_expr_exprOPexpr("*");    }
-        | expr DIV expr   {     Manage_expr_exprOPexpr("/");    }
-        | expr MOD expr   {     Manage_expr_exprOPexpr("%");    }
-        | expr GE expr    {     Manage_expr_exprOPexpr(">=");   }
-        | expr GT expr    {     Manage_expr_exprOPexpr(">");    }
-        | expr LE expr    {     Manage_expr_exprOPexpr("<=");   }
-        | expr LT expr    {     Manage_expr_exprOPexpr("<");    }
-        | expr EQ expr    {     Manage_expr_exprOPexpr("==");   }
-        | expr NE expr    {     Manage_expr_exprOPexpr("!=");   }
-        | expr AND expr   {     Manage_expr_exprOPexpr("and");  }
-        | expr OR expr    {     Manage_expr_exprOPexpr("or");   }
+        | expr PLUS expr  {    $$ = Manage_expr_exprOPexpr($1,"+",$3);    }
+        | expr MINUS expr {    $$ = Manage_expr_exprOPexpr($1,"-",$3);    }
+        | expr MULT expr  {    $$ = Manage_expr_exprOPexpr($1,"*",$3);    }
+        | expr DIV expr   {    $$ = Manage_expr_exprOPexpr($1,"/",$3);    }
+        | expr MOD expr   {    $$ = Manage_expr_exprOPexpr($1,"%",$3);    }
+        | expr GE expr    {    $$ = Manage_expr_exprOPexpr($1,">=",$3);   }
+        | expr GT expr    {    $$ = Manage_expr_exprOPexpr($1,">",$3);    }
+        | expr LE expr    {    $$ = Manage_expr_exprOPexpr($1,"<=",$3);   }
+        | expr LT expr    {    $$ = Manage_expr_exprOPexpr($1,"<",$3);    }
+        | expr EQ expr    {    $$ = Manage_expr_exprOPexpr($1,"==",$3);   }
+        | expr NE expr    {    $$ = Manage_expr_exprOPexpr($1,"!=",$3);   }
+        | expr AND expr   {    $$ = Manage_expr_exprOPexpr($1,"and",$3);  }
+        | expr OR expr    {    $$ = Manage_expr_exprOPexpr($1,"or",$3);   }
         ;
 
 term:   "(" expr ")"            {   Manage_term_expr();                 }

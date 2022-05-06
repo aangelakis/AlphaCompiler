@@ -1,26 +1,101 @@
 #include "quads.h"
 
-Vektor* quads = NULL;
-unsigned total = 0;
-unsigned int currQuad = 0 ;
+char quad_opcode_names[25][15] = {
+    "assign", "add", "sub",
+    "mul", "div", "mod",
+    "uminus", "and", "or",
+    "not", "if_eq", "if_noteq",
+    "if_lesseq", "if_greatereq", "if_less",
+    "if_greater", "call", "param",
+    "ret", "getretval", "funcstart",
+    "funcend", "tablecreate",
+    "tablegetelem", "tablesetelem"
+};
 
-void emit(
-        iopcode     op,
-        expr*       result,
-        expr*       arg1,
-        expr*       arg2,
-        unsigned    label,
-        unsigned    line
-        )
-{
+void const_to_string(char *arg, expr* e, expr_t t){
+    switch (t) {
+        case constdouble_e:
+            sprintf(arg, "%f", e->content.doubleConst);
+            return;
+        case constint_e:
+            sprintf(arg, "%d", e->content.intConst);
+            return;
+        case constbool_e:
+            if(e->content.boolConst)
+                sprintf(arg, "%s", "true");
+            else
+                sprintf(arg, "%s", "false");
+            return;
+        case conststring_e:
+            sprintf(arg, "%s", e->content.strConst);
+            return;
+        case nil_e:
+            sprintf(arg, "%s", "NULL");
+            return;
+    }
 
-    quad* p     = malloc(sizeof(quad));
-    assert(p);
-    p->result   = result;
-    p->arg1     = arg1;
-    p->arg2     = arg2;
-    p->label    = label;
-    p->line     = line;
-    vektor_set_element(quads, currQuad, (void*) p);
-    currQuad++;
+}
+
+
+void print_quad(void* voidquad){
+    quad* q = (quad*) voidquad;
+    // if(q==NULL){
+    //     return;
+    // }
+    char *opcode = quad_opcode_names[q->op];
+    char *result = NULL, *arg1 = NULL, *arg2 = NULL;
+    
+    if(q->arg1 && q->arg1->type >= constdouble_e)
+        arg1 = malloc(sizeof(char)*1024);
+    if(q->arg2 && q->arg2->type >= constdouble_e)
+        arg2 = malloc(sizeof(char)*1024);
+    //char *result = NULL, arg1[1024], arg2[1024];
+    int label , line;
+    line = q->line;
+    label = q->label;
+    
+    // result
+    if(q->result)
+        result = (char*) q->result->sym->value.varVal->name;
+    
+    // arg1
+    if(q -> arg1){
+        expr_t type = q->arg1->type;
+        if(type >= constdouble_e) {
+            const_to_string(arg1, q->arg1, type);
+            //arg1 = "const";
+        }
+        else if(q->arg1->sym->type < USERFUNC)
+            arg1 = (char*) q->arg1->sym->value.varVal->name;
+        else
+            arg1 = (char*) q->arg1->sym->value.funcVal->name;
+    }
+    else
+        arg1 = "nil";
+    
+    // arg2
+    if(q -> arg2){
+        expr_t type = q->arg2->type;
+        if(type >= constdouble_e){
+            const_to_string(arg2, q->arg2, type);
+            //arg2 = "const";
+        }
+        else if(q->arg1->sym->type < USERFUNC)
+            arg2 = (char*) q->arg1->sym->value.varVal->name;
+        else
+            arg2 = (char*) q->arg1->sym->value.funcVal->name;
+    }
+    else
+        arg2 = "nil";
+
+    if (label == -1)
+        printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
+    else
+        printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
+
+ 
+    if(q->arg1 && q->arg1->type >= constdouble_e)
+        free(arg1);
+    if(q->arg2 && q->arg2->type >= constdouble_e)
+        free(arg2);
 }
