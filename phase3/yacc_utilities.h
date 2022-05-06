@@ -499,7 +499,7 @@ void Manage_primary_const(){
     fprintf(yacc_out,"primary -> const\n");
 }
 
-void Manage_assignexpr(SymTableEntry* entry, express* expr){
+void Manage_assignexpr(SymTableEntry* entry, expr* expr){
     if(entry == NULL){return;}
     if(entry->type==USERFUNC || entry->type==LIBFUNC){
         print_custom_error("Cant make assignment to function",entry->value.funcVal->name,scope);
