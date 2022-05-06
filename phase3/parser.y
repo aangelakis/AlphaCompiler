@@ -105,7 +105,7 @@
 
 /* Non Terminal Symbols */
 %type<args> idlist
-%type<symEntr> lvalue
+%type<express> lvalue
 
 %type stmt
 %type<express> expr
@@ -178,18 +178,27 @@ term:   "(" expr ")"            {   Manage_term_expr();                 }
         | primary               {   Manage_term_primary();              }
         ;
 
-assignexpr: lvalue"="expr       {   Manage_assignexpr($1,$3);  };
+assignexpr: lvalue"="expr       {  $$ = Manage_assignexpr($1, $3);  };
 
-primary:  lvalue            {   Manage_primary_lvalue();      }
+primary:  lvalue            {  $$ = Manage_primary_lvalue($1);      }
           | call            {   Manage_primary_call();        }
           | objectdef       {   Manage_primary_objectdef();   }
           | "("funcdef")"   {   Manage_primary_funcdef();     }
           | const           {   Manage_primary_const();       }
           ;
 
-lvalue: ID                    { Manage_lvalue_id(&($$), $1, scope, yylineno);         } 
-        | LOCAL ID            { Manage_lvalue_localID(&($$), $2, scope, yylineno);    }
-        | DOUBLE_COLON ID     { Manage_lvalue_globalID(&($$), $2);                    }
+lvalue: ID                    { SymTableEntry *tmpSymbol = NULL;
+                                Manage_lvalue_id(&(tmpSymbol), $1, scope, yylineno);
+                                $$ = lvalue_to_expr(tmpSymbol);
+                              } 
+        | LOCAL ID            { SymTableEntry *tmpSymbol = NULL; 
+                                Manage_lvalue_localID(&(tmpSymbol), $2, scope, yylineno);    
+                                $$ = lvalue_to_expr(tmpSymbol);
+                              }
+        | DOUBLE_COLON ID     { SymTableEntry *tmpSymbol = NULL;
+                                Manage_lvalue_globalID(&(tmpSymbol), $2);
+                                $$ = lvalue_to_expr(tmpSymbol);
+                              }
         | member              { //$$ = makeSymTableEntry("dc",NULL,0,0,VAR_LOCAL);        // ultimate hackeria, saved infinite lines of code
                                 Manage_lvalue_member(); }
         ;
@@ -236,8 +245,8 @@ funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" {Manage_funcdef_functionId($2,$5
         | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function($4);   }
         ;
 
-const:  INT       { $$ = Manage_const_number($1);    }
-        | DOUBLE  { $$ = Manage_const_number($1);    }
+const:  INT       { $$ = Manage_const_int($1);    }
+        | DOUBLE  { $$ = Manage_const_double($1);    }
         | STRING  { $$ = Manage_const_string($1);    }
         | NIL     { $$ = Manage_const_nil();       }
         | TRUE    { $$ = Manage_const_bool(1);      }

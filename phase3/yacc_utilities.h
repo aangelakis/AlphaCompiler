@@ -91,6 +91,15 @@ void reset_temp_counter(){
     temp_counter = 0;
 }
 
+SymTableEntry* new_temp(){
+    char* name = new_temp_name();
+    SymTableEntry* sym = lookup_active_with_scope(&scpArr, scope, name);
+
+    if(sym == NULL){
+        SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,VAR_FORMAL); 
+    }
+}
+
 void Manage_returnstmt_returnexpr(){
     fprintf(yacc_out,"returnstmt -> return expr;\n");
 } 
@@ -176,32 +185,38 @@ void Manage_idlist_id(idList ** dest , char * new_element){
     fprintf(yacc_out,"idlist -> id,id*\n");
 }
 
-expr* Manage_const_number(double n){
+expr* Manage_const_int(int n){
     fprintf(yacc_out,"const -> number\n");
-    printf("%f\n", n);
-    return newexpr_constnumber(n);
+    //printf("%d\n", n);
+    return newexpr_constint(n);
+}
+
+expr* Manage_const_double(double n){
+    fprintf(yacc_out,"const -> number\n");
+    //printf("%f\n", n);
+    return newexpr_constdouble(n);
 }
 
 expr* Manage_const_string(char* s){
     fprintf(yacc_out,"const -> string\n");
-    printf("%s\n", s);
+    //printf("%s\n", s);
     return newexpr_conststring(s);
 }
 
 expr* Manage_const_nil(){
     fprintf(yacc_out,"const -> nil\n");
-    puts("NULL");
+    //puts("NULL");
     return newexpr_constnil();
 }
 
 expr* Manage_const_bool(unsigned char c){
     if(c) {
         fprintf(yacc_out,"const -> true\n");
-        puts("TRUE");
+        //puts("TRUE");
     }
     else {
-        puts("FALSE");
         fprintf(yacc_out,"const -> false\n");
+        //puts("FALSE");
     }
     return newexpr_constbool(c);
 }
@@ -333,7 +348,7 @@ void Manage_call_callElist(){
     fprintf(yacc_out,"call -> call(elist)\n");
 }
 
-void Manage_call_lvalueCallsuffix(SymTableEntry * entry){
+void Manage_call_lvalueCallsuffix(expr * entry){
     if(entry == NULL)
         {print_custom_error("Function not declared", "", scope);}
     //else if(entry->type != USERFUNC && entry->type != LIBFUNC){
@@ -346,20 +361,20 @@ void Manage_call_funcdefElist(){
     fprintf(yacc_out,"call -> (funcdef)(elist)\n");
 }
 
-void Manage_member_lvalueID(SymTableEntry * entry){
+void Manage_member_lvalueID(expr * entry){
     if(entry == NULL)
         {print_custom_error("lvalue not declared", "", scope);}
-    else if(entry->type == USERFUNC || entry->type == LIBFUNC){
-        print_custom_error("Cant use function name as an lvalue.id",entry->value.varVal->name,scope);
+    else if(entry->type==programfunc_e || entry->type==libraryfunc_e){
+        print_custom_error("Cant use function name as an lvalue.id",entry->sym->value.funcVal->name,scope);
     }
     fprintf(yacc_out,"member -> lvalue.id\n");
 }
 
-void Manage_member_lvalueExpr(SymTableEntry * entry){
+void Manage_member_lvalueExpr(expr * entry){
     if(entry == NULL)
         {print_custom_error("lvalue not declared", "", scope);}
-    else if(entry->type == USERFUNC || entry->type == LIBFUNC){
-        print_custom_error("Cant use function name as an lvalue[]",entry->value.varVal->name,scope);
+    else if(entry->type==programfunc_e || entry->type==libraryfunc_e){
+        print_custom_error("Cant use function name as an lvalue[]",entry->sym->value.funcVal->name,scope);
     }
     fprintf(yacc_out,"member -> lvalue[expr]\n");
 }
@@ -479,8 +494,9 @@ void Manage_lvalue_member(){
     fprintf(yacc_out,"lvalue -> member\n");
 }
 
-void Manage_primary_lvalue(){
+expr* Manage_primary_lvalue(expr* lvalue){
     fprintf(yacc_out,"primary -> lvalue\n");
+    return lvalue;
 }
 
 void Manage_primary_call(){
@@ -499,13 +515,16 @@ void Manage_primary_const(){
     fprintf(yacc_out,"primary -> const\n");
 }
 
-void Manage_assignexpr(SymTableEntry* entry, expr* expr){
-    if(entry == NULL){return;}
-    if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant make assignment to function",entry->value.funcVal->name,scope);
+expr* Manage_assignexpr(expr* lvalue, expr* rvalue){
+    if(lvalue == NULL){return NULL;}
+    if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
+        print_custom_error("Cant make assignment to function",lvalue->sym->value.funcVal->name,scope);
     }
-    
-    
+    expr* e = newexpr(assignexpr_e);
+    e->sym = lvalue->sym; //tmp
+
+    printf("EDW THA MPEI EMIT\n");
+    return e;
 }
 
 void Manage_term_expr(){
@@ -520,34 +539,34 @@ void Manage_term_notExpr(){
     fprintf(yacc_out,"term -> not expr\n");
 }
 
-void Manage_term_pluspluslvalue(SymTableEntry *entry){
+void Manage_term_pluspluslvalue(expr *entry){
     if(entry == NULL){return;}
-    if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
+    if(entry->type==programfunc_e || entry->type==libraryfunc_e){
+        print_custom_error("Cant use a function as an lvalue",entry->sym->value.funcVal->name,scope);
     }
     fprintf(yacc_out,"term -> ++lvalue\n");
 }
 
-void Manage_term_lvalueplusplus(SymTableEntry *entry){
+void Manage_term_lvalueplusplus(expr *entry){
     if(entry == NULL){return;}
-    if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
+    if(entry->type==programfunc_e || entry->type==libraryfunc_e){
+        print_custom_error("Cant use a function as an lvalue",entry->sym->value.funcVal->name,scope);
     }
     fprintf(yacc_out,"term -> lvalue++\n");
 }
 
-void Manage_term_minusminuslvalue(SymTableEntry *entry){
+void Manage_term_minusminuslvalue(expr *entry){
     if(entry == NULL){return;}
-    if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
+    if(entry->type==programfunc_e || entry->type==libraryfunc_e){
+        print_custom_error("Cant use a function as an lvalue",entry->sym->value.funcVal->name,scope);
     }
     fprintf(yacc_out,"term -> --lvalue\n");
 }
 
-void Manage_term_lvalueminusminus(SymTableEntry *entry){
+void Manage_term_lvalueminusminus(expr *entry){
     if(entry == NULL){return;}
-    if(entry->type==USERFUNC || entry->type==LIBFUNC){
-        print_custom_error("Cant use a function as an lvalue",entry->value.funcVal->name,scope);
+    if(entry->type==programfunc_e || entry->type==libraryfunc_e){
+        print_custom_error("Cant use a function as an lvalue",entry->sym->value.funcVal->name,scope);
     }
     fprintf(yacc_out,"term -> lvalue--\n");
 }

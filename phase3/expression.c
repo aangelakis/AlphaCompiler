@@ -10,14 +10,14 @@ expr* newexpr(expr_t t){
 
 expr* newexpr_conststring(char* s){
     expr* e = newexpr(conststring_e);
-    e->strConst = strdup(s);
+    e->content.strConst = strdup(s);
     return e;
 }
 
 
-expr* newexpr_constnumber(double i){
-    expr* e = newexpr(costnum_e);
-    e->numConst = i;
+expr* newexpr_constdouble(double i){
+    expr* e = newexpr(costdouble_e);
+    e->content.doubleConst = i;
     return e;
 }
 
@@ -28,13 +28,41 @@ expr* newexpr_constnil(){
 
 expr* newexpr_constbool(unsigned char b){
     expr* e = newexpr(constbool_e);
-    e->boolConst = b;
+    e->content.boolConst = b;
+    return e;
+}
+
+expr* newexpr_constint(int i){
+    expr* e = newexpr(constint_e);
+    e->content.intConst = i;
     return e;
 }
 
 
-// geia sou koukle
+expr* lvalue_to_expr(SymTableEntry* tmpSymbol){
+    assert(tmpSymbol);
+    expr *e;
+    switch (tmpSymbol->type) {
+        case VAR_GLOBAL:
+            e = newexpr(var_e);
+            break;
+        case VAR_LOCAL:
+            e = newexpr(var_e);
+            break;
+        case VAR_FORMAL:
+            e = newexpr(var_e);
+            break;
+        case USERFUNC:
+            e = newexpr(programfunc_e);
+            break;
+        case LIBFUNC:
+            e = newexpr(libraryfunc_e);
+            break;
+        default:
+            return NULL;
+    }
+    e->next =(expr*) 0;
+    e->sym = tmpSymbol;
+    return e;
+}
 
-
-// gia so kokla
-// iaso
