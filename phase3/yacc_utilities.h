@@ -95,9 +95,14 @@ SymTableEntry* new_temp(){
     char* name = new_temp_name();
     SymTableEntry* sym = lookup_active_with_scope(&scpArr, scope, name);
 
+    // mporei mia temporary metabliti na einai typou VAR_FORMAL?
     if(sym == NULL){
-        SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,VAR_FORMAL); 
+            SymbolType type = (scope == 0) ? VAR_GLOBAL : VAR_LOCAL;
+            SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,type);
+            return entry;
     }
+
+    return sym;
 }
 
 void Manage_returnstmt_returnexpr(){
