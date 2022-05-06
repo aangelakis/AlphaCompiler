@@ -1,7 +1,8 @@
 %{
 	
 	#include "yacc_utilities.h"
-	
+	#include "expression.h"
+
     FILE* yacc_out; 
 	int yylex();
 
