@@ -3,7 +3,7 @@
 	#include "yacc_utilities.h"
 	
 
-        FILE* yacc_out; 
+    FILE* yacc_out; 
 	int yylex();
 
 	extern int yylineno;

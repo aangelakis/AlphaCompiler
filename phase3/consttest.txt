@@ -1,0 +1,6 @@
+x = 5;
+y = 5.1;
+z = "aliekmonas";
+nu = nil;
+t = true;
+f = false;

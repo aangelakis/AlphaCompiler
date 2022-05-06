@@ -19,8 +19,6 @@ extern FILE* yacc_out;
 unsigned int invalid_funcname_number  = 0;
 unsigned int temp_counter = 0;
 
-extern Vektor* quads;
-
 int yyerror(char* yaccProvideMessage)
 {
     fprintf(stderr , "\033[0;31mERROR\033[0m\n");
@@ -180,7 +178,7 @@ void Manage_idlist_id(idList ** dest , char * new_element){
 
 expr* Manage_const_number(double n){
     fprintf(yacc_out,"const -> number\n");
-    printf("%ld\n", n);
+    printf("%f\n", n);
     return newexpr_constnumber(n);
 }
 
@@ -205,7 +203,7 @@ expr* Manage_const_bool(unsigned char c){
         puts("FALSE");
         fprintf(yacc_out,"const -> false\n");
     }
-    newexpr_constbool(c);
+    return newexpr_constbool(c);
 }
 
 void Manage_funcdef_functionId(char *name,idList *args){

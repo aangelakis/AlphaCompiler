@@ -25,9 +25,9 @@ typedef struct quad {
     unsigned    line;
 } quad;
 
-Vektor* quads = NULL;
-unsigned total = 0;
-unsigned int currQuad = 0 ;
+extern Vektor* quads;
+extern unsigned total;
+extern unsigned int currQuad;
 
 void emit(iopcode, expr*, expr*, expr*, unsigned, unsigned);
 

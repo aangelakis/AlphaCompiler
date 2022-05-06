@@ -1,5 +1,9 @@
 #include "quads.h"
 
+Vektor* quads = NULL;
+unsigned total = 0;
+unsigned int currQuad = 0 ;
+
 void emit(
         iopcode     op,
         expr*       result,
