@@ -5,7 +5,7 @@
 #include"libs/SymTableEntry/SymTableEntry.h"
 
 
-extern char quad_opcode_names[25][15];
+extern char quad_opcode_names[26][15];
 
 //NA DUME TO DIV STO ENUM
 typedef enum iopcode {
@@ -17,7 +17,7 @@ typedef enum iopcode {
     if_greater, call, param,
     ret, getretval, funcstart,
     funcend, tablecreate,
-    tablegetelem, tablesetelem
+    tablegetelem, tablesetelem , jump
 } iopcode;
 
 typedef struct quad {

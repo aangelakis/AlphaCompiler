@@ -1,6 +1,6 @@
 #include "quads.h"
 
-char quad_opcode_names[25][15] = {
+char quad_opcode_names[26][15] = {
     "assign", "add", "sub",
     "mul", "div", "mod",
     "uminus", "and", "or",
@@ -9,7 +9,7 @@ char quad_opcode_names[25][15] = {
     "if_greater", "call", "param",
     "ret", "getretval", "funcstart",
     "funcend", "tablecreate",
-    "tablegetelem", "tablesetelem"
+    "tablegetelem", "tablesetelem","jump"
 };
 
 void const_to_string(char *arg, expr* e, expr_t t){
@@ -38,6 +38,9 @@ void const_to_string(char *arg, expr* e, expr_t t){
 
 
 void print_quad(void* voidquad){
+    FILE* quads_out;
+    quads_out = fopen("quads_output.txt", "w");    
+
     quad* q = (quad*) voidquad;
     if(q==NULL){
         return;
@@ -54,8 +57,9 @@ void print_quad(void* voidquad){
     line = q->line;
     label = q->label;
     
-    // result
-    if(q->result)
+    if(q->op==funcend || q->op==funcstart){
+        result = q->result->content.strConst;
+    }else if(q->result)
         result = (char*) q->result->sym->value.varVal->name;
     
     // arg1
@@ -80,17 +84,19 @@ void print_quad(void* voidquad){
             const_to_string(arg2, q->arg2, type);
             //arg2 = "const";
         }
-        else if(q->arg1->sym->type < USERFUNC)
-            arg2 = (char*) q->arg1->sym->value.varVal->name;
+        else if(q->arg2->sym->type < USERFUNC)
+            arg2 = (char*) q->arg2->sym->value.varVal->name;
         else
-            arg2 = (char*) q->arg1->sym->value.funcVal->name;
+            arg2 = (char*) q->arg2->sym->value.funcVal->name;
     }
     else
         arg2 = "nil";
-
+    
     if (label == -1)
         printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
+       // fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
     else
+       // fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
         printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
 
  
@@ -98,4 +104,6 @@ void print_quad(void* voidquad){
         free(arg1);
     if(q->arg2 && q->arg2->type >= constdouble_e)
         free(arg2);
+
+    fclose(quads_out);
 }

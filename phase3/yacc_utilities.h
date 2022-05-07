@@ -21,7 +21,7 @@ unsigned int temp_counter = 0;
 extern Vektor* quads;
 unsigned total;
 unsigned int currQuad = 1;
-
+extern char* anonFuncName;
 void emit(
         iopcode     op,
         expr*       result,
@@ -44,6 +44,26 @@ void emit(
     currQuad++;
 }
 
+SymTableEntry* new_temp(); // <---- dont remove this
+
+expr* emit_iftableitem(expr* e){
+    if(e->type != tableitem_e){
+        return e;
+    }else{
+        expr* result = newexpr(var_e);
+        result->sym = new_temp();
+        emit(tablegetelem,result,e,e->index,0,currQuad);
+        return result;
+    }
+}
+
+expr* member_item(expr* lv, char* name){
+    lv = emit_iftableitem(lv);
+    expr* ti = newexpr(tableitem_e);
+    ti->sym = lv->sym;
+    ti->index = newexpr_conststring(name);
+    return ti;
+}
 
 int yyerror(char* yaccProvideMessage)
 {
@@ -311,12 +331,12 @@ void Manage_funcdef_functionId(char *name,idList *args){
 }
 
 void Manage_funcdef_function(idList *args){
-    char * name = invalid_funcname_generator();
+    char * name = anonFuncName;
     //insertion in the symtable and in the scopelist
     SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC);
     SymTable_put(symTable,name,entry);
     insert_to_scopeArr(&scpArr,scope,entry);
-
+    emit(funcend,newexpr_conststring(name),NULL,NULL,0,currQuad);
     fprintf(yacc_out,"function (idlist) block\n");
 }
 
@@ -393,22 +413,36 @@ void Manage_call_funcdefElist(){
     fprintf(yacc_out,"call -> (funcdef)(elist)\n");
 }
 
-void Manage_member_lvalueID(expr * entry){
+expr* Manage_member_lvalueID(expr * entry, char* index){
+    expr* tableitem;
+
     if(entry == NULL)
         {print_custom_error("lvalue not declared", "", scope);}
     else if(entry->type==programfunc_e || entry->type==libraryfunc_e){
         print_custom_error("Cant use function name as an lvalue.id",entry->sym->value.funcVal->name,scope);
     }
+
+    tableitem = member_item(entry, index);
     fprintf(yacc_out,"member -> lvalue.id\n");
+    return tableitem;
 }
 
-void Manage_member_lvalueExpr(expr * entry){
+expr* Manage_member_lvalueExpr(expr * entry, expr* index){
+    expr* tableitem;
+
     if(entry == NULL)
         {print_custom_error("lvalue not declared", "", scope);}
     else if(entry->type==programfunc_e || entry->type==libraryfunc_e){
         print_custom_error("Cant use function name as an lvalue[]",entry->sym->value.funcVal->name,scope);
     }
+
+    entry = emit_iftableitem(entry);
+    tableitem = newexpr(tableitem_e);
+    tableitem->sym = entry->sym;
+    tableitem->index = index;
+
     fprintf(yacc_out,"member -> lvalue[expr]\n");
+    return tableitem;
 }
 
 void Manage_member_callID(){
@@ -528,7 +562,7 @@ void Manage_lvalue_member(){
 
 expr* Manage_primary_lvalue(expr* lvalue){
     fprintf(yacc_out,"primary -> lvalue\n");
-    return lvalue;
+    return emit_iftableitem(lvalue);
 }
 
 void Manage_primary_call(){
@@ -551,6 +585,13 @@ expr* Manage_assignexpr(expr* lvalue, expr* rvalue){
     if(lvalue == NULL){return NULL;}
     if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
         print_custom_error("Cant make assignment to function",lvalue->sym->value.funcVal->name,scope);
+    }
+
+    if(lvalue->type==tableitem_e){
+        emit(tablesetelem,lvalue,lvalue->index,rvalue,-1,currQuad);
+        expr* e = emit_iftableitem(lvalue);
+        e->type= assignexpr_e;
+        return e;
     }
     emit(assign, lvalue, rvalue, NULL, -1, currQuad); // x = y;
     
@@ -744,4 +785,22 @@ void Manage_program_empty(){
     fprintf(yacc_out,"empty program\n");  
 }
 
+void Init_named_func(char * name){
+    ScopeUp(1);
+    emit(jump, NULL, NULL, NULL, 0, currQuad);
+    emit(funcstart,newexpr_conststring(name),NULL,NULL,-1,currQuad);
+}
+
+void End_named_func(char* name){
+    fprintf(yacc_out, "function id (idlist) block\n"); 
+    emit(funcend,newexpr_conststring(name),NULL,NULL,-1,currQuad);
+    //edw thelei backpatch gia to jump meta to init pros to telos tou function
+}
+
+void Init_Anonymous_func(){
+    anonFuncName = invalid_funcname_generator();
+    ScopeUp(1);
+    emit(jump, NULL, NULL, NULL, 0, currQuad);
+    emit(funcstart,newexpr_conststring(anonFuncName),NULL,NULL,-1,currQuad);
+}
 #endif

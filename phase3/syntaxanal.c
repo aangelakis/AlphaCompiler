@@ -72,6 +72,8 @@ int main(int argc, char *argv[]){
             zarklist_apply(globalScopeArr->scopes[i], printSymTableEntry);
         }
     }
+    
+    printf("%d\n", quads->cur_size-1);
     puts("quad#\t\topcode\t\t\t\t\t  result\t\targ1\t\targ2\t\tlabel");
     vektor_apply(quads, print_quad);
 

@@ -1,0 +1,55 @@
+----------------Symbol Table Entries-------------------------
+
+-----------	Scope #0	-----------
+"print" [library function] (line 0) (scope 0)
+"input" [library function] (line 0) (scope 0)
+"objectmemberkeys" [library function] (line 0) (scope 0)
+"objecttotalmembers" [library function] (line 0) (scope 0)
+"objectcopy" [library function] (line 0) (scope 0)
+"totalarguments" [library function] (line 0) (scope 0)
+"argument" [library function] (line 0) (scope 0)
+"typeof" [library function] (line 0) (scope 0)
+"strtonum" [library function] (line 0) (scope 0)
+"sqrt" [library function] (line 0) (scope 0)
+"cos" [library function] (line 0) (scope 0)
+"sin" [library function] (line 0) (scope 0)
+"a" [global variable] (line 2) (scope 0)
+"_t0" [global variable] (line 2) (scope 0)
+"_t1" [global variable] (line 3) (scope 0)
+"_t2" [global variable] (line 3) (scope 0)
+"_t3" [global variable] (line 4) (scope 0)
+"_t4" [global variable] (line 4) (scope 0)
+32
+quad#		opcode					  result		arg1		arg2		label
+1:			tablesetelem			a   			3   		3   		nil
+2:			tablegetelem			_t0 			a   		3   		0
+3:			tablegetelem			_t0 			a   		3   		0
+4:			tablegetelem			_t1 			a   		3   		0
+5:			tablesetelem			_t0 			4   		_t1 		nil
+6:			tablegetelem			_t2 			_t0 		4   		0
+7:			tablegetelem			_t0 			a   		3   		0
+8:			tablegetelem			_t1 			_t0 		4   		0
+9:			tablegetelem			_t2 			_t1 		4   		0
+10:			tablegetelem			_t3 			_t2 		4   		0
+11:			tablesetelem			a   			r   		_t3 		nil
+12:			tablegetelem			_t4 			a   		r   		0
+13:			tablegetelem			_t0 			a   		r   		0
+14:			tablesetelem			a   			r   		_t0 		nil
+15:			tablegetelem			_t1 			a   		r   		0
+16:			tablegetelem			_t0 			a   		r   		0
+17:			tablegetelem			_t1 			a   		r   		0
+18:			tablegetelem			_t2 			_t1 		q   		0
+19:			tablesetelem			_t0 			q   		_t2 		nil
+20:			tablegetelem			_t3 			_t0 		q   		0
+21:			tablegetelem			_t0 			a   		r   		0
+22:			tablegetelem			_t1 			_t0 		q   		0
+23:			tablegetelem			_t2 			_t1 		r   		0
+24:			tablegetelem			_t3 			_t2 		s   		0
+25:			tablesetelem			_t3 			3   		12  		nil
+26:			tablegetelem			_t4 			_t3 		3   		0
+27:			tablesetelem			a   			r   		5   		nil
+28:			tablegetelem			_t0 			a   		r   		0
+29:			tablesetelem			a   			1   		_t0 		nil
+30:			tablegetelem			_t1 			a   		1   		0
+31:			tablesetelem			a   			x   		_t1 		nil
+32:			tablegetelem			_t2 			a   		x   		0

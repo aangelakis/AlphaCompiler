@@ -10,6 +10,7 @@
 	extern char* yytext;
 	int scope = 0;
 	int flag_scope = 0 ; // 0 == block ; 1 == function
+        char* anonFuncName = NULL;
 %}
 
 %output "parser.c"
@@ -200,8 +201,8 @@ lvalue: ID                    { SymTableEntry *tmpSymbol = NULL;
                                 Manage_lvalue_member(); }
         ;
 
-member: lvalue "." ID           {   Manage_member_lvalueID($1);   }
-        | lvalue "[" expr "]"   {   Manage_member_lvalueExpr($1); }
+member: lvalue "." ID           {   $$ = Manage_member_lvalueID($1, $3);   }
+        | lvalue "[" expr "]"   {   $$ = Manage_member_lvalueExpr($1, $3); }
         | call "." ID           {   Manage_member_callID();     }
         | call "[" expr "]"     {   Manage_member_callExpr();   }
         ;
@@ -238,8 +239,10 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt(
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();   }
         ;
 
-funcdef: FUNCTION ID {ScopeUp(1);} "("idlist")" {Manage_funcdef_functionId($2,$5);} block {  fprintf(yacc_out, "function id (idlist) block\n"); }
-        | FUNCTION{ScopeUp(1);} "("idlist")" block   {   Manage_funcdef_function($4);   }
+funcdef: FUNCTION ID {Init_named_func($2);} "("idlist")" {Manage_funcdef_functionId($2,$5);} block 
+                        {  End_named_func($2); }
+                        
+        | FUNCTION{Init_Anonymous_func();} "("idlist")" block   {   Manage_funcdef_function($4);   }
         ;
 
 const:  INT       { $$ = Manage_const_int($1);    }
