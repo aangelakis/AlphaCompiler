@@ -1,5 +1,7 @@
 #include "quads.h"
 
+extern FILE* quads_out;
+
 char quad_opcode_names[26][15] = {
     "assign", "add", "sub",
     "mul", "div", "mod",
@@ -37,9 +39,7 @@ void const_to_string(char *arg, expr* e, expr_t t){
 }
 
 
-void print_quad(void* voidquad){
-    FILE* quads_out;
-    quads_out = fopen("quads_output.txt", "w");    
+void print_quad(void* voidquad){   
 
     quad* q = (quad*) voidquad;
     if(q==NULL){
@@ -93,17 +93,15 @@ void print_quad(void* voidquad){
         arg2 = "nil";
     
     if (label == -1)
-        printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
-       // fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
+       // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
+       fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
     else
-       // fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
-        printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
+       fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
+       // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
 
  
     if(q->arg1 && q->arg1->type >= constdouble_e)
         free(arg1);
     if(q->arg2 && q->arg2->type >= constdouble_e)
         free(arg2);
-
-    fclose(quads_out);
 }

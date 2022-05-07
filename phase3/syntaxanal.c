@@ -12,6 +12,7 @@
 SymTable_T symTable;
 scopeArray* scpArr;
 Vektor* quads;
+FILE* quads_out;
 
 scopeArray* globalScopeArr;
 
@@ -31,6 +32,8 @@ char libraryFunctions[12][24]={
 };
 
 int main(int argc, char *argv[]){
+    quads_out = fopen("quads_output.txt", "w"); 
+
     // initialize necessary global structures
 	symTable = SymTable_new();
 	scpArr = scope_initialize();
@@ -73,9 +76,12 @@ int main(int argc, char *argv[]){
         }
     }
     
-    printf("%d\n", quads->cur_size-1);
-    puts("quad#\t\topcode\t\t\t\t\t  result\t\targ1\t\targ2\t\tlabel");
+    fprintf(quads_out,"Number of quads -> %d\n", quads->cur_size-1);
+    //puts("quad#\t\topcode\t\t\t\t\t  result\t\targ1\t\targ2\t\tlabel");
+    fprintf(quads_out,"quad#\t\topcode\t\t\t\t\t  result\t\targ1\t\targ2\t\tlabel\n");
     vektor_apply(quads, print_quad);
+
+    fclose(quads_out);
 
     SymTable_free(symTable);
     free_scopeArr(scpArr);
