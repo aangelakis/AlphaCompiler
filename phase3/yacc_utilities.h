@@ -22,6 +22,14 @@ extern Vektor* quads;
 unsigned total;
 unsigned int currQuad = 1;
 extern char* anonFuncName;
+
+unsigned nextquad(void) { return currQuad; }
+
+void patchlabel(unsigned quadNo, unsigned label) {
+    assert(quadNo < currQuad && !((quad*)quads->data[quadNo])->label);
+    ((quad*)quads->data[quadNo])->label = label;
+}
+
 void emit(
         iopcode     op,
         expr*       result,
@@ -607,8 +615,19 @@ void Manage_term_expr(){
     fprintf(yacc_out,"term -> (expr)\n");
 }
 
-void Manage_term_uminusExpr(){
+expr* Manage_term_uminusExpr(expr * lvalue){
+    if(lvalue == NULL){return NULL;}
+    if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
+        print_custom_error("Cant make uminus to function",lvalue->sym->value.funcVal->name,scope);
+    }
+    
+    SymTableEntry *tmp = new_temp(); // create new tmp variable
+    expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
+
+    emit(uminus, tmp_expr, lvalue, NULL, -1, currQuad); // _t0 = -x;
+
     fprintf(yacc_out,"term -> -expr\n");
+    return tmp_expr;
 }
 
 void Manage_term_notExpr(){

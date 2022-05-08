@@ -1,6 +1,4 @@
-
-function fae_skata_kai_psofa(){
-  function(x) {
-            return x + x;
-        }
+s = 5;
+while(s){
+    s = s-1;
 }

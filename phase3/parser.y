@@ -19,6 +19,7 @@
 %union {
     char*               strVal;
     int                 intVal;
+    unsigned int        labelVal;
     double              realVal;
     unsigned char       boolVal;
     SymTableEntry*      symEntr;
@@ -122,6 +123,12 @@
 %type block
 %type funcdef
 %type<express> const
+%type<labelVal> ifprefix 
+%type<labelVal> elseprefix
+%type<labelVal> whilestart
+%type<labelVal> whilecond
+/* %type<labelVal> M
+%type<labelVal> N */
 %type ifstmt
 %type whilestmt
 %type forstmt
@@ -167,7 +174,7 @@ expr:   assignexpr        {     Manage_expr_assignexpr();       }
         ;
 
 term:   "(" expr ")"            {   Manage_term_expr();                 }
-        | "-"expr  %prec UMINUS {   Manage_term_uminusExpr();           }
+        | "-"expr  %prec UMINUS {   $$ = Manage_term_uminusExpr($2);           }
         | NOT expr              {   Manage_term_notExpr();              }
         | "++"lvalue            {   Manage_term_pluspluslvalue($2);       }
         | lvalue"++"            {   Manage_term_lvalueplusplus($1);       }
@@ -258,13 +265,55 @@ idlist: %empty          {   Manage_idlist_empty(&($$));      }
         | ID            {   Manage_idlist_id(&($$),$1);         } 
         ;
 
-ifstmt: IF "(" expr ")" stmt ELSE stmt {   Manage_ifstmt_ifelse();  }
-        | IF "(" expr ")" stmt         {    Manage_ifstmt_if();     }
+ifprefix: IF "(" expr ")" {     printf("DULEUEI TO IF\n"); 
+                                emit(if_eq, NULL, $3, newexpr_constbool(1), nextquad() + 2, currQuad);
+                                $$ = nextquad();
+                                emit(jump, NULL, NULL, NULL, 0, currQuad);
+                        }
+
+elseprefix: ELSE {      printf("DOULEUEI TO IF ELSE\n");
+                        $$ = nextquad();
+                        emit(jump, NULL, NULL, NULL, 0, currQuad);
+                }
+
+ifstmt:   ifprefix stmt elseprefix stmt { patchlabel($1, $3 + 1); patchlabel($3, nextquad());  Manage_ifstmt_ifelse();  }
+        | ifprefix stmt         {   patchlabel($1, nextquad()); Manage_ifstmt_if();     }
         ;
 
-whilestmt: WHILE  "(" expr ")" stmt     {    Manage_whilestmt();  };
 
-forstmt: FOR "(" elist ";" expr ";" elist ")" stmt  {   Manage_forstmt();  };
+loopstart:%empty  {/*++loopcounter;*/}
+
+loopend:%empty  {/*--loopcounter;*/}
+
+loopstmt: loopstart stmt loopend {  }
+
+whilestart: WHILE {     printf("whilestart -> while\n");
+                        $$ = nextquad();
+                  }
+
+whilecond: "(" expr ")" {       printf("whilecond -> (expr)\n");
+                                emit(if_eq, NULL, $2, newexpr_constbool(1), nextquad() + 2, currQuad);
+                                $$ = nextquad();
+                                emit(jump, NULL, NULL, NULL, 0, currQuad);
+                        }
+
+whilestmt: whilestart whilecond loopstmt     {      Manage_whilestmt();  
+                                                emit(jump, NULL, NULL, NULL, $1, currQuad);
+                                                patchlabel($2, nextquad());  
+                                                // patchlist(stmt.breaklist, nextquad());
+                                                // patchlist(stmt.contlist, $1);
+                                         }
+
+/* N:%empty { $$ = nextquad(); emit(jump, NULL, NULL, NULL, 0, currQuad);}
+
+M:%empty { $$ = nextquad(); }
+
+forprefix: FOR "(" elist ";" M expr ";" {
+
+} */
+
+
+forstmt: FOR "(" elist ";" expr ";" elist ")" loopstmt  {   Manage_forstmt();  };
 
 returnstmt: RETURN expr";"  {   Manage_returnstmt_returnexpr(); }
             | RETURN";"     {   Manage_returnstmt_return();     }
