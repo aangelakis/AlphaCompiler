@@ -24,8 +24,44 @@ unsigned total;
 unsigned int currQuad = 1;
 extern alpha_stack* anon_func_names_stack;
 extern alpha_stack* invalid_funcname_number_stack;
+extern alpha_stack* loopcounter_stack;
+int loopcounter = 0;
 
 unsigned nextquad(void) { return currQuad; }
+
+stmt_t* make_stmt(void) {
+    stmt_t* s = malloc(sizeof(stmt_t));
+    s->breaklist = 0;
+    s->continuelist = 0;
+    return s;
+}
+
+int newlist(int i) {
+    ((quad*)quads->data[i])->label = 0;
+    return i;
+}
+
+int mergelist(int l1, int l2) {
+    if(!l1)
+        return l2;
+    else if(!l2)
+        return l1;
+    else {
+        int i = l1;
+        while(((quad*)quads->data[i])->label)
+            i = ((quad*)quads->data[i])->label;
+        ((quad*)quads->data[i])->label = l2;
+        return l1;
+    }
+}
+
+void patchlist(int list, int label) {
+    while(list) {
+        int next = ((quad*)quads->data[list])->label;
+        ((quad*)quads->data[list])->label = label;
+        list = next;
+    }
+}
 
 void patchlabel(unsigned quadNo, unsigned label) {
     assert(quadNo < currQuad && !((quad*)quads->data[quadNo])->label);
@@ -349,6 +385,11 @@ SymTableEntry* Manage_funcdef_functionId(char *name,idList *args){
 }
 
 SymTableEntry* Manage_funcdef_function(idList *args){
+    
+    int *tmp_loopcounter = (int *) stack_pop(loopcounter_stack);
+    loopcounter = *tmp_loopcounter;
+    free(tmp_loopcounter);
+
     char * name = (char*)stack_pop(anon_func_names_stack);
     //insertion in the symtable and in the scopelist
     SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC);
@@ -779,12 +820,28 @@ void Manage_stmt_returnstmt(){
     fprintf(yacc_out,"stmt -> returnstmt\n");
 }
 
-void Manage_stmt_break(){
+stmt_t* Manage_stmt_break(){
     fprintf(yacc_out,"stmt -> break;\n");
+    if(loopcounter == 0)
+        fprintf(stderr , "\033[1;31mERROR\033[0m at line\033[0;35m %d\033[0m", yylineno);
+
+    stmt_t* new_stmt = make_stmt();
+    emit(jump, NULL, NULL, NULL, 0, currQuad);
+    new_stmt->breaklist = newlist(nextquad() - 1);
+
+    return new_stmt;
 }
 
-void Manage_stmt_continue(){
-    fprintf(yacc_out,"stmt -> continue;\n");
+stmt_t* Manage_stmt_continue(){
+    fprintf(yacc_out,"liststmt -> liststmt stmt\n");
+    if(loopcounter == 0)
+        fprintf(stderr , "\033[1;31mERROR\033[0m at line\033[0;35m %d\033[0m", yylineno);
+
+    stmt_t* new_stmt = make_stmt();
+    emit(jump, NULL, NULL, NULL, 0, currQuad);
+    new_stmt->continuelist = newlist(nextquad() - 1);
+
+    return new_stmt;
 }
 
 void Manage_stmt_block(){
@@ -799,8 +856,14 @@ void Manage_stmt_semicolon(){
     fprintf(yacc_out,"stmt -> ;\n");
 }
 
-void Manage_liststmt_liststmtStmt(){
+stmt_t* Manage_liststmt_liststmtStmt(stmt_t* liststmt, stmt_t* simple_stmt){
     fprintf(yacc_out,"liststmt -> liststmt stmt\n");
+    
+    stmt_t* new_stmt = make_stmt();
+    new_stmt->breaklist = mergelist(liststmt->breaklist, simple_stmt->breaklist);
+    new_stmt->continuelist = mergelist(liststmt->continuelist, simple_stmt->continuelist);
+
+    return new_stmt;
 }
 
 void Manage_liststmt_stmt(){
@@ -816,18 +879,34 @@ void Manage_program_empty(){
 }
 
 void Init_named_func(char * name){
+    // puts the variable in the stack and the resets the counter
+    int * tmp_loopcounter = (int *)malloc(sizeof(int));
+    *tmp_loopcounter = loopcounter;
+    stack_push(loopcounter_stack,(void *)tmp_loopcounter);
+    loopcounter = 0;
+    
     ScopeUp(1);
     emit(jump, NULL, NULL, NULL, 0, currQuad);
     emit(funcstart,newexpr_conststring(name),NULL,NULL,-1,currQuad);
 }
 
 void End_named_func(char* name){
+    // pops the loopcounter changes the global pointer and free's the used variable
+    int *tmp_loopcounter = (int *) stack_pop(loopcounter_stack);
+    loopcounter = *tmp_loopcounter;
+    free(tmp_loopcounter);
     fprintf(yacc_out, "function id (idlist) block\n"); 
     emit(funcend,newexpr_conststring(name),NULL,NULL,-1,currQuad);
     //edw thelei backpatch gia to jump meta to init pros to telos tou function
 }
 
 void Init_Anonymous_func(){
+    //for the loop counter
+    int * tmp_loopcounter = (int *)malloc(sizeof(int));
+    *tmp_loopcounter = loopcounter;
+    stack_push(loopcounter_stack,(void *)tmp_loopcounter);
+    loopcounter = 0;
+
     char * anonFuncName = invalid_funcname_generator();
     ScopeUp(1);
     emit(jump, NULL, NULL, NULL, 0, currQuad);

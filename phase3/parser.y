@@ -5,7 +5,7 @@
 
         FILE* yacc_out; 
 	int yylex();
-
+        extern int loopcounter;
 	extern int yylineno;
 	extern char* yytext;
 	int scope = 0;
@@ -25,6 +25,7 @@
     SymTableEntry*      symEntr;
     idList*             args;
     expr*               express;
+    stmt_t*             statement;
     call_t*              callVal;                
 }
 
@@ -65,8 +66,8 @@
 %token FOR             "for"
 %token FUNCTION        "function"
 %token RETURN          "return"
-%token BREAK           "break"
-%token CONTINUE        "continue"
+%token<statement> BREAK           "break"
+%token<statement> CONTINUE        "continue"
 %token AND             "and"
 %token NOT             "not"
 %token OR              "or"
@@ -107,7 +108,9 @@
 %type<args> idlist
 %type<express> lvalue
 
-%type stmt
+%type<statement> loopstmt
+%type<statement> stmt
+%type<statement> liststmt
 %type<express> expr
 %type<express> term
 %type<express> assignexpr
@@ -121,7 +124,7 @@
 %type<express> objectdef
 %type<express> indexed
 %type<express> indexedelem
-%type block
+%type<statement> block
 %type<symEntr> funcdef
 %type<express> const
 %type<labelVal> ifprefix 
@@ -130,7 +133,7 @@
 %type<labelVal> whilecond
 /* %type<labelVal> M
 %type<labelVal> N */
-%type ifstmt
+%type<statement> ifstmt
 %type whilestmt
 %type forstmt
 %type returnstmt
@@ -141,20 +144,20 @@ program: liststmt   {   Manage_program_liststmt();     fclose(yacc_out); }
         |%empty     {   Manage_program_empty();        fclose(yacc_out); }
         ;
 
-liststmt: liststmt stmt {  Manage_liststmt_liststmtStmt();      }
+liststmt: liststmt stmt {  $$ = Manage_liststmt_liststmtStmt($1, $2);      }
           | stmt        {   Manage_liststmt_stmt();             }
           ;
 
-stmt: expr ";"      {   Manage_stmt_expr();   reset_temp_counter();      }
-      | ifstmt      {   Manage_stmt_ifstmt();       }
-      | whilestmt   {   Manage_stmt_whilestmt();    }
-      | forstmt     {   Manage_stmt_forstmt();      }
-      | returnstmt  {   Manage_stmt_returnstmt();   }
-      | BREAK ";"   {   Manage_stmt_break();        }  
-      | CONTINUE ";"{   Manage_stmt_continue();     }
-      | block       {   Manage_stmt_block();        }
-      | funcdef     {   Manage_stmt_funcdef();      }
-      | ";"         {   Manage_stmt_semicolon();   reset_temp_counter(); }
+stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();   reset_temp_counter();      }
+      | ifstmt      {   $$ = $1; Manage_stmt_ifstmt();       }
+      | whilestmt   {   $$ = make_stmt(); Manage_stmt_whilestmt();    }
+      | forstmt     {   $$ = make_stmt(); Manage_stmt_forstmt();      }
+      | returnstmt  {   $$ = make_stmt(); Manage_stmt_returnstmt();   }
+      | BREAK ";"   {   $$ = Manage_stmt_break();        }  
+      | CONTINUE ";"{   $$ = Manage_stmt_continue();     }
+      | block       {   $$ = $1; Manage_stmt_block();        }
+      | funcdef     {   $$ = make_stmt(); Manage_stmt_funcdef();      }
+      | ";"         {   $$ = make_stmt(); Manage_stmt_semicolon();   reset_temp_counter(); }
       ;
 
 expr:   assignexpr        {     Manage_expr_assignexpr();       }
@@ -174,7 +177,7 @@ expr:   assignexpr        {     Manage_expr_assignexpr();       }
         | expr OR expr    {    $$ = Manage_expr_exprOPexpr($1,"or",$3);   }
         ;
 
-term:   "(" expr ")"            {   Manage_term_expr();                 }
+term:   "(" expr ")"            {   $$ = $2; Manage_term_expr();                 }
         | "-"expr  %prec UMINUS {   $$ = Manage_term_uminusExpr($2);           }
         | NOT expr              {   Manage_term_notExpr();              }
         | "++"lvalue            {   Manage_term_pluspluslvalue($2);       }
@@ -305,7 +308,7 @@ indexedelem: "{" expr ":" expr "}"  {   $4->index = $2;
                                         Manage_indexedelem(); 
                                 }
 
-block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} {   Manage_block_liststmt();    }
+block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} { $$=$3;  Manage_block_liststmt();    }
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();   }
         ;
 
@@ -339,16 +342,18 @@ elseprefix: ELSE {      printf("DOULEUEI TO IF ELSE\n");
                         emit(jump, NULL, NULL, NULL, 0, currQuad);
                 }
 
-ifstmt:   ifprefix stmt elseprefix stmt { patchlabel($1, $3 + 1); patchlabel($3, nextquad());  Manage_ifstmt_ifelse();  }
-        | ifprefix stmt         {   patchlabel($1, nextquad()); Manage_ifstmt_if();     }
+ifstmt:   ifprefix stmt elseprefix stmt {  patchlabel($1, $3 + 1); patchlabel($3, nextquad());  Manage_ifstmt_ifelse();
+                                        $$ = make_stmt();
+                                        $$->breaklist = mergelist($2->breaklist, $4->breaklist); $$->continuelist = mergelist($2->continuelist, $4->continuelist);}
+        | ifprefix stmt         {  $$ = $2; patchlabel($1, nextquad()); Manage_ifstmt_if();     }
         ;
 
 
-loopstart:%empty  {/*++loopcounter;*/}
+loopstart:%empty  {++loopcounter;}
 
-loopend:%empty  {/*--loopcounter;*/}
+loopend:%empty  {--loopcounter;}
 
-loopstmt: loopstart stmt loopend {  }
+loopstmt: loopstart stmt loopend { $$ =$2;}
 
 whilestart: WHILE {     printf("whilestart -> while\n");
                         $$ = nextquad();
@@ -363,8 +368,8 @@ whilecond: "(" expr ")" {       printf("whilecond -> (expr)\n");
 whilestmt: whilestart whilecond loopstmt     {      Manage_whilestmt();  
                                                 emit(jump, NULL, NULL, NULL, $1, currQuad);
                                                 patchlabel($2, nextquad());  
-                                                // patchlist(stmt.breaklist, nextquad());
-                                                // patchlist(stmt.contlist, $1);
+                                                patchlist($3->breaklist, nextquad());
+                                                patchlist($3->continuelist, $1);
                                          }
 
 /* N:%empty { $$ = nextquad(); emit(jump, NULL, NULL, NULL, 0, currQuad);}

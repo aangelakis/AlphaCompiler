@@ -1,15 +1,16 @@
-function (){ return false;} // 0
+/*s = 3;
+while(s){
+    if(5) 
+        break;
+    else
+        continue;
+}*/
 
-function(){  // 1
-    function (){ return false;} // 0
-    function (){ 
-        function (){ return false;} // 0
-    }  // 1 
-    function (){ return false;} // 2
-}
+(function(){})();
 
-function (){ return false;} //2
 
-function (){ 
-    function (){ return false;} // 0
-} //3
+//[false, true, [], 5, [ "hello", "lol" ], []];
+
+
+// x = (function(a,b){ return a+b; });
+//(function(){})();

@@ -44,6 +44,11 @@ typedef struct call_t{
     char*           name;
 } call_t;
 
+typedef struct stmt_t {
+    int breaklist;
+    int continuelist;
+} stmt_t;
+
 expr* newexpr(expr_t);
 
 //  CONST VALUES

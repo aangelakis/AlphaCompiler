@@ -1,15 +1,14 @@
 EMIT IF TABLE :
   prepei na mpei se kathe call kai se kathe uminus expr , lvalue ++ etc;
-
+  na dume pu allu prepei na mpei
 
 
 -sta term na kanume $$ = to katalilo giati kanei auto generate $$ = $1 kai se kapoia einai lathos
-ALEX -dhmiourgia pinakwn
 ALEX -calls
 ALEX -check arithmetic (check const ?)
-TEO -functions swsto funcstart / funcend me stack gia ta unamed functions
-TEO -kai sta amesa call twn anon function na pairnei to onoma apo to panw quad
--loop_counter_stack gia ta break kai continue
+TEO  -kai sta amesa call twn anon function na pairnei to onoma apo to panw quad
+TEO  -se function return kai to 1o jump / me xrhsh list opws continue-break gia patch sto telos tu func
+ 
 
 
 -kathe while / for kanun stin arxi tou loop ++loopcounter kai sto telos tou loop --loopcounter
@@ -21,6 +20,10 @@ TEO -kai sta amesa call twn anon function na pairnei to onoma apo to panw quad
 
 fix print strings
 
+DONE :
+-loop_counter_stack gia ta break kai continue
+-functions swsto funcstart / funcend me stack gia ta unamed functions
+-dhmiourgia pinakwn (needs more testing!!!!)
 
 
 
