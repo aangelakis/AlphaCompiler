@@ -5,6 +5,7 @@
 #include "libs/symtable/symtable.h"
 #include "libs/zarkList/zarkList.h"
 #include "libs/Vektor/Vektor.h"
+#include "libs/stack/stack.h"
 #include "expression.h" 
 #include "quads.h"
 
@@ -21,7 +22,8 @@ unsigned int temp_counter = 0;
 extern Vektor* quads;
 unsigned total;
 unsigned int currQuad = 1;
-extern char* anonFuncName;
+extern alpha_stack* anon_func_names_stack;
+extern alpha_stack* invalid_funcname_number_stack;
 
 unsigned nextquad(void) { return currQuad; }
 
@@ -60,7 +62,7 @@ expr* emit_iftableitem(expr* e){
     }else{
         expr* result = newexpr(var_e);
         result->sym = new_temp();
-        emit(tablegetelem,result,e,e->index,0,currQuad);
+        emit(tablegetelem,result,e,e->index,-1,currQuad);
         return result;
     }
 }
@@ -97,10 +99,20 @@ int print_custom_error(char* yaccProvideMessage,const char* yaccProvideName,cons
 void ScopeUp(int callee){
     if (callee == 0 && flag_scope == 0)
     {
+        unsigned int *tmp = (unsigned int *)malloc(sizeof(unsigned int)); //malloc space to have the name in the stack
+        *tmp = invalid_funcname_number; //copy the name
+        stack_push(invalid_funcname_number_stack, (void*)tmp); //put it in the stack
+        invalid_funcname_number = 0; //reset the counter
+
         //we dont soft hide inside the block
         scope ++;
         fprintf(yacc_out,"Scope up to %d\n",scope);
     } else if (callee == 1){
+        unsigned int *tmp = (unsigned int *)malloc(sizeof(unsigned int)); //malloc space to have the name in the stack
+        *tmp = invalid_funcname_number; //copy the name
+        stack_push(invalid_funcname_number_stack, (void*)tmp); //put it in the stack
+        invalid_funcname_number = 0; //reset the counter
+
         //inside one function we soft hide every other scope except the latest scope
         scope ++;
         for (int i = 1; i < scope; i++)
@@ -119,7 +131,11 @@ void ScopeDown(int callee){
     //printf("%d\n",scope);
     hard_hide(&scpArr,scope); //hide the current scope
     scope--;
-    // fprintf(yacc_out,"Scope down to %d\n",--scope);   //print tha we go a scope down
+    unsigned int *tmp = (unsigned int *)stack_pop(invalid_funcname_number_stack); //get the name from the stack
+    invalid_funcname_number = *tmp;  //copy the value to the global variable
+    free(tmp); //free the variable used from the stack
+    
+
     unhide(&scpArr,scope);  //unhide the scope
     
 }
@@ -281,7 +297,7 @@ expr* Manage_const_bool(unsigned char c){
     return newexpr_constbool(c);
 }
 
-void Manage_funcdef_functionId(char *name,idList *args){
+SymTableEntry* Manage_funcdef_functionId(char *name,idList *args){
     fprintf(yacc_out,"scope is =%d\n",scope);
     //if it already exists in the global scope as an lib func
     SymTableEntry* search = lookup_active_with_scope(&scpArr,0,name);
@@ -289,17 +305,14 @@ void Manage_funcdef_functionId(char *name,idList *args){
     {
         if(search->type==LIBFUNC){
             print_custom_error("User function shadows library function",name,scope);
-            return;
+            return NULL;
         }else if(scope-1 == 0){
             print_custom_error("Already found a symbol with same name",name,0);
-            return;
+            return NULL;
         }
         
         
     }
-
-
-
     //if scope 2 , 3 etc 
     if (scope>1)
     {
@@ -312,13 +325,10 @@ void Manage_funcdef_functionId(char *name,idList *args){
         if (search !=NULL)
         {
             print_custom_error("Variable already exists",name,scope);
-            return;
+            return NULL;
         }
         
     }
-    
-    
-
     
     //if it already exists in the same scope print error
     if ((search = lookup_active_with_scope(&scpArr,scope,name)) != NULL)
@@ -327,25 +337,26 @@ void Manage_funcdef_functionId(char *name,idList *args){
             print_custom_error("Function redefinition",name,scope);
         else
             print_custom_error("Funtion declared with same name as variable",name,scope);
-        return ;
+        return NULL;
     }
     
     //insertion in the symtable and in the scopelist
     SymTableEntry* entry = makeSymTableEntry(name,args,scope-1,yylineno,USERFUNC);
     SymTable_put(symTable,name,entry);
     insert_to_scopeArr(&scpArr,scope-1,entry);
-
+    return entry;
     //printf("function id (idlist) block\n");
 }
 
-void Manage_funcdef_function(idList *args){
-    char * name = anonFuncName;
+SymTableEntry* Manage_funcdef_function(idList *args){
+    char * name = (char*)stack_pop(anon_func_names_stack);
     //insertion in the symtable and in the scopelist
     SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC);
     SymTable_put(symTable,name,entry);
     insert_to_scopeArr(&scpArr,scope,entry);
     emit(funcend,newexpr_conststring(name),NULL,NULL,0,currQuad);
     fprintf(yacc_out,"function (idlist) block\n");
+    return entry;
 }
 
 void Manage_block_liststmt(){
@@ -817,9 +828,26 @@ void End_named_func(char* name){
 }
 
 void Init_Anonymous_func(){
-    anonFuncName = invalid_funcname_generator();
+    char * anonFuncName = invalid_funcname_generator();
     ScopeUp(1);
     emit(jump, NULL, NULL, NULL, 0, currQuad);
+    stack_push(anon_func_names_stack, anonFuncName);
     emit(funcstart,newexpr_conststring(anonFuncName),NULL,NULL,-1,currQuad);
+}
+
+expr* make_call(expr* lv, expr* elist){
+    expr* func = emit_iftableitem(lv);
+    while(elist->next){
+        elist = elist->next;
+    }
+    while(elist){
+        emit(param, elist, NULL, NULL, -1, currQuad);
+        elist = elist->prev;
+    }
+    emit(call, func, NULL, NULL, -1, currQuad);
+    expr* result = newexpr(var_e);
+    result->sym = new_temp();
+    emit(getretval, result, NULL, NULL, -1, currQuad);
+    return result;
 }
 #endif

@@ -24,7 +24,6 @@ typedef enum expr_t {
     nil_e
 } expr_t;
 
-
 typedef struct expr {
     expr_t          type;
     SymTableEntry*  sym;
@@ -36,7 +35,14 @@ typedef struct expr {
     } content;
     struct expr*    index;
     struct expr*    next;
+    struct expr*    prev;
 } expr;
+
+typedef struct call_t{
+    expr*           elist;
+    unsigned char   method;
+    char*           name;
+} call_t;
 
 expr* newexpr(expr_t);
 

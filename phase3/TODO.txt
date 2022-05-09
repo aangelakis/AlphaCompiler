@@ -19,7 +19,7 @@ TEO -kai sta amesa call twn anon function na pairnei to onoma apo to panw quad
   -ola ta break / continue mpainun se listes me head sto antistoixo epipedo tu stack etsi wste otan kleisei
     i loop pu tis kalese na ta kanei backpatch
 
-
+fix print strings
 
 
 

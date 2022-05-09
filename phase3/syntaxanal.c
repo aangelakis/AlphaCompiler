@@ -4,6 +4,7 @@
 #include "libs/zarkList/zarkList.h"
 #include "expression.h"
 #include "parser.h"
+#include "libs/stack/stack.h"
 #include "libs/Vektor/Vektor.h"
 #include "expression.h" 
 #include "quads.h"
@@ -13,7 +14,8 @@ SymTable_T symTable;
 scopeArray* scpArr;
 Vektor* quads;
 FILE* quads_out;
-
+alpha_stack* anon_func_names_stack; 
+alpha_stack* invalid_funcname_number_stack;
 scopeArray* globalScopeArr;
 
 char libraryFunctions[12][24]={
@@ -39,7 +41,8 @@ int main(int argc, char *argv[]){
 	scpArr = scope_initialize();
 	globalScopeArr = scope_initialize();
     quads = vektor_initialize();
-
+    anon_func_names_stack = alpha_stack_init();
+    invalid_funcname_number_stack = alpha_stack_init();
     SymTableEntry* tmp;
     
     if (argc > 1)

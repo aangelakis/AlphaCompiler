@@ -1,4 +1,15 @@
-s = 5;
-while(s){
-    s = s-1;
+function (){ return false;} // 0
+
+function(){  // 1
+    function (){ return false;} // 0
+    function (){ 
+        function (){ return false;} // 0
+    }  // 1 
+    function (){ return false;} // 2
 }
+
+function (){ return false;} //2
+
+function (){ 
+    function (){ return false;} // 0
+} //3
