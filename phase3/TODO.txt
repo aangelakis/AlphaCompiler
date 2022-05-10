@@ -3,19 +3,13 @@ EMIT IF TABLE :
   na dume pu allu prepei na mpei
 
 
+-merikh apotimhsh
 -sta term na kanume $$ = to katalilo giati kanei auto generate $$ = $1 kai se kapoia einai lathos
-ALEX -check arithmetic (check const ?)
-
 -not quad in print!
 -print strings
 
+TEO -global in function gia na dume ama eimaste se legal return
 
--kathe while / for kanun stin arxi tou loop ++loopcounter kai sto telos tou loop --loopcounter
-  -kathe block otan anoigei kanei push to loopcounter se ena stack kai kanei reset to global 
-  -opote koitame gia break/continue koitame sto last added sto stack gia 0/1
-  -opote teleiwnei ena block kanei pop to loopcounter apo to stack kai epanaferei tin timi tou loopcounter
-  -ola ta break / continue mpainun se listes me head sto antistoixo epipedo tu stack etsi wste otan kleisei
-    i loop pu tis kalese na ta kanei backpatch
 
 DONE :
 -loop_counter_stack gia ta break kai continue
@@ -24,38 +18,13 @@ DONE :
 -kai sta amesa call twn anon function na pairnei to onoma apo to panw quad
 -se function return kai to 1o jump / me xrhsh list opws continue-break gia patch sto telos tu func
 -calls
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-check arithmetic (check const ?)
+-kathe while / for kanun stin arxi tou loop ++loopcounter kai sto telos tou loop --loopcounter
+  -kathe block otan anoigei kanei push to loopcounter se ena stack kai kanei reset to global 
+  -opote koitame gia break/continue koitame sto last added sto stack gia 0/1
+  -opote teleiwnei ena block kanei pop to loopcounter apo to stack kai epanaferei tin timi tou loopcounter
+  -ola ta break / continue mpainun se listes me head sto antistoixo epipedo tu stack etsi wste otan kleisei
+    i loop pu tis kalese na ta kanei backpatch
 
 
 
