@@ -34,6 +34,7 @@ stmt_t* make_stmt(void) {
     stmt_t* s = malloc(sizeof(stmt_t));
     s->breaklist = 0;
     s->continuelist = 0;
+    s->returnlist = 0;
     return s;
 }
 
@@ -65,7 +66,8 @@ void patchlist(int list, int label) {
 }
 
 void patchlabel(unsigned quadNo, unsigned label) {
-    assert(quadNo < currQuad && !((quad*)quads->data[quadNo])->label);
+    assert(quadNo < currQuad );
+    assert(!((quad*)quads->data[quadNo])->label);
     ((quad*)quads->data[quadNo])->label = label;
 }
 
@@ -427,7 +429,7 @@ SymTableEntry* Manage_funcdef_function(idList *args){
     SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC);
     SymTable_put(symTable,name,entry);
     insert_to_scopeArr(&scpArr,scope,entry);
-    emit(funcend,newexpr_conststring(name),NULL,NULL,0,currQuad);
+    emit(funcend,newexpr_conststring(name),NULL,NULL,-1,currQuad);
 
     //patch the jump
     int *tmp_currQuad = (int *) stack_pop(func_init_jump_stack);
@@ -1015,8 +1017,9 @@ void End_named_func(char* name){
     free(tmp_loopcounter);
     fprintf(yacc_out, "function id (idlist) block\n"); 
     emit(funcend,newexpr_conststring(name),NULL,NULL,-1,currQuad);
-    //edw thelei backpatch gia to jump meta to init pros to telos tou function
-
+    
+    
+    //patches the jump created by funcstart
     int *tmp_currQuad = (int *) stack_pop(func_init_jump_stack);
     patchlabel(*tmp_currQuad, nextquad());
     free(tmp_currQuad);

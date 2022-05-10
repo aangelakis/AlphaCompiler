@@ -139,16 +139,16 @@
 %type<statement> forstmt
 %type<statement> returnstmt
 %type<forprefixVal> forprefix
-
+%type<statement> program
 
 %%
 
-program: liststmt   {   Manage_program_liststmt();     fclose(yacc_out); }
+program: liststmt   { $$=$1;   Manage_program_liststmt();     fclose(yacc_out); }
         |%empty     {   Manage_program_empty();        fclose(yacc_out); }
         ;
 
 liststmt: liststmt stmt {  $$ = Manage_liststmt_liststmtStmt($1, $2);      }
-          | stmt        {   Manage_liststmt_stmt();             }
+          | stmt        {  $$=$1; Manage_liststmt_stmt();             }
           ;
 
 stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();   reset_temp_counter();      }
@@ -315,13 +315,13 @@ indexedelem: "{" expr ":" expr "}"  {   $4->index = $2;
                                 }
 
 block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} { $$=$3;  Manage_block_liststmt();    }
-        |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       {  Manage_block_emptyblock();   }
+        |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       { $$=make_stmt();  Manage_block_emptyblock();   }
         ;
 
 funcdef: FUNCTION ID {Init_named_func($2);} "("idlist")" {$<symEntr>$ = Manage_funcdef_functionId($2,$5);} block 
-                        {  End_named_func($2); patchlabel($8->returnlist,nextquad()-1); }
+                        {  End_named_func($2); patchlist($8->returnlist,nextquad()-1); }
                         
-        | FUNCTION{Init_Anonymous_func();} "("idlist")" block   {  $$ = Manage_funcdef_function($4);  patchlabel($6->returnlist,nextquad()-1); }
+        | FUNCTION{Init_Anonymous_func();} "("idlist")" block   {  $$ = Manage_funcdef_function($4);  patchlist($6->returnlist,nextquad()-1); }
         ;
 
 const:  INT       { $$ = Manage_const_int($1);    }
@@ -387,6 +387,7 @@ N:%empty { $$ = nextquad(); emit(jump, NULL, NULL, NULL, 0, currQuad);}
 M:%empty { $$ = nextquad(); }
 
 forprefix: FOR "(" elist ";" M expr ";" {
+        $$ = malloc(sizeof(forprefix_t));
         $$->test = $5; 
         $$->enter = nextquad();
         emit(if_eq, NULL, $6, newexpr_constbool(1), 0, nextquad());
@@ -399,11 +400,11 @@ forstmt: forprefix N elist ")" N loopstmt N {
         patchlabel($5, $1->test);
         patchlabel($7, $2 + 1);
         
-        $$ = $6;
+        
 
         patchlist($6->breaklist, nextquad());
         patchlist($6->continuelist, $2+1);
-
+        $$ = $6;
         Manage_forstmt();
 };
 

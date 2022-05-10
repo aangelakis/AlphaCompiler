@@ -1,3 +1,4 @@
+/*
 function a(){
     s = 5;
     if(s){
@@ -5,10 +6,25 @@ function a(){
     }
     ;
     function a (){
-        ;
-        for(i = 0; i < N; ++i)
+        ;  
+        for(i = 0; i < N; ++i){
             return ;
         }
         
     }
-};
+};*/
+
+function(){
+    s = 5;
+    if(s){
+        return s;
+    }
+    ;
+    ;
+    for(i = 0; i < N; ++i){
+        while(1){
+            return ;
+        }
+        ;
+    }
+}
