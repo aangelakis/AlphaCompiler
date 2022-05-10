@@ -17,6 +17,7 @@ FILE* quads_out;
 alpha_stack* anon_func_names_stack; 
 alpha_stack* invalid_funcname_number_stack;
 alpha_stack* loopcounter_stack;
+alpha_stack* func_init_jump_stack;
 scopeArray* globalScopeArr;
 
 char libraryFunctions[12][24]={
@@ -45,6 +46,7 @@ int main(int argc, char *argv[]){
     anon_func_names_stack = alpha_stack_init();
     invalid_funcname_number_stack = alpha_stack_init();
     loopcounter_stack= alpha_stack_init();
+    func_init_jump_stack = alpha_stack_init();
     SymTableEntry* tmp;
     
     if (argc > 1)

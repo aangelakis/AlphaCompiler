@@ -1,16 +1,14 @@
-/*s = 3;
-while(s){
-    if(5) 
-        break;
-    else
-        continue;
-}*/
-
-(function(){})();
-
-
-//[false, true, [], 5, [ "hello", "lol" ], []];
-
-
-// x = (function(a,b){ return a+b; });
-//(function(){})();
+function a(){
+    s = 5;
+    if(s){
+        return s;
+    }
+    ;
+    function a (){
+        ;
+        for(i = 0; i < N; ++i)
+            return ;
+        }
+        
+    }
+};

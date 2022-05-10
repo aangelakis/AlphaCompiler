@@ -25,6 +25,7 @@ unsigned int currQuad = 1;
 extern alpha_stack* anon_func_names_stack;
 extern alpha_stack* invalid_funcname_number_stack;
 extern alpha_stack* loopcounter_stack;
+extern alpha_stack* func_init_jump_stack;
 int loopcounter = 0;
 
 unsigned nextquad(void) { return currQuad; }
@@ -231,12 +232,24 @@ SymTableEntry* new_temp(){
     return sym; //return the entry
 }
 
-void Manage_returnstmt_returnexpr(){
+stmt_t* Manage_returnstmt_returnexpr(expr* rvalue){
+    stmt_t* stmt_tmp = make_stmt();
+    emit(ret,rvalue,NULL,NULL,-1,nextquad());
+    emit(jump, NULL, NULL, NULL, 0, currQuad);
+    stmt_tmp->returnlist = newlist(nextquad()-1);
     fprintf(yacc_out,"returnstmt -> return expr;\n");
+
+    return stmt_tmp;
 } 
 
-void Manage_returnstmt_return(){
+stmt_t* Manage_returnstmt_return(){
+    stmt_t* stmt_tmp = make_stmt();
+    emit(ret,NULL,NULL,NULL,-1,nextquad());
+    emit(jump, NULL, NULL, NULL, 0, currQuad);
+    stmt_tmp->returnlist = newlist(nextquad() - 1);
     fprintf(yacc_out,"returnstmt -> return;\n");
+
+    return stmt_tmp;
 }
 
 void Manage_forstmt(){
@@ -415,6 +428,12 @@ SymTableEntry* Manage_funcdef_function(idList *args){
     SymTable_put(symTable,name,entry);
     insert_to_scopeArr(&scpArr,scope,entry);
     emit(funcend,newexpr_conststring(name),NULL,NULL,0,currQuad);
+
+    //patch the jump
+    int *tmp_currQuad = (int *) stack_pop(func_init_jump_stack);
+    patchlabel(*tmp_currQuad, nextquad());
+    free(tmp_currQuad);
+
     fprintf(yacc_out,"function (idlist) block\n");
     return entry;
 }
@@ -953,6 +972,7 @@ stmt_t* Manage_liststmt_liststmtStmt(stmt_t* liststmt, stmt_t* simple_stmt){
     stmt_t* new_stmt = make_stmt();
     new_stmt->breaklist = mergelist(liststmt->breaklist, simple_stmt->breaklist);
     new_stmt->continuelist = mergelist(liststmt->continuelist, simple_stmt->continuelist);
+    new_stmt->returnlist = mergelist(liststmt->returnlist, simple_stmt->returnlist);
 
     return new_stmt;
 }
@@ -977,6 +997,13 @@ void Init_named_func(char * name){
     loopcounter = 0;
     
     ScopeUp(1);
+
+    // puts the quad number of jump to function in the stack
+    int * tmp_currQuad = (int *)malloc(sizeof(int));
+    *tmp_currQuad = nextquad();
+    stack_push(func_init_jump_stack,(void *)tmp_currQuad);
+
+
     emit(jump, NULL, NULL, NULL, 0, currQuad);
     emit(funcstart,newexpr_conststring(name),NULL,NULL,-1,currQuad);
 }
@@ -989,6 +1016,10 @@ void End_named_func(char* name){
     fprintf(yacc_out, "function id (idlist) block\n"); 
     emit(funcend,newexpr_conststring(name),NULL,NULL,-1,currQuad);
     //edw thelei backpatch gia to jump meta to init pros to telos tou function
+
+    int *tmp_currQuad = (int *) stack_pop(func_init_jump_stack);
+    patchlabel(*tmp_currQuad, nextquad());
+    free(tmp_currQuad);
 }
 
 void Init_Anonymous_func(){
@@ -997,6 +1028,11 @@ void Init_Anonymous_func(){
     *tmp_loopcounter = loopcounter;
     stack_push(loopcounter_stack,(void *)tmp_loopcounter);
     loopcounter = 0;
+
+    // puts the quad number of jump to function in the stack
+    int * tmp_currQuad = (int *)malloc(sizeof(int));
+    *tmp_currQuad = nextquad();
+    stack_push(func_init_jump_stack,(void *)tmp_currQuad);
 
     char * anonFuncName = invalid_funcname_generator();
     ScopeUp(1);

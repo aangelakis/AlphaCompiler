@@ -26,7 +26,8 @@
     idList*             args;
     expr*               express;
     stmt_t*             statement;
-    call_t*              callVal;                
+    call_t*              callVal;
+    forprefix_t*        forprefixVal;                
 }
 
 %initial-action
@@ -131,12 +132,14 @@
 %type<labelVal> elseprefix
 %type<labelVal> whilestart
 %type<labelVal> whilecond
-/* %type<labelVal> M
-%type<labelVal> N */
+%type<labelVal> M
+%type<labelVal> N 
 %type<statement> ifstmt
-%type whilestmt
-%type forstmt
-%type returnstmt
+%type<statement> whilestmt
+%type<statement> forstmt
+%type<statement> returnstmt
+%type<forprefixVal> forprefix
+
 
 %%
 
@@ -150,9 +153,9 @@ liststmt: liststmt stmt {  $$ = Manage_liststmt_liststmtStmt($1, $2);      }
 
 stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();   reset_temp_counter();      }
       | ifstmt      {   $$ = $1; Manage_stmt_ifstmt();       }
-      | whilestmt   {   $$ = make_stmt(); Manage_stmt_whilestmt();    }
-      | forstmt     {   $$ = make_stmt(); Manage_stmt_forstmt();      }
-      | returnstmt  {   $$ = make_stmt(); Manage_stmt_returnstmt();   }
+      | whilestmt   {   $$ = $1; Manage_stmt_whilestmt();    }
+      | forstmt     {   $$ = $1; Manage_stmt_forstmt();      }
+      | returnstmt  {   $$ = $1; Manage_stmt_returnstmt();   }
       | BREAK ";"   {   $$ = Manage_stmt_break();        }  
       | CONTINUE ";"{   $$ = Manage_stmt_continue();     }
       | block       {   $$ = $1; Manage_stmt_block();        }
@@ -316,9 +319,9 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} { $$=$3;  Manage_block_lis
         ;
 
 funcdef: FUNCTION ID {Init_named_func($2);} "("idlist")" {$<symEntr>$ = Manage_funcdef_functionId($2,$5);} block 
-                        {  End_named_func($2); }
+                        {  End_named_func($2); patchlabel($8->returnlist,nextquad()-1); }
                         
-        | FUNCTION{Init_Anonymous_func();} "("idlist")" block   {  $$ = Manage_funcdef_function($4);   }
+        | FUNCTION{Init_Anonymous_func();} "("idlist")" block   {  $$ = Manage_funcdef_function($4);  patchlabel($6->returnlist,nextquad()-1); }
         ;
 
 const:  INT       { $$ = Manage_const_int($1);    }
@@ -347,7 +350,10 @@ elseprefix: ELSE {      printf("DOULEUEI TO IF ELSE\n");
 
 ifstmt:   ifprefix stmt elseprefix stmt {  patchlabel($1, $3 + 1); patchlabel($3, nextquad());  Manage_ifstmt_ifelse();
                                         $$ = make_stmt();
-                                        $$->breaklist = mergelist($2->breaklist, $4->breaklist); $$->continuelist = mergelist($2->continuelist, $4->continuelist);}
+                                        $$->breaklist = mergelist($2->breaklist, $4->breaklist); 
+                                        $$->continuelist = mergelist($2->continuelist, $4->continuelist);
+                                        $$->returnlist = mergelist($2->returnlist, $4->returnlist);
+                                        }
         | ifprefix stmt         {  $$ = $2; patchlabel($1, nextquad()); Manage_ifstmt_if();     }
         ;
 
@@ -369,25 +375,40 @@ whilecond: "(" expr ")" {       printf("whilecond -> (expr)\n");
                         }
 
 whilestmt: whilestart whilecond loopstmt     {      Manage_whilestmt();  
+                                                $$ = $3;
                                                 emit(jump, NULL, NULL, NULL, $1, currQuad);
                                                 patchlabel($2, nextquad());  
                                                 patchlist($3->breaklist, nextquad());
                                                 patchlist($3->continuelist, $1);
                                          }
 
-/* N:%empty { $$ = nextquad(); emit(jump, NULL, NULL, NULL, 0, currQuad);}
+N:%empty { $$ = nextquad(); emit(jump, NULL, NULL, NULL, 0, currQuad);}
 
 M:%empty { $$ = nextquad(); }
 
 forprefix: FOR "(" elist ";" M expr ";" {
+        $$->test = $5; 
+        $$->enter = nextquad();
+        emit(if_eq, NULL, $6, newexpr_constbool(1), 0, nextquad());
+}
 
-} */
 
+forstmt: forprefix N elist ")" N loopstmt N {   
+        patchlabel($1->enter, $5+1);
+        patchlabel($2, nextquad());
+        patchlabel($5, $1->test);
+        patchlabel($7, $2 + 1);
+        
+        $$ = $6;
 
-forstmt: FOR "(" elist ";" expr ";" elist ")" loopstmt  {   Manage_forstmt();  };
+        patchlist($6->breaklist, nextquad());
+        patchlist($6->continuelist, $2+1);
 
-returnstmt: RETURN expr";"  {   Manage_returnstmt_returnexpr(); }
-            | RETURN";"     {   Manage_returnstmt_return();     }
+        Manage_forstmt();
+};
+
+returnstmt: RETURN expr";"  {   $$ = Manage_returnstmt_returnexpr($2); }
+            | RETURN";"     {  $$ = Manage_returnstmt_return();     }
             ;
 
 %%

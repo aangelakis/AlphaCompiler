@@ -47,7 +47,13 @@ typedef struct call_t{
 typedef struct stmt_t {
     int breaklist;
     int continuelist;
+    int returnlist;
 } stmt_t;
+
+typedef struct forprefix_t {
+    int test;
+    int enter;
+} forprefix_t;
 
 expr* newexpr(expr_t);
 
