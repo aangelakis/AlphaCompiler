@@ -723,7 +723,7 @@ expr* Manage_term_pluspluslvalue(expr *lvalue){
     if(lvalue->type == tableitem_e){
         term = emit_iftableitem(lvalue);
         emit(add, term, term, newexpr_constint(1), -1, currQuad);
-        emit(tablesetelem, term, lvalue->index, lvalue, -1, currQuad);
+        emit(tablesetelem, lvalue, lvalue->index, term, -1, currQuad);
     }
     else{
         emit(add, lvalue, lvalue, newexpr_constint(1), -1, currQuad);
@@ -749,7 +749,7 @@ expr* Manage_term_lvalueplusplus(expr *lvalue){
         expr* val = emit_iftableitem(lvalue);
         emit(assign, term, val, NULL, -1, currQuad);
         emit(add, val, val, newexpr_constint(1), -1, currQuad);
-        emit(tablesetelem, val, lvalue->index, lvalue, -1, currQuad);
+        emit(tablesetelem, lvalue, lvalue->index, val, -1, currQuad);
     }
     else{
         emit(assign, term, lvalue, NULL, -1, currQuad);
@@ -765,7 +765,23 @@ expr* Manage_term_minusminuslvalue(expr *lvalue){
     if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
         print_custom_error("Cant use a function as an lvalue",lvalue->sym->value.funcVal->name,scope);
     }
+
+    expr* term = NULL;
+    check_arith(lvalue);
+    if(lvalue->type == tableitem_e){
+        term = emit_iftableitem(lvalue);
+        emit(sub, term, term, newexpr_constint(1), -1, currQuad);
+        emit(tablesetelem, lvalue, lvalue->index, term, -1, currQuad);
+    }
+    else{
+        emit(sub, lvalue, lvalue, newexpr_constint(1), -1, currQuad);
+        term = newexpr(arithexpr_e);
+        term->sym = new_temp();
+        emit(assign, term, lvalue, NULL, -1, currQuad);
+    }
+
     fprintf(yacc_out,"term -> --lvalue\n");
+    return term;
 }
 
 expr* Manage_term_lvalueminusminus(expr *lvalue){
@@ -773,7 +789,24 @@ expr* Manage_term_lvalueminusminus(expr *lvalue){
     if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
         print_custom_error("Cant use a function as an lvalue",lvalue->sym->value.funcVal->name,scope);
     }
+
+    expr* term = NULL;
+    check_arith(lvalue);
+    term = newexpr(var_e);
+    term->sym = new_temp();
+    if(lvalue->type == tableitem_e){
+        expr* val = emit_iftableitem(lvalue);
+        emit(assign, term, val, NULL, -1, currQuad);
+        emit(sub, val, val, newexpr_constint(1), -1, currQuad);
+        emit(tablesetelem, lvalue, lvalue->index, val, -1, currQuad);
+    }
+    else{
+        emit(assign, term, lvalue, NULL, -1, currQuad);
+        emit(sub, lvalue, lvalue, newexpr_constint(1), -1, currQuad);
+    }
+
     fprintf(yacc_out,"term -> lvalue--\n");
+    return term;
 }
 
 void Manage_term_primary(){
