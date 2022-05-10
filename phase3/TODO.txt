@@ -8,6 +8,7 @@ ALEX -calls
 ALEX -check arithmetic (check const ?)
 TEO  -kai sta amesa call twn anon function na pairnei to onoma apo to panw quad
 TEO  -se function return kai to 1o jump / me xrhsh list opws continue-break gia patch sto telos tu func
+-not quad in print!
  
 
 
@@ -24,6 +25,7 @@ DONE :
 -loop_counter_stack gia ta break kai continue
 -functions swsto funcstart / funcend me stack gia ta unamed functions
 -dhmiourgia pinakwn (needs more testing!!!!)
+
 
 
 

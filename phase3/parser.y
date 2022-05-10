@@ -179,11 +179,12 @@ expr:   assignexpr        {     Manage_expr_assignexpr();       }
 
 term:   "(" expr ")"            {   $$ = $2; Manage_term_expr();                 }
         | "-"expr  %prec UMINUS {   $$ = Manage_term_uminusExpr($2);           }
-        | NOT expr              {   Manage_term_notExpr();              }
-        | "++"lvalue            {   Manage_term_pluspluslvalue($2);       }
-        | lvalue"++"            {   Manage_term_lvalueplusplus($1);       }
-        | "--"lvalue            {   Manage_term_minusminuslvalue($2);     }
-        | lvalue"--"            {   Manage_term_lvalueminusminus($1);     }
+        | NOT expr              {   //thelei kialla logo tis olikis/merikis apotimisis.
+                                    $$ = Manage_term_notExpr($2);              }
+        | "++"lvalue            {   $$ = Manage_term_pluspluslvalue($2);       }
+        | lvalue"++"            {   $$ = Manage_term_lvalueplusplus($1);       }
+        | "--"lvalue            {   $$ = Manage_term_minusminuslvalue($2);     }
+        | lvalue"--"            {   $$ = Manage_term_lvalueminusminus($1);     }
         | primary               {   $$ = $1; Manage_term_primary();              }
         ;
 
@@ -214,8 +215,10 @@ lvalue: ID                    { SymTableEntry *tmpSymbol = NULL;
 
 member: lvalue "." ID           {   $$ = Manage_member_lvalueID($1, $3);   }
         | lvalue "[" expr "]"   {   $$ = Manage_member_lvalueExpr($1, $3); }
-        | call "." ID           {   Manage_member_callID();     }
-        | call "[" expr "]"     {   Manage_member_callExpr();   }
+        | call "." ID           {   $$ = member_item($1, $3); Manage_member_callID();     }
+        | call "[" expr "]"     {       $$ = member_item_expr($1, $3);
+                                        Manage_member_callExpr();   
+                                }
         ;
 
 call: call "(" elist ")"                {       $$ = make_call($1, $3); 

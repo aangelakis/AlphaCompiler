@@ -111,6 +111,25 @@ expr* member_item(expr* lv, char* name){
     return ti;
 }
 
+expr* member_item_expr(expr* lv, expr* inBrackets){
+    lv = emit_iftableitem(lv);
+    expr* ti = newexpr(tableitem_e);
+    ti->sym = lv->sym;
+    ti->index = inBrackets;
+    return ti;
+}
+
+void check_arith(expr* e){
+    if( e->type == constbool_e   ||
+        e->type == conststring_e ||
+        e->type == nil_e         ||
+        e->type == newtable_e    ||
+        e->type == programfunc_e ||
+        e->type == libraryfunc_e ||
+        e->type == boolexpr_e )
+        printf("Illegal expr used!\n");
+}
+
 int yyerror(char* yaccProvideMessage)
 {
     fprintf(stderr , "\033[0;31mERROR\033[0m\n");
@@ -673,47 +692,86 @@ expr* Manage_term_uminusExpr(expr * lvalue){
         print_custom_error("Cant make uminus to function",lvalue->sym->value.funcVal->name,scope);
     }
     
-    SymTableEntry *tmp = new_temp(); // create new tmp variable
-    expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
+    check_arith(lvalue);
+    expr* term = newexpr(arithexpr_e);
+    term->sym = new_temp(); // create new tmp variable
 
-    emit(uminus, tmp_expr, lvalue, NULL, -1, currQuad); // _t0 = -x;
+    //expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
+
+    emit(uminus, term, lvalue, NULL, -1, currQuad); // _t0 = -x;
 
     fprintf(yacc_out,"term -> -expr\n");
-    return tmp_expr;
+    return term;
 }
 
-void Manage_term_notExpr(){
+expr* Manage_term_notExpr(expr* notExpr){
+    expr* term = newexpr(boolexpr_e);
+    term->sym = new_temp();
+    emit(not, term, notExpr, NULL, -1, currQuad);
     fprintf(yacc_out,"term -> not expr\n");
+    return term;
 }
 
-void Manage_term_pluspluslvalue(expr *entry){
-    if(entry == NULL){return;}
-    if(entry->type==programfunc_e || entry->type==libraryfunc_e){
-        print_custom_error("Cant use a function as an lvalue",entry->sym->value.funcVal->name,scope);
+expr* Manage_term_pluspluslvalue(expr *lvalue){
+    if(lvalue == NULL){return NULL;}
+    if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
+        print_custom_error("Cant use a function as an lvalue",lvalue->sym->value.funcVal->name,scope);
     }
+
+    expr* term = NULL;
+    check_arith(lvalue);
+    if(lvalue->type == tableitem_e){
+        term = emit_iftableitem(lvalue);
+        emit(add, term, term, newexpr_constint(1), -1, currQuad);
+        emit(tablesetelem, term, lvalue->index, lvalue, -1, currQuad);
+    }
+    else{
+        emit(add, lvalue, lvalue, newexpr_constint(1), -1, currQuad);
+        term = newexpr(arithexpr_e);
+        term->sym = new_temp();
+        emit(assign, term, lvalue, NULL, -1, currQuad);
+    }
+
     fprintf(yacc_out,"term -> ++lvalue\n");
+    return term;
 }
 
-void Manage_term_lvalueplusplus(expr *entry){
-    if(entry == NULL){return;}
-    if(entry->type==programfunc_e || entry->type==libraryfunc_e){
-        print_custom_error("Cant use a function as an lvalue",entry->sym->value.funcVal->name,scope);
+expr* Manage_term_lvalueplusplus(expr *lvalue){
+    if(lvalue == NULL){return NULL;}
+    if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
+        print_custom_error("Cant use a function as an lvalue",lvalue->sym->value.funcVal->name,scope);
     }
+    expr* term = NULL;
+    check_arith(lvalue);
+    term = newexpr(var_e);
+    term->sym = new_temp();
+    if(lvalue->type == tableitem_e){
+        expr* val = emit_iftableitem(lvalue);
+        emit(assign, term, val, NULL, -1, currQuad);
+        emit(add, val, val, newexpr_constint(1), -1, currQuad);
+        emit(tablesetelem, val, lvalue->index, lvalue, -1, currQuad);
+    }
+    else{
+        emit(assign, term, lvalue, NULL, -1, currQuad);
+        emit(add, lvalue, lvalue, newexpr_constint(1), -1, currQuad);
+    }
+
     fprintf(yacc_out,"term -> lvalue++\n");
+    return term;
 }
 
-void Manage_term_minusminuslvalue(expr *entry){
-    if(entry == NULL){return;}
-    if(entry->type==programfunc_e || entry->type==libraryfunc_e){
-        print_custom_error("Cant use a function as an lvalue",entry->sym->value.funcVal->name,scope);
+expr* Manage_term_minusminuslvalue(expr *lvalue){
+    if(lvalue == NULL){return NULL;}
+    if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
+        print_custom_error("Cant use a function as an lvalue",lvalue->sym->value.funcVal->name,scope);
     }
     fprintf(yacc_out,"term -> --lvalue\n");
 }
 
-void Manage_term_lvalueminusminus(expr *entry){
-    if(entry == NULL){return;}
-    if(entry->type==programfunc_e || entry->type==libraryfunc_e){
-        print_custom_error("Cant use a function as an lvalue",entry->sym->value.funcVal->name,scope);
+expr* Manage_term_lvalueminusminus(expr *lvalue){
+    if(lvalue == NULL){return NULL;}
+    if(lvalue->type==programfunc_e || lvalue->type==libraryfunc_e){
+        print_custom_error("Cant use a function as an lvalue",lvalue->sym->value.funcVal->name,scope);
     }
     fprintf(yacc_out,"term -> lvalue--\n");
 }
@@ -916,12 +974,14 @@ void Init_Anonymous_func(){
 
 expr* make_call(expr* lv, expr* elist){
     expr* func = emit_iftableitem(lv);
-    while(elist->next){
-        elist = elist->next;
-    }
-    while(elist){
-        emit(param, elist, NULL, NULL, -1, currQuad);
-        elist = elist->prev;
+    if(elist != NULL){
+        while(elist->next){
+            elist = elist->next;
+        }
+        while(elist){
+            emit(param, elist, NULL, NULL, -1, currQuad);
+            elist = elist->prev;
+        }
     }
     emit(call, func, NULL, NULL, -1, currQuad);
     expr* result = newexpr(var_e);
