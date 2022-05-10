@@ -8,6 +8,7 @@
         extern int loopcounter;
 	extern int yylineno;
 	extern char* yytext;
+        int infunction = 0;
 	int scope = 0;
 	int flag_scope = 0 ; // 0 == block ; 1 == function
         char* anonFuncName = NULL;
@@ -318,10 +319,10 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} { $$=$3;  Manage_block_lis
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       { $$=make_stmt();  Manage_block_emptyblock();   }
         ;
 
-funcdef: FUNCTION ID {Init_named_func($2);} "("idlist")" {$<symEntr>$ = Manage_funcdef_functionId($2,$5);} block 
-                        {  End_named_func($2); patchlist($8->returnlist,nextquad()-1); }
+funcdef: FUNCTION ID {Init_named_func($2);infunction++;} "("idlist")" {$<symEntr>$ = Manage_funcdef_functionId($2,$5);} block 
+                        {  End_named_func($2); patchlist($8->returnlist,nextquad()-1); infunction--;}
                         
-        | FUNCTION{Init_Anonymous_func();} "("idlist")" block   {  $$ = Manage_funcdef_function($4);  patchlist($6->returnlist,nextquad()-1); }
+        | FUNCTION{Init_Anonymous_func(); infunction++;} "("idlist")" block   {  $$ = Manage_funcdef_function($4);  patchlist($6->returnlist,nextquad()-1);infunction--; }
         ;
 
 const:  INT       { $$ = Manage_const_int($1);    }
@@ -413,8 +414,18 @@ forstmt: forprefix N elist ")" N loopstmt N {
         Manage_forstmt();
 };
 
-returnstmt: RETURN expr";"  {   $$ = Manage_returnstmt_returnexpr($2); }
-            | RETURN";"     {  $$ = Manage_returnstmt_return();     }
+returnstmt: RETURN expr";"  {  
+                                if(infunction==0){
+                                        print_custom_error("return outside of function","return",scope);
+                                } 
+                                $$ = Manage_returnstmt_returnexpr($2); 
+                        }
+            | RETURN";"     
+                        {       if(infunction==0){
+                                        print_custom_error("return outside of function","return",scope);
+                                } 
+                                $$ = Manage_returnstmt_return();     
+                        }
             ;
 
 %%
