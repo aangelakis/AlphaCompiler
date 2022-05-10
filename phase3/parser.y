@@ -389,6 +389,11 @@ M:%empty { $$ = nextquad(); }
 forprefix: FOR "(" elist ";" M expr ";" {
         $$ = malloc(sizeof(forprefix_t));
         $$->test = $5; 
+        //dummy emits
+        emit(jump,NULL,NULL,NULL,-1,currQuad);
+        emit(jump,NULL,NULL,NULL,-1,currQuad);
+        emit(jump,NULL,NULL,NULL,-1,currQuad);
+        emit(jump,NULL,NULL,NULL,-1,currQuad);
         $$->enter = nextquad();
         emit(if_eq, NULL, $6, newexpr_constbool(1), 0, nextquad());
 }
