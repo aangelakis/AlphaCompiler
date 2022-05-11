@@ -20,6 +20,27 @@ TEO -kai sta amesa call twn anon function na pairnei to onoma apo to panw quad
     i loop pu tis kalese na ta kanei backpatch
 
 
+relop: ">=" {} | ...;
+
+relopexpr: expr relop expr    {    $$ = Manage_expr_exprOPexpr($1, $2, $3);   }         // quad gia relop kai quad gia jump     
+        ;                                                                               // episis tha ftiaxtoun ta falselist kai truelist      
+
+boolexpr: relopexpr {}
+          | boolexpr AND boolexpr  {}     // edw tha ginetai meros tou backpatch kai katallhlo merge twn falselist kai twn truelist
+          | boolexpr OR boolexpr {}
+        ;
+
+expr: ... | boolexpr {}            // edw tha teleiwnei to backpatch
+        ;
+
+
+
+
+
+
+
+
+
 
 
 

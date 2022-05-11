@@ -1,0 +1,31 @@
+M -> 5
+Mlabel = 5
+type: 5
+----------------Symbol Table Entries-------------------------
+
+-----------	Scope #0	-----------
+"print" [library function] (line 0) (scope 0)
+"input" [library function] (line 0) (scope 0)
+"objectmemberkeys" [library function] (line 0) (scope 0)
+"objecttotalmembers" [library function] (line 0) (scope 0)
+"objectcopy" [library function] (line 0) (scope 0)
+"totalarguments" [library function] (line 0) (scope 0)
+"argument" [library function] (line 0) (scope 0)
+"typeof" [library function] (line 0) (scope 0)
+"strtonum" [library function] (line 0) (scope 0)
+"sqrt" [library function] (line 0) (scope 0)
+"cos" [library function] (line 0) (scope 0)
+"sin" [library function] (line 0) (scope 0)
+"x" [global variable] (line 6) (scope 0)
+"a" [global variable] (line 6) (scope 0)
+"b" [global variable] (line 6) (scope 0)
+"_t0" [global variable] (line 6) (scope 0)
+"c" [global variable] (line 6) (scope 0)
+"d" [global variable] (line 6) (scope 0)
+"_t1" [global variable] (line 6) (scope 0)
+"e" [global variable] (line 6) (scope 0)
+"f" [global variable] (line 6) (scope 0)
+"_t2" [global variable] (line 6) (scope 0)
+"_t3" [global variable] (line 6) (scope 0)
+"_t4" [global variable] (line 6) (scope 0)
+"_t5" [global variable] (line 6) (scope 0)

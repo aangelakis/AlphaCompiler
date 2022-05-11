@@ -40,7 +40,6 @@ void const_to_string(char *arg, expr* e, expr_t t){
 
 
 void print_quad(void* voidquad){   
-
     quad* q = (quad*) voidquad;
     if(q==NULL){
         return;

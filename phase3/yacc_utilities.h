@@ -53,6 +53,7 @@ void emit(
 }
 
 SymTableEntry* new_temp(); // <---- dont remove this
+int true_test(expr*);
 
 expr* emit_iftableitem(expr* e){
     if(e->type != tableitem_e){
@@ -73,6 +74,32 @@ expr* member_item(expr* lv, char* name){
     return ti;
 }
 
+<<<<<<< Updated upstream
+=======
+expr* member_item_expr(expr* lv, expr* inBrackets){
+    lv = emit_iftableitem(lv);
+    expr* ti = newexpr(tableitem_e);
+    ti->sym = lv->sym;
+    ti->index = inBrackets;
+    return ti;
+}
+
+void check_arith(expr* e){
+    if( e->type == constbool_e   ||
+        e->type == conststring_e ||
+        e->type == nil_e         ||
+        e->type == newtable_e    ||
+        e->type == programfunc_e ||
+        e->type == libraryfunc_e ||
+        e->type == boolexpr_e )
+    {
+        printf("Invalid use of arithmetic operator!\n");
+        exit(-1);
+    }
+
+}
+
+>>>>>>> Stashed changes
 int yyerror(char* yaccProvideMessage)
 {
     fprintf(stderr , "\033[0;31mERROR\033[0m\n");
@@ -630,8 +657,21 @@ expr* Manage_term_uminusExpr(expr * lvalue){
     return tmp_expr;
 }
 
-void Manage_term_notExpr(){
+expr* Manage_term_notExpr(expr* notExpr){
+    //expr* term = newexpr(boolexpr_e);
+    //term->sym = new_temp();
+    //emit(not, term, notExpr, NULL, -1, currQuad);
+
+    true_test(notExpr);
+
+    unsigned int tmp = notExpr->truelist;
+    notExpr->truelist = notExpr->falselist;
+    notExpr->falselist = tmp;
+    
     fprintf(yacc_out,"term -> not expr\n");
+    printf("truelist%d\n", notExpr->truelist);
+    printf("falselist%d\n", notExpr->falselist);
+    return notExpr;
 }
 
 void Manage_term_pluspluslvalue(expr *entry){
@@ -670,74 +710,131 @@ void Manage_term_primary(){
     fprintf(yacc_out,"term -> primary\n");
 }
 
-expr* Manage_expr_exprOPexpr(expr* arg1,char* op, expr* arg2){
+
+int true_test(expr* arg){
+    if(arg == NULL) return 0;
+    else if(arg->type == boolexpr_e) return 0;
+    puts("I AM HERE");
+    
+    arg->type = boolexpr_e;
+    emit(if_eq, NULL, arg, newexpr_constbool(1), 0, currQuad);
+    emit(jump, NULL, NULL, NULL, 0, currQuad);
+    printf("%d\n", nextquad()-2);
+    printf("%d\n", nextquad()-1);
+    arg->truelist = newlist(nextquad()-2);
+    arg->falselist = newlist(nextquad()-1);
+    return 1;
+}
+
+expr* Manage_expr_exprOPexpr(expr* arg1,char* op, expr* arg2, unsigned int Mlabel){
     fprintf(yacc_out,"expr -> expr %s expr\n", op);
-    SymTableEntry *tmp = new_temp(); // create new tmp variable
-    expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
+    SymTableEntry *tmp;
+    expr* tmp_expr = NULL;
+    //if(op[0] == '+' || op[0] == '-' || op[0] == '*' || op[0] == '/' || op[0] == '%') {
+        tmp = new_temp(); // create new tmp variable
+        tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
+    //}
+    //else{
+    //    tmp_expr = newexpr(boolexpr_e);
+    //}
     
     switch (op[0])
     {
     case '+':
+        tmp_expr->type = arithexpr_e;
+        check_arith(arg1);
+        check_arith(arg2);
         emit(add, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
         break;
     case '-':
+        tmp_expr->type = arithexpr_e;
+        check_arith(arg1);
+        check_arith(arg2);
         emit(sub, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
         break;
     case '*':
+        tmp_expr->type = arithexpr_e;
+        check_arith(arg1);
+        check_arith(arg2);
         emit(mul, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
         break;
     case '/':
+        tmp_expr->type = arithexpr_e;
+        check_arith(arg1);
+        check_arith(arg2);
         emit(_div, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
         break;
     case '%':
+        tmp_expr->type = arithexpr_e;
+        check_arith(arg1);
+        check_arith(arg2);
         emit(mod, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
         break;
     case '>':
+        tmp_expr->type = boolexpr_e;
         if (strcmp(op, ">=") == 0) 
         {
-            emit(if_greatereq, tmp_expr, arg1, arg2, -1, currQuad);
-            return tmp_expr;
+            emit(if_greatereq, NULL, arg1, arg2, 0, currQuad);
+            emit(jump, NULL, NULL, NULL, 0, currQuad);
         }else{
-            emit(if_greater, tmp_expr, arg1, arg2, -1, currQuad);
-            return tmp_expr;
+            emit(if_greater, NULL, arg1, arg2, 0, currQuad);
+            emit(jump, NULL, NULL, NULL, 0, currQuad);
         }
+        tmp_expr->truelist  = newlist(nextquad()-2);
+        tmp_expr->falselist = newlist(nextquad()-1);
         break;
     case '<':
+        tmp_expr->type = boolexpr_e;
         if (strcmp(op, "<=") == 0) 
         {
-            emit(if_lesseq, tmp_expr, arg1, arg2, -1, currQuad);
-            return tmp_expr;
+            emit(if_lesseq, NULL, arg1, arg2, 0, currQuad);
+            emit(jump, NULL, NULL, NULL, 0, currQuad);
         }else{
-            emit(if_less, tmp_expr, arg1, arg2, -1, currQuad);
-            return tmp_expr;
+            emit(if_less, NULL, arg1, arg2, 0, currQuad);
+            emit(jump, NULL, NULL, NULL, 0, currQuad);
         }
+        tmp_expr->truelist  = newlist(nextquad()-2);
+        tmp_expr->falselist = newlist(nextquad()-1);
         break;
     case '=':
-        emit(if_eq, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
+        tmp_expr->type = boolexpr_e;
+        emit(if_eq, NULL, arg1, arg2, 0, currQuad);
+        emit(jump, NULL, NULL, NULL, 0, currQuad);
+        tmp_expr->truelist  = newlist(nextquad()-2);
+        tmp_expr->falselist = newlist(nextquad()-1);
         break;
     case '!':
-        emit(if_noteq, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
-        break;
-    case 'a':
-        emit(and, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
+        tmp_expr->type = boolexpr_e;
+        emit(if_noteq, NULL, arg1, arg2, 0, currQuad);
+        emit(jump, NULL, NULL, NULL, 0, currQuad);
+        tmp_expr->truelist  = newlist(nextquad()-2);
+        tmp_expr->falselist = newlist(nextquad()-1);
         break;
     case 'o':
-        emit(or, tmp_expr, arg1, arg2, -1, currQuad);
-        return tmp_expr;
+        //emit(or, tmp_expr, arg1, arg2, -1, currQuad);
+        //if(true_test(arg1)) Mlabel += 2;
+        //true_test(arg2);
+        tmp_expr->type = boolexpr_e;
+        patchlist(arg1->falselist, Mlabel);
+        tmp_expr->truelist = mergelist(arg1->truelist, arg2->truelist);
+        tmp_expr->falselist = arg2->falselist;
+        break;
+    case 'a':
+        //emit(and, tmp_expr, arg1, arg2, -1, currQuad);
+        //if(true_test(arg1)) Mlabel += 2;
+        //true_test(arg2);
+        tmp_expr->type = boolexpr_e;
+        printf("Mlabel = %d\n", Mlabel);
+        patchlist(arg1->truelist, Mlabel);
+        tmp_expr->truelist = arg2->truelist;
+        tmp_expr->falselist = mergelist(arg1->falselist, arg2->falselist);
         break;
     default:
         printf("Invalid operator\n");
         return NULL;
         break;
     }
+    return tmp_expr;
 }
 
 void Manage_expr_term(){

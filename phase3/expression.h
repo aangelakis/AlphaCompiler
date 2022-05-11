@@ -36,6 +36,12 @@ typedef struct expr {
     } content;
     struct expr*    index;
     struct expr*    next;
+<<<<<<< Updated upstream
+=======
+    struct expr*    prev;
+    int truelist;
+    int falselist;
+>>>>>>> Stashed changes
 } expr;
 
 expr* newexpr(expr_t);

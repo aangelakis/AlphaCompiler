@@ -127,12 +127,15 @@
 %type<labelVal> elseprefix
 %type<labelVal> whilestart
 %type<labelVal> whilecond
-/* %type<labelVal> M
-%type<labelVal> N */
-%type ifstmt
-%type whilestmt
-%type forstmt
-%type returnstmt
+%type<labelVal> M
+%type<labelVal> Me
+%type<labelVal> N 
+%type<statement> ifstmt
+%type<statement> whilestmt
+%type<statement> forstmt
+%type<statement> returnstmt
+%type<forprefixVal> forprefix
+%type<statement> program
 
 %%
 
@@ -144,46 +147,62 @@ liststmt: liststmt stmt {  Manage_liststmt_liststmtStmt();      }
           | stmt        {   Manage_liststmt_stmt();             }
           ;
 
-stmt: expr ";"      {   Manage_stmt_expr();   reset_temp_counter();      }
-      | ifstmt      {   Manage_stmt_ifstmt();       }
-      | whilestmt   {   Manage_stmt_whilestmt();    }
-      | forstmt     {   Manage_stmt_forstmt();      }
-      | returnstmt  {   Manage_stmt_returnstmt();   }
-      | BREAK ";"   {   Manage_stmt_break();        }  
-      | CONTINUE ";"{   Manage_stmt_continue();     }
-      | block       {   Manage_stmt_block();        }
-      | funcdef     {   Manage_stmt_funcdef();      }
-      | ";"         {   Manage_stmt_semicolon();   reset_temp_counter(); }
+stmt: expr ";"  {       $$ = make_stmt(); Manage_stmt_expr();   reset_temp_counter();
+                        printf("type: %d\n", $1->type);
+                        if($1->type == boolexpr_e){
+                                patchlist($1->truelist, nextquad());
+                                patchlist($1->falselist, nextquad()+2);
+
+                                expr* tmp = newexpr(var_e);
+                                tmp->sym = new_temp();
+
+                                emit(assign, tmp, newexpr_constbool(1), NULL, -1, currQuad);
+                                emit(jump, NULL, NULL, NULL, nextquad() + 2 , currQuad);
+                                emit(assign, tmp, newexpr_constbool(0), NULL, -1, currQuad);
+                        }
+                }
+      | ifstmt      {   $$ = $1; Manage_stmt_ifstmt();       }
+      | whilestmt   {   $$ = $1; Manage_stmt_whilestmt();    }
+      | forstmt     {   $$ = $1; Manage_stmt_forstmt();      }
+      | returnstmt  {   $$ = $1; Manage_stmt_returnstmt();   }
+      | BREAK ";"   {   $$ = Manage_stmt_break();        }  
+      | CONTINUE ";"{   $$ = Manage_stmt_continue();     }
+      | block       {   $$ = $1; Manage_stmt_block();        }
+      | funcdef     {   $$ = make_stmt(); Manage_stmt_funcdef();      }
+      | ";"         {   $$ = make_stmt(); Manage_stmt_semicolon();   reset_temp_counter(); }
       ;
+
+Me :%empty { $$ = nextquad();};
 
 expr:   assignexpr        {     Manage_expr_assignexpr();       }
         | term            {     Manage_expr_term();             }
-        | expr PLUS expr  {    $$ = Manage_expr_exprOPexpr($1,"+",$3);    }
-        | expr MINUS expr {    $$ = Manage_expr_exprOPexpr($1,"-",$3);    }
-        | expr MULT expr  {    $$ = Manage_expr_exprOPexpr($1,"*",$3);    }
-        | expr DIV expr   {    $$ = Manage_expr_exprOPexpr($1,"/",$3);    }
-        | expr MOD expr   {    $$ = Manage_expr_exprOPexpr($1,"%",$3);    }
-        | expr GE expr    {    $$ = Manage_expr_exprOPexpr($1,">=",$3);   }
-        | expr GT expr    {    $$ = Manage_expr_exprOPexpr($1,">",$3);    }
-        | expr LE expr    {    $$ = Manage_expr_exprOPexpr($1,"<=",$3);   }
-        | expr LT expr    {    $$ = Manage_expr_exprOPexpr($1,"<",$3);    }
-        | expr EQ expr    {    $$ = Manage_expr_exprOPexpr($1,"==",$3);   }
-        | expr NE expr    {    $$ = Manage_expr_exprOPexpr($1,"!=",$3);   }
-        | expr AND expr   {    $$ = Manage_expr_exprOPexpr($1,"and",$3);  }
-        | expr OR expr    {    $$ = Manage_expr_exprOPexpr($1,"or",$3);   }
+        | expr PLUS expr  {    $$ = Manage_expr_exprOPexpr($1,"+",$3, -1);    }
+        | expr MINUS expr {    $$ = Manage_expr_exprOPexpr($1,"-",$3, -1);    }
+        | expr MULT expr  {    $$ = Manage_expr_exprOPexpr($1,"*",$3, -1);    }
+        | expr DIV expr   {    $$ = Manage_expr_exprOPexpr($1,"/",$3, -1);    }
+        | expr MOD expr   {    $$ = Manage_expr_exprOPexpr($1,"%",$3, -1);    }
+        | expr GE expr    {    $$ = Manage_expr_exprOPexpr($1,">=",$3, -1);   }
+        | expr GT expr    {    $$ = Manage_expr_exprOPexpr($1,">",$3, -1);    }
+        | expr LE expr    {    $$ = Manage_expr_exprOPexpr($1,"<=",$3, -1);   }
+        | expr LT expr    {    $$ = Manage_expr_exprOPexpr($1,"<",$3, -1);    }
+        | expr EQ expr    {    $$ = Manage_expr_exprOPexpr($1,"==",$3, -1);   }
+        | expr NE expr    {    $$ = Manage_expr_exprOPexpr($1,"!=",$3, -1);   }
+        | expr AND {true_test($1);} Me expr {  printf("M -> %d\n", $4); true_test($5);  $$ = Manage_expr_exprOPexpr($1,"and",$5, $4);}
+        | expr OR Me expr  {    $$ = Manage_expr_exprOPexpr($1,"or",$4, $3);  }
         ;
 
-term:   "(" expr ")"            {   Manage_term_expr();                 }
+term:   "(" expr ")"            {   $$ = $2; Manage_term_expr();               }
         | "-"expr  %prec UMINUS {   $$ = Manage_term_uminusExpr($2);           }
-        | NOT expr              {   Manage_term_notExpr();              }
-        | "++"lvalue            {   Manage_term_pluspluslvalue($2);       }
-        | lvalue"++"            {   Manage_term_lvalueplusplus($1);       }
-        | "--"lvalue            {   Manage_term_minusminuslvalue($2);     }
-        | lvalue"--"            {   Manage_term_lvalueminusminus($1);     }
-        | primary               {   Manage_term_primary();              }
+        | NOT expr              {   //thelei kialla logo tis olikis/merikis apotimisis.
+                                    $$ = Manage_term_notExpr($2);              }
+        | "++"lvalue            {   $$ = Manage_term_pluspluslvalue($2);       }
+        | lvalue"++"            {   $$ = Manage_term_lvalueplusplus($1);       }
+        | "--"lvalue            {   $$ = Manage_term_minusminuslvalue($2);     }
+        | lvalue"--"            {   $$ = Manage_term_lvalueminusminus($1);     }
+        | primary               {   $$ = $1; Manage_term_primary();            }
         ;
 
-assignexpr: lvalue"="expr       {  $$ = Manage_assignexpr($1, $3);  };
+assignexpr: lvalue"="expr       {  $$ = Manage_assignexpr($1, $3);  $$->type = $3->type; };
 
 primary:  lvalue            {  $$ = Manage_primary_lvalue($1);      }
           | call            {   Manage_primary_call();        }
@@ -306,7 +325,7 @@ whilestmt: whilestart whilecond loopstmt     {      Manage_whilestmt();
 
 /* N:%empty { $$ = nextquad(); emit(jump, NULL, NULL, NULL, 0, currQuad);}
 
-M:%empty { $$ = nextquad(); }
+M:%empty { $$ = nextquad();}
 
 forprefix: FOR "(" elist ";" M expr ";" {
 

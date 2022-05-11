@@ -1,4 +1,13 @@
+<<<<<<< Updated upstream
 s = 5;
 while(s){
     s = s-1;
 }
+=======
+//a < b and c; -> douleyei
+//a and b and c;
+//a and not c;
+// a and c < b;
+// a < b or c > d and e < f and a;
+x = a < b or c < d and e < f;
+>>>>>>> Stashed changes
