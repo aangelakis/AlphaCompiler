@@ -10,6 +10,8 @@ EMIT IF TABLE :
 
 TEO -global in function gia na dume ama eimaste se legal return
 
+-na mpei truetest stis while, for kai if gia expressions tou typou "if(a), while(5) etc."
+
 
 DONE :
 -loop_counter_stack gia ta break kai continue

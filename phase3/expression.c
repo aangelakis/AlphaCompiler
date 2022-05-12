@@ -4,6 +4,8 @@ expr* newexpr(expr_t t){
     expr* e = (expr*) malloc(sizeof(expr));
     memset(e,0,sizeof(expr));
     e->type = t;
+    e->truelist = 0;
+    e->falselist = 0;
     return e;
 }
 

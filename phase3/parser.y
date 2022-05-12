@@ -34,6 +34,7 @@
 %initial-action
 {
     yacc_out = fopen("yacc_output.txt", "w");    
+    //yacc_out = stdout;
 };
 
 %start program
@@ -141,7 +142,9 @@
 %type<statement> returnstmt
 %type<forprefixVal> forprefix
 %type<statement> program
-
+%type<express>arithmexpr
+%type<express>relopexpr
+%type<express>boolexpr
 %%
 
 program: liststmt   { $$=$1;   Manage_program_liststmt();     fclose(yacc_out); }
@@ -152,7 +155,7 @@ liststmt: liststmt stmt {  $$ = Manage_liststmt_liststmtStmt($1, $2);      }
           | stmt        {  $$=$1; Manage_liststmt_stmt();             }
           ;
 
-stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();   reset_temp_counter();      }
+stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();  emit_ifbool($1); reset_temp_counter();    }
       | ifstmt      {   $$ = $1; Manage_stmt_ifstmt();       }
       | whilestmt   {   $$ = $1; Manage_stmt_whilestmt();    }
       | forstmt     {   $$ = $1; Manage_stmt_forstmt();      }
@@ -164,22 +167,32 @@ stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();   reset_temp_count
       | ";"         {   $$ = make_stmt(); Manage_stmt_semicolon();   reset_temp_counter(); }
       ;
 
+arithmexpr: expr PLUS expr  {    $$ = Manage_arithmexpr($1,"+",$3);    }
+        | expr MINUS expr   {    $$ = Manage_arithmexpr($1,"-",$3);    }
+        | expr MULT expr    {    $$ = Manage_arithmexpr($1,"*",$3);    }
+        | expr DIV expr     {    $$ = Manage_arithmexpr($1,"/",$3);    }
+        | expr MOD expr     {    $$ = Manage_arithmexpr($1,"%",$3);    }
+        ;
+
+relopexpr:  expr GE expr  {    $$ = Manage_relopexpr($1,">=",$3);   }
+        | expr GT expr    {    $$ = Manage_relopexpr($1,">",$3);    }
+        | expr LE expr    {    $$ = Manage_relopexpr($1,"<=",$3);   }
+        | expr LT expr    {    $$ = Manage_relopexpr($1,"<",$3);    }
+        | expr EQ expr    {    $$ = Manage_relopexpr($1,"==",$3);   }
+        | expr NE expr    {    $$ = Manage_relopexpr($1,"!=",$3);   }
+        ;
+
+boolexpr:   expr AND { true_test($1); } M expr   {   printf("M -> %d\n", $4); true_test($5); $$ = Manage_boolexpr($1, "and", $5, $4);     }
+        | expr OR { true_test($1); } M expr      {   printf("M -> %d\n", $4); true_test($5); $$ = Manage_boolexpr($1,"or",$5,$4);         }
+        ;
+
 expr:   assignexpr        {     Manage_expr_assignexpr();       }
         | term            {     Manage_expr_term();             }
-        | expr PLUS expr  {    $$ = Manage_expr_exprOPexpr($1,"+",$3);    }
-        | expr MINUS expr {    $$ = Manage_expr_exprOPexpr($1,"-",$3);    }
-        | expr MULT expr  {    $$ = Manage_expr_exprOPexpr($1,"*",$3);    }
-        | expr DIV expr   {    $$ = Manage_expr_exprOPexpr($1,"/",$3);    }
-        | expr MOD expr   {    $$ = Manage_expr_exprOPexpr($1,"%",$3);    }
-        | expr GE expr    {    $$ = Manage_expr_exprOPexpr($1,">=",$3);   }
-        | expr GT expr    {    $$ = Manage_expr_exprOPexpr($1,">",$3);    }
-        | expr LE expr    {    $$ = Manage_expr_exprOPexpr($1,"<=",$3);   }
-        | expr LT expr    {    $$ = Manage_expr_exprOPexpr($1,"<",$3);    }
-        | expr EQ expr    {    $$ = Manage_expr_exprOPexpr($1,"==",$3);   }
-        | expr NE expr    {    $$ = Manage_expr_exprOPexpr($1,"!=",$3);   }
-        | expr AND expr   {    $$ = Manage_expr_exprOPexpr($1,"and",$3);  }
-        | expr OR expr    {    $$ = Manage_expr_exprOPexpr($1,"or",$3);   }
+        | arithmexpr      {    $$ = $1;   }
+        | relopexpr       {    $$ = $1;   }
+        | boolexpr        {    $$ = $1;   }
         ;
+
 
 term:   "(" expr ")"            {   $$ = $2; Manage_term_expr();                 }
         | "-"expr  %prec UMINUS {   $$ = Manage_term_uminusExpr($2);           }
@@ -338,7 +351,9 @@ idlist: %empty          {   Manage_idlist_empty(&($$));      }
         | ID            {   Manage_idlist_id(&($$),$1);         } 
         ;
 
-ifprefix: IF "(" expr ")" {     printf("DULEUEI TO IF\n"); 
+ifprefix: IF "(" expr ")" {     printf("DULEUEI TO IF\n");
+                                $3 = emit_ifbool($3);
+                                //true_test($3);
                                 emit(if_eq, NULL, $3, newexpr_constbool(1), nextquad() + 2, currQuad);
                                 $$ = nextquad();
                                 emit(jump, NULL, NULL, NULL, 0, currQuad);
@@ -370,6 +385,8 @@ whilestart: WHILE {     printf("whilestart -> while\n");
                   }
 
 whilecond: "(" expr ")" {       printf("whilecond -> (expr)\n");
+                                $2 = emit_ifbool($2);
+                                //true_test($2);
                                 emit(if_eq, NULL, $2, newexpr_constbool(1), nextquad() + 2, currQuad);
                                 $$ = nextquad();
                                 emit(jump, NULL, NULL, NULL, 0, currQuad);
@@ -390,11 +407,8 @@ M:%empty { $$ = nextquad(); }
 forprefix: FOR "(" elist ";" M expr ";" {
         $$ = malloc(sizeof(forprefix_t));
         $$->test = $5; 
-        //dummy emits
-        emit(jump,NULL,NULL,NULL,-1,currQuad);
-        emit(jump,NULL,NULL,NULL,-1,currQuad);
-        emit(jump,NULL,NULL,NULL,-1,currQuad);
-        emit(jump,NULL,NULL,NULL,-1,currQuad);
+        $6 = emit_ifbool($6);
+        //true_test($6);
         $$->enter = nextquad();
         emit(if_eq, NULL, $6, newexpr_constbool(1), 0, nextquad());
 }
@@ -417,7 +431,8 @@ forstmt: forprefix N elist ")" N loopstmt N {
 returnstmt: RETURN expr";"  {  
                                 if(infunction==0){
                                         print_custom_error("return outside of function","return",scope);
-                                } 
+                                }
+                                $2 = emit_ifbool($2); 
                                 $$ = Manage_returnstmt_returnexpr($2); 
                         }
             | RETURN";"     

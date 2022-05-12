@@ -36,6 +36,9 @@ typedef struct expr {
     struct expr*    index;
     struct expr*    next;
     struct expr*    prev;
+
+    int truelist;
+    int falselist;
 } expr;
 
 typedef struct call_t{
