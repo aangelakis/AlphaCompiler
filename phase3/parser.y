@@ -157,8 +157,8 @@ liststmt: liststmt stmt {  $$ = Manage_liststmt_liststmtStmt($1, $2);      }
 
 stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();  emit_ifbool($1); reset_temp_counter();    }
       | ifstmt      {   $$ = $1; Manage_stmt_ifstmt();       }
-      | whilestmt   {   $$ = $1; Manage_stmt_whilestmt();    }
-      | forstmt     {   $$ = $1; Manage_stmt_forstmt();      }
+      | whilestmt   {   $$ = make_stmt(); Manage_stmt_whilestmt();    }
+      | forstmt     {   $$ = make_stmt(); Manage_stmt_forstmt();      }
       | returnstmt  {   $$ = $1; Manage_stmt_returnstmt();   }
       | BREAK ";"   {   $$ = Manage_stmt_break();        }  
       | CONTINUE ";"{   $$ = Manage_stmt_continue();     }
@@ -351,7 +351,7 @@ idlist: %empty          {   Manage_idlist_empty(&($$));      }
         | ID            {   Manage_idlist_id(&($$),$1);         } 
         ;
 
-ifprefix: IF "(" expr ")" {     printf("DULEUEI TO IF\n");
+ifprefix: IF "(" expr ")" {     
                                 $3 = emit_ifbool($3);
                                 //true_test($3);
                                 emit(if_eq, NULL, $3, newexpr_constbool(1), nextquad() + 2, currQuad);
@@ -359,7 +359,7 @@ ifprefix: IF "(" expr ")" {     printf("DULEUEI TO IF\n");
                                 emit(jump, NULL, NULL, NULL, 0, currQuad);
                         }
 
-elseprefix: ELSE {      printf("DOULEUEI TO IF ELSE\n");
+elseprefix: ELSE {      
                         $$ = nextquad();
                         emit(jump, NULL, NULL, NULL, 0, currQuad);
                 }
@@ -393,11 +393,16 @@ whilecond: "(" expr ")" {       printf("whilecond -> (expr)\n");
                         }
 
 whilestmt: whilestart whilecond loopstmt     {      Manage_whilestmt();  
-                                                $$ = $3;
+                                                
                                                 emit(jump, NULL, NULL, NULL, $1, currQuad);
+                                                
                                                 patchlabel($2, nextquad());  
+                                                
                                                 patchlist($3->breaklist, nextquad());
+                                                
                                                 patchlist($3->continuelist, $1);
+                                                $$ = $3;
+                                                
                                          }
 
 N:%empty { $$ = nextquad(); emit(jump, NULL, NULL, NULL, 0, currQuad);}
