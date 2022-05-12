@@ -9,6 +9,7 @@ EMIT IF TABLE :
 -print strings
 
 TEO -global in function gia na dume ama eimaste se legal return
+TEO -reset tmp onomata opu prepei px if (expr) dn kanei meta to expr
 
 -na mpei truetest stis while, for kai if gia expressions tou typou "if(a), while(5) etc."
 
