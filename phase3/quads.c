@@ -71,14 +71,24 @@ void print_quad(void* voidquad){
     // arg1
     if(q -> arg1){
         expr_t type = q->arg1->type;
-        if(type >= constdouble_e) {
+        if(type == conststring_e){
+            const_to_string(arg1, q->arg1, type);
+            char tmp[1024] = "\"";
+            strcat(tmp, arg1);
+            strcat(tmp, "\"");
+            strcpy(arg1, tmp);
+        }
+        else if(type == constbool_e){
+            const_to_string(arg1, q->arg1, type);
+            char tmp[1024] = "\'";
+            strcat(tmp, arg1);
+            strcat(tmp, "\'");
+            strcpy(arg1, tmp);
+        }
+        else if(type >= constdouble_e) {
             const_to_string(arg1, q->arg1, type);
             //arg1 = "const";
         }
-        // else if(type == conststring_e){
-        //     arg1 = strcat("\n", arg1);
-        //     arg1 = strcat(arg1, "\n");
-        // }
         else if(q->arg1->sym->type < USERFUNC)
             arg1 = (char*) q->arg1->sym->value.varVal->name;
         else
@@ -90,14 +100,24 @@ void print_quad(void* voidquad){
     // arg2
     if(q -> arg2){
         expr_t type = q->arg2->type;
-        if(type >= constdouble_e){
+        if(type == conststring_e){
+            const_to_string(arg1, q->arg1, type);
+            char tmp[1024] = "\"";
+            strcat(tmp, arg2);
+            strcat(tmp, "\"");
+            strcpy(arg2, tmp);
+        }
+        else if(type == constbool_e){
+            const_to_string(arg1, q->arg1, type);
+            char tmp[1024] = "\'";
+            strcat(tmp, arg1);
+            strcat(tmp, "\'");
+            strcpy(arg1, tmp);
+        }
+        else if(type >= constdouble_e){
             const_to_string(arg2, q->arg2, type);
             //arg2 = "const";
         }
-        // else if(type == conststring_e){
-        //     arg2 = strcat("\n", arg2);
-        //     arg2 = strcat(arg2, "\n");
-        // }
         else if(q->arg2->sym->type < USERFUNC)
             arg2 = (char*) q->arg2->sym->value.varVal->name;
         else
@@ -105,11 +125,6 @@ void print_quad(void* voidquad){
     }
     else
         arg2 = "nil";
-    
-    // if(q->result->type == conststring_e) {
-    //     result = strcat("\"", result);
-    //     result = strcat(result, "\"");
-    // }
 
     if (label == -1)
        // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
