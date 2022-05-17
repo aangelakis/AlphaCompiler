@@ -1,18 +1,3 @@
-//x = c < d and e > f;
-/*
-for(i = 0; i; ++i) {
-    x = 0;
-}
+//((k != l) and not (i == l)) ==  j;
 
-
-for(i = 0; i < N; i++){
-    x++;
-}
-
-while(c < d and e > f){
-    x = 5;
-}
-*/
-function (){
-    return 5>4;
-}
+z = a > b ;

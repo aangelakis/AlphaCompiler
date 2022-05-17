@@ -889,8 +889,8 @@ expr* Manage_arithmexpr(expr* arg1,char* op, expr* arg2){
     check_arith(arg2);
     fprintf(yacc_out,"arithmexpr -> expr %s expr\n", op);
     SymTableEntry *tmp = new_temp(); // create new tmp variable
-    expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
-    
+    expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue exprs
+
     switch (op[0])
     {
     case '+':
@@ -918,15 +918,14 @@ expr* Manage_arithmexpr(expr* arg1,char* op, expr* arg2){
 expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
     fprintf(yacc_out,"relopexpr -> expr %s expr\n", op);
     expr* tmp_expr=newexpr(boolexpr_e);
-    //SymTableEntry *tmp = new_temp(); // create new tmp variable
-    //expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
-    //tmp_expr->type = boolexpr_e;
+    //tmp_expr->sym = new_temp(); // create new tmp variable
+    
     if(arg1->type==boolexpr_e){
-            emit_ifbool(arg1);
-        }
-        if(arg2->type==boolexpr_e){
-            emit_ifbool(arg2);
-        }
+        arg1 = emit_ifbool(arg1);
+    }
+    if(arg2->type==boolexpr_e){
+        arg2 = emit_ifbool(arg2);
+    }
     switch (op[0]){
         case '>':
         tmp_expr->type = boolexpr_e;
@@ -994,7 +993,7 @@ expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
 expr* Manage_boolexpr(expr* arg1,char* op, expr* arg2, unsigned int Mlabel){
     fprintf(yacc_out,"boolexpr -> expr %s expr\n", op);
     expr* tmp_expr=newexpr(boolexpr_e);
-    // SymTableEntry *tmp = new_temp(); // create new tmp variable
+    tmp_expr->sym = new_temp(); // create new tmp variable
     // expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
     // tmp_expr->type = boolexpr_e;
     

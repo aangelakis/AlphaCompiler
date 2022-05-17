@@ -81,10 +81,11 @@ void print_quad(void* voidquad){
         else
             sprintf(result, "%s", (char*) q->result->sym->value.funcVal->name);
     }
-    puts("I AM HERE1");
+    
     
     // arg1
     if(q -> arg1){
+        
         expr_t type = q->arg1->type;
         if(type == conststring_e){
             const_to_string(arg1, q->arg1, type);
@@ -104,12 +105,13 @@ void print_quad(void* voidquad){
             const_to_string(arg1, q->arg1, type);
             //arg1 = "const";
         }
-        else if(q->arg1->sym->type < USERFUNC)
+        else if(q->arg1->sym->type < USERFUNC){
             sprintf(arg1, "%s", (char*) q->arg1->sym->value.varVal->name);
+        }
         else
             sprintf(arg1, "%s", (char*) q->arg1->sym->value.funcVal->name);
     }
-    puts("I AM HERE2");
+    
     
     // arg2
     if(q -> arg2){
@@ -137,7 +139,7 @@ void print_quad(void* voidquad){
         else
             sprintf(arg2, "%s", (char*) q->arg2->sym->value.funcVal->name);
     }
-    puts("I AM HERE3");
+    
 
     if (label == -1)
        // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
