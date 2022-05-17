@@ -45,7 +45,7 @@ void print_quad(void* voidquad){
         return;
     }
     char *opcode = quad_opcode_names[q->op];
-    puts(opcode);
+    //puts(opcode);
     char result[1024] = "nil", arg1[1024] = "nil", arg2[1024] = "nil";
 
     int line = q->line, label = q->label;
@@ -58,6 +58,7 @@ void print_quad(void* voidquad){
     }
     else if(q->result){
         expr_t type = q->result->type;
+        //printf("result.type=%d\n", type);
         if(type == conststring_e){
             const_to_string(result, q->result, type);
             char tmp[1024] = "\"";
@@ -81,12 +82,12 @@ void print_quad(void* voidquad){
         else
             sprintf(result, "%s", (char*) q->result->sym->value.funcVal->name);
     }
-    
+    //puts("I AM HERE0");
     
     // arg1
     if(q -> arg1){
-        
         expr_t type = q->arg1->type;
+        //printf("arg1.type=%d\n", type);
         if(type == conststring_e){
             const_to_string(arg1, q->arg1, type);
             char tmp[1024] = "\"";
@@ -111,11 +112,12 @@ void print_quad(void* voidquad){
         else
             sprintf(arg1, "%s", (char*) q->arg1->sym->value.funcVal->name);
     }
-    
+    //puts("I AM HERE1");
     
     // arg2
     if(q -> arg2){
         expr_t type = q->arg2->type;
+        //printf("arg2.type=%d\n", type);
         if(type == conststring_e){
             const_to_string(arg2, q->arg2, type);
             char tmp[1024] = "\"";
@@ -139,8 +141,8 @@ void print_quad(void* voidquad){
         else
             sprintf(arg2, "%s", (char*) q->arg2->sym->value.funcVal->name);
     }
+    //puts("I AM HERE2");
     
-
     if (label == -1)
        // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
        fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
