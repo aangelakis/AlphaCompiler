@@ -40,34 +40,48 @@ void const_to_string(char *arg, expr* e, expr_t t){
 
 
 void print_quad(void* voidquad){   
-
     quad* q = (quad*) voidquad;
     if(q==NULL){
         return;
     }
     char *opcode = quad_opcode_names[q->op];
-    char *result = NULL, *arg1 = NULL, *arg2 = NULL;
-    
-    if(q->result && q->result->type >= constdouble_e)
-        result = malloc(sizeof(char)*1024);
-    if(q->arg1 && q->arg1->type >= constdouble_e)
-        arg1 = malloc(sizeof(char)*1024);
-    if(q->arg2 && q->arg2->type >= constdouble_e)
-        arg2 = malloc(sizeof(char)*1024);
-    //char *result = NULL, arg1[1024], arg2[1024];
-    int label , line;
-    line = q->line;
-    label = q->label;
+    puts(opcode);
+    char result[1024] = "nil", arg1[1024] = "nil", arg2[1024] = "nil";
+
+    int line = q->line, label = q->label;
     
     if(q->op==funcend || q->op==funcstart){
-        result = q->result->content.strConst;
+        sprintf(result, "%s", q->result->content.strConst);
     }
     else if(q->op == param && q->result->type >= constdouble_e){
         const_to_string(result, q->result, q->result->type);
     }
     else if(q->result){
-        result = (char*) q->result->sym->value.varVal->name;
+        expr_t type = q->result->type;
+        if(type == conststring_e){
+            const_to_string(result, q->result, type);
+            char tmp[1024] = "\"";
+            strcat(tmp, result);
+            strcat(tmp, "\"");
+            strcpy(result, tmp);
+        }
+        else if(type == constbool_e){
+            const_to_string(result, q->result, type);
+            char tmp[1024] = "\'";
+            strcat(tmp, result);
+            strcat(tmp, "\'");
+            strcpy(result, tmp);
+        }
+        else if(type >= constdouble_e) {
+            const_to_string(result, q->result, type);
+            //result = "const";
+        }
+        else if(q->result->sym->type < USERFUNC)
+            sprintf(result, "%s", (char*) q->result->sym->value.varVal->name);
+        else
+            sprintf(result, "%s", (char*) q->result->sym->value.funcVal->name);
     }
+    puts("I AM HERE1");
     
     // arg1
     if(q -> arg1){
@@ -91,12 +105,11 @@ void print_quad(void* voidquad){
             //arg1 = "const";
         }
         else if(q->arg1->sym->type < USERFUNC)
-            arg1 = (char*) q->arg1->sym->value.varVal->name;
+            sprintf(arg1, "%s", (char*) q->arg1->sym->value.varVal->name);
         else
-            arg1 = (char*) q->arg1->sym->value.funcVal->name;
+            sprintf(arg1, "%s", (char*) q->arg1->sym->value.funcVal->name);
     }
-    else
-        arg1 = "nil";
+    puts("I AM HERE2");
     
     // arg2
     if(q -> arg2){
@@ -120,12 +133,11 @@ void print_quad(void* voidquad){
             //arg2 = "const";
         }
         else if(q->arg2->sym->type < USERFUNC)
-            arg2 = (char*) q->arg2->sym->value.varVal->name;
+            sprintf(arg2, "%s", (char*) q->arg2->sym->value.varVal->name);
         else
-            arg2 = (char*) q->arg2->sym->value.funcVal->name;
+            sprintf(arg2, "%s", (char*) q->arg2->sym->value.funcVal->name);
     }
-    else
-        arg2 = "nil";
+    puts("I AM HERE3");
 
     if (label == -1)
        // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
@@ -133,12 +145,4 @@ void print_quad(void* voidquad){
     else
        fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
        // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
-
- 
-    if(q->result && q->result->type >= constdouble_e)
-        free(result);
-    if(q->arg1 && q->arg1->type >= constdouble_e)
-        free(arg1);
-    if(q->arg2 && q->arg2->type >= constdouble_e)
-        free(arg2);
 }
