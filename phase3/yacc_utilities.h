@@ -769,12 +769,10 @@ expr* Manage_term_uminusExpr(expr * lvalue){
 }
 
 expr* Manage_term_notExpr(expr* notExpr){
-    //expr* term = newexpr(boolexpr_e);
-    //term->sym = new_temp();
-    //emit(not, term, notExpr, NULL, -1, currQuad);
-
+    // if(true_test(notExpr)){
+    //     notExpr = emit_ifbool(notExpr);
+    // }
     true_test(notExpr);
-
     unsigned int tmp = notExpr->truelist;
     notExpr->truelist = notExpr->falselist;
     notExpr->falselist = tmp;
@@ -923,7 +921,12 @@ expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
     //SymTableEntry *tmp = new_temp(); // create new tmp variable
     //expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
     //tmp_expr->type = boolexpr_e;
-    
+    if(arg1->type==boolexpr_e){
+            emit_ifbool(arg1);
+        }
+        if(arg2->type==boolexpr_e){
+            emit_ifbool(arg2);
+        }
     switch (op[0]){
         case '>':
         tmp_expr->type = boolexpr_e;
@@ -953,6 +956,14 @@ expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
         break;
     case '=':
         tmp_expr->type = boolexpr_e;
+        //tmp stuff
+        // if(arg1->type==boolexpr_e){
+        //     emit_ifbool(arg1);
+        // }
+        // if(arg2->type==boolexpr_e){
+        //     emit_ifbool(arg2);
+        // }
+        //end of tmp stuff
         emit(if_eq, NULL, arg1, arg2, 0, currQuad);
         emit(jump, NULL, NULL, NULL, 0, currQuad);
         tmp_expr->truelist  = newlist(nextquad()-2);
@@ -960,6 +971,14 @@ expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
         break;
     case '!':
         tmp_expr->type = boolexpr_e;
+        //tmp stuff
+        // if(arg1->type==boolexpr_e){
+        //     emit_ifbool(arg1);
+        // }
+        // if(arg2->type==boolexpr_e){
+        //     emit_ifbool(arg2);
+        // }
+        //end of tmp stuff
         emit(if_noteq, NULL, arg1, arg2, 0, currQuad);
         emit(jump, NULL, NULL, NULL, 0, currQuad);
         tmp_expr->truelist  = newlist(nextquad()-2);
