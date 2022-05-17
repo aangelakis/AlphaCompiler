@@ -12,6 +12,7 @@ expr* newexpr(expr_t t){
 
 expr* newexpr_conststring(char* s){
     expr* e = newexpr(conststring_e);
+    e->sym = NULL;
     e->content.strConst = strdup(s);
     return e;
 }
@@ -19,23 +20,27 @@ expr* newexpr_conststring(char* s){
 
 expr* newexpr_constdouble(double i){
     expr* e = newexpr(constdouble_e);
+    e->sym = NULL;
     e->content.doubleConst = i;
     return e;
 }
 
 expr* newexpr_constnil(){
     expr* e = newexpr(nil_e);
+    e->sym = NULL;
     return e;
 }
 
 expr* newexpr_constbool(unsigned char b){
     expr* e = newexpr(constbool_e);
+    e->sym = NULL;
     e->content.boolConst = b;
     return e;
 }
 
 expr* newexpr_constint(int i){
     expr* e = newexpr(constint_e);
+    e->sym = NULL;
     e->content.intConst = i;
     return e;
 }

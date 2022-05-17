@@ -98,13 +98,11 @@
 %left AND
 %nonassoc NE EQ
 %nonassoc GT GE LT LE
-%left PLUS 
-%right MINUS
+%left PLUS MINUS
 %left MULT DIV MOD
-%right NOT PLUS_PLUS MINUS_MINUS
+%right NOT PLUS_PLUS MINUS_MINUS UMINUS
 %left STOP DOUBLE_STOP
 %left LEFT_BRACKET RIGHT_BRACKET
-%nonassoc UMINUS
 %left LEFT_PARENTHESIS RIGHT_PARENTHESIS
 
 /* Non Terminal Symbols */
@@ -164,7 +162,7 @@ stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();  emit_ifbool($1); 
       | CONTINUE ";"{   $$ = Manage_stmt_continue();     }
       | block       {   $$ = $1; Manage_stmt_block();        }
       | funcdef     {   $$ = make_stmt(); Manage_stmt_funcdef();      }
-      | ";"         {   $$ = make_stmt(); Manage_stmt_semicolon();   reset_temp_counter(); }
+      | ";"         {   $$ = make_stmt(); Manage_stmt_semicolon();    }
       ;
 
 arithmexpr: expr PLUS expr  {    $$ = Manage_arithmexpr($1,"+",$3);    }

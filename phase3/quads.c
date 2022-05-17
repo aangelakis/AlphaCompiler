@@ -66,7 +66,8 @@ void print_quad(void* voidquad){
             strcat(tmp, "\"");
             strcpy(result, tmp);
         }
-        else if(type == constbool_e){
+        else if(type == constbool_e || (type == boolexpr_e && q->result->sym == NULL)){
+            type = constbool_e;
             const_to_string(result, q->result, type);
             char tmp[1024] = "\'";
             strcat(tmp, result);
@@ -95,7 +96,8 @@ void print_quad(void* voidquad){
             strcat(tmp, "\"");
             strcpy(arg1, tmp);
         }
-        else if(type == constbool_e){
+        else if(type == constbool_e || (type == boolexpr_e && q->arg1->sym == NULL)){
+            type = constbool_e;
             const_to_string(arg1, q->arg1, type);
             char tmp[1024] = "\'";
             strcat(tmp, arg1);
@@ -125,7 +127,8 @@ void print_quad(void* voidquad){
             strcat(tmp, "\"");
             strcpy(arg2, tmp);
         }
-        else if(type == constbool_e){
+        else if(type == constbool_e || (type == boolexpr_e && q->arg2->sym == NULL)){
+            type = constbool_e;
             const_to_string(arg2, q->arg2, type);
             char tmp[1024] = "\'";
             strcat(tmp, arg2);

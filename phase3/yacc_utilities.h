@@ -107,6 +107,7 @@ expr* emit_iftableitem(expr* e){
 }
 
 int true_test(expr* arg){
+    puts("I AM TRUE TESTING");
     if(arg == NULL){
         //puts("I AM HERE");
         return 0;
@@ -116,8 +117,12 @@ int true_test(expr* arg){
         return 0;
     }
     
+    
     //arg->type = boolexpr_e;
-    arg->type = constbool_e;
+    //if(arg->type != constbool_e){
+        arg->type = boolexpr_e;
+    //}
+    
     emit(if_eq, NULL, arg, newexpr_constbool(1), 0, currQuad);
     emit(jump, NULL, NULL, NULL, 0, currQuad);
     // printf("%d\n", nextquad()-2);
@@ -129,7 +134,7 @@ int true_test(expr* arg){
 
 expr* emit_ifbool(expr* e){
     printf("inside emit if bool\n");
-    if(e->type == boolexpr_e){
+    if(e->type == boolexpr_e || e->type == constbool_e){
         patchlist(e->truelist, nextquad());
         patchlist(e->falselist, nextquad()+2);
 
@@ -758,15 +763,19 @@ expr* Manage_term_uminusExpr(expr * lvalue){
     }
     
     check_arith(lvalue);
-    expr* term = newexpr(arithexpr_e);
-    term->sym = new_temp(); // create new tmp variable
+    
+    if (lvalue->sym->type<2 && lvalue->sym->value.varVal->name[0]=='_') // in case of tmp
+    {
+        emit(uminus, lvalue, lvalue, NULL, -1, currQuad);
+        return lvalue;
+    }else {
+        expr* term = newexpr(arithexpr_e);
+        term->sym = new_temp(); // create new tmp variable
+        emit(uminus, term, lvalue, NULL, -1, currQuad); // _t0 = -x;
+        fprintf(yacc_out,"term -> -expr\n");
+        return term;
+    }
 
-    //expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue expr
-
-    emit(uminus, term, lvalue, NULL, -1, currQuad); // _t0 = -x;
-
-    fprintf(yacc_out,"term -> -expr\n");
-    return term;
 }
 
 expr* Manage_term_notExpr(expr* notExpr){
@@ -889,9 +898,21 @@ expr* Manage_arithmexpr(expr* arg1,char* op, expr* arg2){
     check_arith(arg1);
     check_arith(arg2);
     fprintf(yacc_out,"arithmexpr -> expr %s expr\n", op);
-    SymTableEntry *tmp = new_temp(); // create new tmp variable
-    expr* tmp_expr = lvalue_to_expr(tmp); // make it an lvalue exprs
-
+    
+    SymTableEntry *tmp;
+    expr* tmp_expr;
+    
+    
+    if (arg1->sym && arg1->sym->type<2 && arg1->sym->value.varVal->name[0]=='_') // in case of tmp
+    {
+        tmp = arg1->sym;
+    }else if(arg2->sym && arg2->sym->type<2 && arg2->sym->value.varVal->name[0]=='_'){
+        tmp = arg2->sym;
+    }else{
+        tmp = new_temp(); // create new tmp variable
+    }
+    
+    tmp_expr = lvalue_to_expr(tmp); // make it an lvalue exprs
     switch (op[0])
     {
     case '+':
@@ -920,16 +941,10 @@ expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
     fprintf(yacc_out,"relopexpr -> expr %s expr\n", op);
     expr* tmp_expr=newexpr(boolexpr_e);
     //tmp_expr->sym = new_temp(); // create new tmp variable
+
+    arg1 = emit_ifbool(arg1);
+    arg2 = emit_ifbool(arg2);
     
-    if(arg1->type==boolexpr_e){
-        
-        arg1 = emit_ifbool(arg1);
-        
-    }
-    if(arg2->type==boolexpr_e){
-        
-        arg2 = emit_ifbool(arg2);
-    }
     switch (op[0]){
         case '>':
         tmp_expr->type = boolexpr_e;
