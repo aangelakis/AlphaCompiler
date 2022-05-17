@@ -65,8 +65,9 @@ void print_quad(void* voidquad){
     else if(q->op == param && q->result->type >= constdouble_e){
         const_to_string(result, q->result, q->result->type);
     }
-    else if(q->result)
+    else if(q->result){
         result = (char*) q->result->sym->value.varVal->name;
+    }
     
     // arg1
     if(q -> arg1){
@@ -101,18 +102,18 @@ void print_quad(void* voidquad){
     if(q -> arg2){
         expr_t type = q->arg2->type;
         if(type == conststring_e){
-            const_to_string(arg1, q->arg1, type);
+            const_to_string(arg2, q->arg2, type);
             char tmp[1024] = "\"";
             strcat(tmp, arg2);
             strcat(tmp, "\"");
             strcpy(arg2, tmp);
         }
         else if(type == constbool_e){
-            const_to_string(arg1, q->arg1, type);
+            const_to_string(arg2, q->arg2, type);
             char tmp[1024] = "\'";
-            strcat(tmp, arg1);
+            strcat(tmp, arg2);
             strcat(tmp, "\'");
-            strcpy(arg1, tmp);
+            strcpy(arg2, tmp);
         }
         else if(type >= constdouble_e){
             const_to_string(arg2, q->arg2, type);
