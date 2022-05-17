@@ -84,6 +84,7 @@ int main(int argc, char *argv[]){
     }
     
     fprintf(quads_out,"Number of quads -> %d\n", quads->cur_size-1);
+    //quads_out = stdout;
     //puts("quad#\t\topcode\t\t\t\t\t  result\t\targ1\t\targ2\t\tlabel");
     fprintf(quads_out,"quad#\t\topcode\t\t\t\t\t  result\t\targ1\t\targ2\t\tlabel\n");
     vektor_apply(quads, print_quad);

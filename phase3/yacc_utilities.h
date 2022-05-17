@@ -116,7 +116,8 @@ int true_test(expr* arg){
         return 0;
     }
     
-    arg->type = boolexpr_e;
+    //arg->type = boolexpr_e;
+    arg->type = constbool_e;
     emit(if_eq, NULL, arg, newexpr_constbool(1), 0, currQuad);
     emit(jump, NULL, NULL, NULL, 0, currQuad);
     // printf("%d\n", nextquad()-2);
