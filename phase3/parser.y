@@ -338,18 +338,33 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} { $$=$3;  Manage_block_lis
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       { $$=make_stmt();  Manage_block_emptyblock();   }
         ;
 
-funcdef: FUNCTION ID {Init_named_func($2);infunction++;} "("idlist")" {$<symEntr>$ = Manage_funcdef_functionId($2,$5);} block 
-                        {  End_named_func($2); patchlist($8->returnlist,nextquad()-1); infunction--;}
+funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;} 
+                "("idlist")"    {$<symEntr>$ = Manage_funcdef_functionId($2,$6); 
+                                $<symEntr>$->value.funcVal->quadfuncStartIndex = $3 + 1; // keep where funcstart is with M rule
+                                
+                                }
+                block          { //$$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
+                                End_named_func($2); 
+                                patchlist($9->returnlist,nextquad()-1); 
+                                infunction--;
+                                }
                         
-        | FUNCTION{Init_Anonymous_func(); infunction++;} "("idlist")" {push_function_local_offset();
-        currscopespace = functionlocal;} block   {  $$ = Manage_funcdef_function($4);  patchlist($7->returnlist,nextquad()-1);infunction--; 
-        pop_function_local_offset();
-        if (infunction == 0)
-        {
-                currscopespace = programvar;
-        }
-        
-        }
+        | 
+        FUNCTION  M              {Init_Anonymous_func(); infunction++;} 
+        "("idlist")"            {push_function_local_offset(); currscopespace = functionlocal;} 
+        block                   {  $$ = Manage_funcdef_function($5);
+                                        //$$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
+                                        $$->value.funcVal->quadfuncStartIndex = $2+ 1;
+                                        
+                                        patchlist($8->returnlist,nextquad()-1);
+                                        infunction--; 
+                                        pop_function_local_offset();
+                                        if (infunction == 0)
+                                        {
+                                                currscopespace = programvar;
+                                        }
+                                        
+                                }
         ;
 
 const:  INT       { $$ = Manage_const_int($1);    }

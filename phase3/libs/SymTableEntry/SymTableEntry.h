@@ -34,7 +34,7 @@ typedef struct Function {
     unsigned int scope;
     unsigned int line;
     unsigned int quadfuncStartIndex;    // the index of the quad where the function definition starts
-    unsigned int nOfLocalVars;  // that is going to be equal to the offset when exiting the function body block
+    unsigned int numOfLocalVars;  // that is going to be equal to the offset when exiting the function body block
 } Function;
 
 typedef enum SymbolType {
