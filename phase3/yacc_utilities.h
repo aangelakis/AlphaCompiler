@@ -491,8 +491,8 @@ SymTableEntry* Manage_funcdef_functionId(char *name,idList *args){
         
     }
     
-    //if it already exists in the same scope print error
-    if ((search = lookup_active_with_scope(&scpArr,scope,name)) != NULL)
+    //if it already exists in the same scope print error, the same scope is -1 for the name coz this is called before scope down
+    if ((search = lookup_active_with_scope(&scpArr,scope-1,name)) != NULL)
     {
         if(IS_FUNCTION(search))
             print_custom_error("Function redefinition",name,scope);
