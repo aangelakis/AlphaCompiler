@@ -8,7 +8,7 @@ char symTypes[5][20]= {
     "library function"    
 };
 
-SymTableEntry* makeSymTableEntry(const char* name, idList* args, unsigned scope, unsigned line, SymbolType type)
+SymTableEntry* makeSymTableEntry(const char* name, idList* args, unsigned scope, unsigned line, SymbolType type, scopespace_t scopespace, int offset)
 {
     SymTableEntry* new_entry = malloc(sizeof(SymTableEntry));
 
@@ -26,6 +26,10 @@ SymTableEntry* makeSymTableEntry(const char* name, idList* args, unsigned scope,
         new_entry->value.varVal->name  = strdup(name);
         new_entry->value.varVal->scope = scope;
         new_entry->value.varVal->line  = line;
+        new_entry->value.varVal->offset = offset;
+        new_entry->value.varVal->scopespace = scopespace;
+        printf("name : %s , scopespace : %d , offset : %d\n",name,scopespace,offset);
+        
     }
 
     return new_entry;

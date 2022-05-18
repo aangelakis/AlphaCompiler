@@ -1,17 +1,6 @@
-EMIT IF TABLE :
-  prepei na mpei se kathe call kai se kathe uminus expr , lvalue ++ etc;
-  na dume pu allu prepei na mpei
-
-
--merikh apotimhsh
--sta term na kanume $$ = to katalilo giati kanei auto generate $$ = $1 kai se kapoia einai lathos
--not quad in print!
--print strings
-
-TEO -global in function gia na dume ama eimaste se legal return
-TEO -reset tmp onomata opu prepei px if (expr) dn kanei meta to expr
-
--na mpei truetest stis while, for kai if gia expressions tou typou "if(a), while(5) etc."
+DES GRAMMI 5O0 YACC UTILITIES . H
+function four(four){four=4;}
+SKAEI
 
 
 DONE :
@@ -29,6 +18,9 @@ DONE :
   -ola ta break / continue mpainun se listes me head sto antistoixo epipedo tu stack etsi wste otan kleisei
     i loop pu tis kalese na ta kanei backpatch
 
+LASTLY:
+-offsets, scopespaces, etc
+-change value to constant expressions (?)
 
 
 ⠑⡄⠀⠀⠀⠀⠀⠀ ⠀ ⣀⣀⣤⣤⣤⣀⡀

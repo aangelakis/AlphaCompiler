@@ -18,6 +18,12 @@ alpha_stack* anon_func_names_stack;
 alpha_stack* invalid_funcname_number_stack;
 alpha_stack* loopcounter_stack;
 alpha_stack* func_init_jump_stack;
+
+//gia offset
+alpha_stack* function_local_offset_stack;
+
+
+
 scopeArray* globalScopeArr;
 
 char libraryFunctions[12][24]={
@@ -47,6 +53,7 @@ int main(int argc, char *argv[]){
     invalid_funcname_number_stack = alpha_stack_init();
     loopcounter_stack= alpha_stack_init();
     func_init_jump_stack = alpha_stack_init();
+    function_local_offset_stack = alpha_stack_init();
     SymTableEntry* tmp;
     
     if (argc > 1)
@@ -65,7 +72,7 @@ int main(int argc, char *argv[]){
     /* Putting all the library functions in the SymTable */
     for (int i = 0; i < 12; i++){
         //char *key = strdup(libraryFunctions[i]);
-        tmp = makeSymTableEntry(libraryFunctions[i], NULL, 0, 0, LIBFUNC);
+        tmp = makeSymTableEntry(libraryFunctions[i], NULL, 0, 0, LIBFUNC, 0, 0);
         SymTable_put(symTable, libraryFunctions[i], (void*)tmp);
         insert_to_scopeArr(&scpArr,0,tmp);
     }

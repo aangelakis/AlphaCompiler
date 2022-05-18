@@ -26,6 +26,44 @@ extern alpha_stack* anon_func_names_stack;
 extern alpha_stack* invalid_funcname_number_stack;
 extern alpha_stack* loopcounter_stack;
 extern alpha_stack* func_init_jump_stack;
+
+//gia offset
+extern alpha_stack* function_local_offset_stack;
+scopespace_t currscopespace = programvar;
+int programvar_offset = 0;
+int functionlocal_offset = 0;
+int formalarg_offset = 0;
+
+
+void push_function_local_offset(){
+    int *tmp = malloc(sizeof(int));
+    *tmp = functionlocal_offset;
+    stack_push(function_local_offset_stack, tmp);
+    functionlocal_offset = 0;
+}
+
+void pop_function_local_offset(){
+    int *tmp = stack_pop(function_local_offset_stack);
+    int offset = *tmp;
+    free(tmp);
+    functionlocal_offset = offset;
+}
+
+/*returns offset of currscopespace and proceeds to add 1 to it */
+int get_offset(){
+    switch (currscopespace) {
+        case programvar:
+            return programvar_offset++;
+        case functionlocal:
+            return functionlocal_offset++;
+        case formalarg:
+            return formalarg_offset++;
+        default:
+            printf("PANIC ERROR IN get_offset()\n");
+            return 0;
+    }
+}
+
 int loopcounter = 0;
 
 unsigned nextquad(void) { return currQuad; }
@@ -273,7 +311,7 @@ SymTableEntry* new_temp(){
     // mporei mia temporary metabliti na einai typou VAR_FORMAL?
     if(sym == NULL){
             SymbolType type = (scope == 0) ? VAR_GLOBAL : VAR_LOCAL;
-            SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,type); //create new entry
+            SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,type,currscopespace,(type==1)? get_offset():0); //create new entry
             SymTable_put(symTable, name, entry); //put it inside the global symtable
             insert_to_scopeArr(&scpArr,scope,entry); //and inside the scope array
             return entry;
@@ -341,7 +379,7 @@ void Manage_idlist_idlistId(idList ** dest , idList * old_list , char * new_elem
     }
     
     //insertion in the symtable and in the scopelist
-    SymTableEntry* entry = makeSymTableEntry(new_element,NULL,scope,yylineno,VAR_FORMAL);
+    SymTableEntry* entry = makeSymTableEntry(new_element,NULL,scope,yylineno,VAR_FORMAL,currscopespace,get_offset());
     SymTable_put(symTable,new_element,entry);
     insert_to_scopeArr(&scpArr,scope,entry);
 
@@ -368,7 +406,7 @@ void Manage_idlist_id(idList ** dest , char * new_element){
     }
     
     //insertion in the symtable and in the scopelist
-    SymTableEntry* entry = makeSymTableEntry(new_element,NULL,scope,yylineno,VAR_FORMAL);
+    SymTableEntry* entry = makeSymTableEntry(new_element,NULL,scope,yylineno,VAR_FORMAL,currscopespace,get_offset());
     SymTable_put(symTable,new_element,entry);
     insert_to_scopeArr(&scpArr,scope,entry);
 
@@ -418,7 +456,12 @@ expr* Manage_const_bool(unsigned char c){
 SymTableEntry* Manage_funcdef_functionId(char *name,idList *args){
     fprintf(yacc_out,"scope is =%d\n",scope);
     //if it already exists in the global scope as an lib func
-    SymTableEntry* search = lookup_active_with_scope(&scpArr,0,name);
+    SymTableEntry* search = lookup_active_with_scope(&scpArr,0,name); // TODO: edw einai to lathos me to object_creation_expression test
+
+    push_function_local_offset();
+    currscopespace = functionlocal;
+    
+
     if (search!=NULL)
     {
         if(search->type==LIBFUNC){
@@ -454,12 +497,12 @@ SymTableEntry* Manage_funcdef_functionId(char *name,idList *args){
         if(IS_FUNCTION(search))
             print_custom_error("Function redefinition",name,scope);
         else
-            print_custom_error("Funtion declared with same name as variable",name,scope);
+            print_custom_error("Funtion declared with same name as variable",name,scope); // edw skasei error function four(four){four=4;}
         return NULL;
     }
     
     //insertion in the symtable and in the scopelist
-    SymTableEntry* entry = makeSymTableEntry(name,args,scope-1,yylineno,USERFUNC);
+    SymTableEntry* entry = makeSymTableEntry(name,args,scope-1,yylineno,USERFUNC,currscopespace,0);
     SymTable_put(symTable,name,entry);
     insert_to_scopeArr(&scpArr,scope-1,entry);
     return entry;
@@ -474,7 +517,7 @@ SymTableEntry* Manage_funcdef_function(idList *args){
 
     char * name = (char*)stack_pop(anon_func_names_stack);
     //insertion in the symtable and in the scopelist
-    SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC);
+    SymTableEntry* entry = makeSymTableEntry(name,args,scope,yylineno,USERFUNC,currscopespace,0);
     SymTable_put(symTable,name,entry);
     insert_to_scopeArr(&scpArr,scope,entry);
     emit(funcend,newexpr_conststring(name),NULL,NULL,-1,currQuad);
@@ -627,7 +670,7 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
             // if you didn't find anything then create new symbol
             if(entry == NULL){
                 SymbolType type = (scope == 0) ? VAR_GLOBAL : VAR_LOCAL;
-                entry = makeSymTableEntry(id, NULL,  scope, line, type);
+                entry = makeSymTableEntry(id, NULL,  scope, line, type,currscopespace,get_offset());
                 SymTable_put(symTable,id, entry);
                 insert_to_scopeArr(&scpArr, scope, entry);
                 *new_entry = entry;
@@ -675,9 +718,9 @@ void Manage_lvalue_localID(SymTableEntry** new_entry, char* id, int scope, int l
         }
         else {
             if(scope == 0)
-                entry = makeSymTableEntry(id, NULL,  scope, line, VAR_GLOBAL);
+                entry = makeSymTableEntry(id, NULL,  scope, line, VAR_GLOBAL,currscopespace,get_offset());
             else
-                entry = makeSymTableEntry(id, NULL,  scope, line, VAR_LOCAL);
+                entry = makeSymTableEntry(id, NULL,  scope, line, VAR_LOCAL,currscopespace,get_offset());
 
             SymTable_put(symTable,id, entry);
             insert_to_scopeArr(&scpArr, scope, entry);
@@ -1152,8 +1195,12 @@ void Init_named_func(char * name){
 
     emit(jump, NULL, NULL, NULL, 0, currQuad);
     emit(funcstart,newexpr_conststring(name),NULL,NULL,-1,currQuad);
-}
+    
+    currscopespace = formalarg;
+    formalarg_offset = 0;
 
+}
+extern int infunction;
 void End_named_func(char* name){
     // pops the loopcounter changes the global pointer and free's the used variable
     int *tmp_loopcounter = (int *) stack_pop(loopcounter_stack);
@@ -1167,6 +1214,14 @@ void End_named_func(char* name){
     int *tmp_currQuad = (int *) stack_pop(func_init_jump_stack);
     patchlabel(*tmp_currQuad, nextquad());
     free(tmp_currQuad);
+
+    pop_function_local_offset();
+    if (infunction == 1)
+    {
+        currscopespace = programvar;
+    }
+    
+    
 }
 
 void Init_Anonymous_func(){
@@ -1186,6 +1241,9 @@ void Init_Anonymous_func(){
     emit(jump, NULL, NULL, NULL, 0, currQuad);
     stack_push(anon_func_names_stack, anonFuncName);
     emit(funcstart,newexpr_conststring(anonFuncName),NULL,NULL,-1,currQuad);
+
+    currscopespace = formalarg;
+    formalarg_offset = 0;
 }
 
 expr* make_call(expr* lv, expr* elist){

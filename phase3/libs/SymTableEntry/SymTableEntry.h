@@ -15,8 +15,8 @@ extern char symTypes[5][20];
 /* Scope space name enum*/
 typedef enum scopespace_t{
     programvar,
-    functionlocal,
-    formalarg
+    formalarg,
+    functionlocal
 } scopespace_t;
 
 /* Symbol Table Entries */
@@ -50,7 +50,7 @@ typedef struct SymTableEntry {
     enum SymbolType type;
 } SymTableEntry;
 
-SymTableEntry* makeSymTableEntry(const char* name, idList* args, unsigned scope, unsigned line, SymbolType type);
+SymTableEntry* makeSymTableEntry(const char* name, idList* args, unsigned scope, unsigned line, SymbolType type, scopespace_t scopespace, int offset);
 
 void printSymTableEntry(void*);
 

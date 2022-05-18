@@ -341,7 +341,15 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} { $$=$3;  Manage_block_lis
 funcdef: FUNCTION ID {Init_named_func($2);infunction++;} "("idlist")" {$<symEntr>$ = Manage_funcdef_functionId($2,$5);} block 
                         {  End_named_func($2); patchlist($8->returnlist,nextquad()-1); infunction--;}
                         
-        | FUNCTION{Init_Anonymous_func(); infunction++;} "("idlist")" block   {  $$ = Manage_funcdef_function($4);  patchlist($6->returnlist,nextquad()-1);infunction--; }
+        | FUNCTION{Init_Anonymous_func(); infunction++;} "("idlist")" {push_function_local_offset();
+        currscopespace = functionlocal;} block   {  $$ = Manage_funcdef_function($4);  patchlist($7->returnlist,nextquad()-1);infunction--; 
+        pop_function_local_offset();
+        if (infunction == 0)
+        {
+                currscopespace = programvar;
+        }
+        
+        }
         ;
 
 const:  INT       { $$ = Manage_const_int($1);    }
