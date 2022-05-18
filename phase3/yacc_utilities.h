@@ -764,11 +764,11 @@ expr* Manage_term_uminusExpr(expr * lvalue){
     
     check_arith(lvalue);
     
-    if (lvalue->sym->type<2 && lvalue->sym->value.varVal->name[0]=='_') // in case of tmp
+    if (lvalue->sym && lvalue->sym->type<2 && lvalue->sym->value.varVal->name[0]=='_') // in case of tmp
     {
         emit(uminus, lvalue, lvalue, NULL, -1, currQuad);
         return lvalue;
-    }else {
+    } else {
         expr* term = newexpr(arithexpr_e);
         term->sym = new_temp(); // create new tmp variable
         emit(uminus, term, lvalue, NULL, -1, currQuad); // _t0 = -x;
