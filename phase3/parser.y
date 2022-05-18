@@ -154,15 +154,15 @@ liststmt: liststmt stmt {  $$ = Manage_liststmt_liststmtStmt($1, $2);      }
           ;
 
 stmt: expr ";"      {   $$ = make_stmt(); Manage_stmt_expr();  emit_ifbool($1); reset_temp_counter();    }
-      | ifstmt      {   $$ = $1; Manage_stmt_ifstmt();       }
-      | whilestmt   {   $$ = make_stmt(); Manage_stmt_whilestmt();    }
-      | forstmt     {   $$ = make_stmt(); Manage_stmt_forstmt();      }
-      | returnstmt  {   $$ = $1; Manage_stmt_returnstmt();   }
-      | BREAK ";"   {   $$ = Manage_stmt_break();        }  
-      | CONTINUE ";"{   $$ = Manage_stmt_continue();     }
-      | block       {   $$ = $1; Manage_stmt_block();        }
-      | funcdef     {   $$ = make_stmt(); Manage_stmt_funcdef();      }
-      | ";"         {   $$ = make_stmt(); Manage_stmt_semicolon();    }
+      | ifstmt      {   $$ = $1; Manage_stmt_ifstmt();      reset_temp_counter(); }
+      | whilestmt   {   $$ = make_stmt(); Manage_stmt_whilestmt();  reset_temp_counter();  }
+      | forstmt     {   $$ = make_stmt(); Manage_stmt_forstmt();   reset_temp_counter();   }
+      | returnstmt  {   $$ = $1; Manage_stmt_returnstmt(); reset_temp_counter();  }
+      | BREAK ";"   {   $$ = Manage_stmt_break();     reset_temp_counter();   }  
+      | CONTINUE ";"{   $$ = Manage_stmt_continue();   reset_temp_counter();  }
+      | block       {   $$ = $1; Manage_stmt_block();      reset_temp_counter();  }
+      | funcdef     {   $$ = make_stmt(); Manage_stmt_funcdef();   reset_temp_counter();   }
+      | ";"         {   $$ = make_stmt(); Manage_stmt_semicolon();   reset_temp_counter(); }
       ;
 
 arithmexpr: expr PLUS expr  {    $$ = Manage_arithmexpr($1,"+",$3);    }
@@ -284,12 +284,20 @@ methodcall: DOUBLE_STOP ID "(" elist ")"        {
 elist:  %empty            {     $$ = NULL;  Manage_elist_empty();           }
         | elist "," expr        {       while($1->next){
                                                 $1 = $1->next;
-                                        } 
+                                        }
+                                        if($3->type == boolexpr_e) {
+                                                $3 = emit_ifbool($3);
+                                        }
+                                        
                                         $1->next = $3; 
                                         $3->prev = $1; 
                                         Manage_elist_elistExpr();     
                                 }
-        | expr            {   $$ = $1; Manage_elist_expr();            }      
+        | expr          {               if($1->type == boolexpr_e) {
+                                                $1 = emit_ifbool($1);
+                                        }  
+                                        $$ = $1; Manage_elist_expr();            
+                        }      
         ;
 
 objectdef:  "[" elist "]"      {        expr* t = newexpr(newtable_e);
@@ -435,7 +443,10 @@ returnstmt: RETURN expr";"  {
                                 if(infunction==0){
                                         print_custom_error("return outside of function","return",scope);
                                 }
-                                $2 = emit_ifbool($2); 
+                                if($2->type == boolexpr_e){
+                                        $2 = emit_ifbool($2);
+                                }
+                                 
                                 $$ = Manage_returnstmt_returnexpr($2); 
                         }
             | RETURN";"     
