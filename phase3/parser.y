@@ -366,7 +366,10 @@ idlist: %empty          {   Manage_idlist_empty(&($$));      }
         ;
 
 ifprefix: IF "(" expr ")" {     
-                                $3 = emit_ifbool($3);
+                                if($3->type == boolexpr_e) {
+                                        $3 = emit_ifbool($3);
+                                }
+                                
                                 //true_test($3);
                                 emit(if_eq, NULL, $3, newexpr_constbool(1), nextquad() + 2, currQuad);
                                 $$ = nextquad();
@@ -399,7 +402,10 @@ whilestart: WHILE {     printf("whilestart -> while\n");
                   }
 
 whilecond: "(" expr ")" {       printf("whilecond -> (expr)\n");
-                                $2 = emit_ifbool($2);
+                                if($2->type == boolexpr_e){
+                                        $2 = emit_ifbool($2);
+                                }
+                                
                                 //true_test($2);
                                 emit(if_eq, NULL, $2, newexpr_constbool(1), nextquad() + 2, currQuad);
                                 $$ = nextquad();
@@ -426,7 +432,10 @@ M:%empty { $$ = nextquad(); }
 forprefix: FOR "(" elist ";" M expr ";" {
         $$ = malloc(sizeof(forprefix_t));
         $$->test = $5; 
-        $6 = emit_ifbool($6);
+        if($6->type == boolexpr_e){
+                $6 = emit_ifbool($6);
+        }
+        
         //true_test($6);
         $$->enter = nextquad();
         emit(if_eq, NULL, $6, newexpr_constbool(1), 0, nextquad());

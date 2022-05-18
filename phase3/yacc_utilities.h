@@ -784,7 +784,11 @@ expr* Manage_assignexpr(expr* lvalue, expr* rvalue){
         e->type= assignexpr_e;
         return e;
     }
-    expr* e = emit_ifbool(rvalue); //in case merikis apotimisis
+    expr* e  = rvalue;
+    if(rvalue->type == boolexpr_e){
+        e = emit_ifbool(rvalue); //in case merikis apotimisis
+    }
+    
     emit(assign, lvalue, e, NULL, -1, currQuad); // x = y;
     
     SymTableEntry *tmp = new_temp(); // create new tmp variable
@@ -822,9 +826,7 @@ expr* Manage_term_uminusExpr(expr * lvalue){
 }
 
 expr* Manage_term_notExpr(expr* notExpr){
-    // if(true_test(notExpr)){
-    //     notExpr = emit_ifbool(notExpr);
-    // }
+
     true_test(notExpr);
     unsigned int tmp = notExpr->truelist;
     notExpr->truelist = notExpr->falselist;
@@ -984,10 +986,14 @@ expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
     fprintf(yacc_out,"relopexpr -> expr %s expr\n", op);
     expr* tmp_expr=newexpr(boolexpr_e);
     //tmp_expr->sym = new_temp(); // create new tmp variable
-
-    arg1 = emit_ifbool(arg1);
-    arg2 = emit_ifbool(arg2);
-    
+    if (arg1->type == boolexpr_e)
+    {
+        arg1 = emit_ifbool(arg1);
+    }
+    if (arg2->type == boolexpr_e)
+    {
+        arg2 = emit_ifbool(arg2);
+    }
     switch (op[0]){
         case '>':
         tmp_expr->type = boolexpr_e;
@@ -1017,14 +1023,7 @@ expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
         break;
     case '=':
         tmp_expr->type = boolexpr_e;
-        //tmp stuff
-        // if(arg1->type==boolexpr_e){
-        //     emit_ifbool(arg1);
-        // }
-        // if(arg2->type==boolexpr_e){
-        //     emit_ifbool(arg2);
-        // }
-        //end of tmp stuff
+
         emit(if_eq, NULL, arg1, arg2, 0, currQuad);
         emit(jump, NULL, NULL, NULL, 0, currQuad);
         tmp_expr->truelist  = newlist(nextquad()-2);
@@ -1032,14 +1031,7 @@ expr* Manage_relopexpr(expr* arg1,char* op, expr* arg2){
         break;
     case '!':
         tmp_expr->type = boolexpr_e;
-        //tmp stuff
-        // if(arg1->type==boolexpr_e){
-        //     emit_ifbool(arg1);
-        // }
-        // if(arg2->type==boolexpr_e){
-        //     emit_ifbool(arg2);
-        // }
-        //end of tmp stuff
+        
         emit(if_noteq, NULL, arg1, arg2, 0, currQuad);
         emit(jump, NULL, NULL, NULL, 0, currQuad);
         tmp_expr->truelist  = newlist(nextquad()-2);
