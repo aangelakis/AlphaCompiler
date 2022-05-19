@@ -339,16 +339,19 @@ block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} { $$=$3;  Manage_block_lis
         ;
 
 funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;} 
-                "("idlist")"    {$<symEntr>$ = Manage_funcdef_functionId($2,$6); 
-                                $<symEntr>$->value.funcVal->quadfuncStartIndex = $3 + 1; // keep where funcstart is with M rule
+                "("idlist")"    {
                                 
+                                $<symEntr>$ = Manage_funcdef_functionId($2,$6); 
+                                if($<symEntr>$ != NULL){
+                                        $<symEntr>$->value.funcVal->quadfuncStartIndex = $3 + 1; // keep where funcstart is with M rule
+                                }
                                 }
                 block          { 
                                 SymTableEntry* search =lookup_active_with_scope(&scpArr,scope,$2); //GIA KAPOIO LOGO EDW EINAI NULL TO
-                                search->value.funcVal->numOfLocalVars=functionlocal_offset;     //      $$->value.funcVal
-                                
-                                //$$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
-                                
+                                if(search != NULL){
+                                        search->value.funcVal->numOfLocalVars=functionlocal_offset;     //      $$->value.funcVal
+                                }
+                                $$ = search;
                                 End_named_func($2); 
                                 patchlist($9->returnlist,nextquad()-1); 
                                 infunction--;
