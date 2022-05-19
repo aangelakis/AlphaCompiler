@@ -145,7 +145,7 @@ expr* emit_iftableitem(expr* e){
 }
 
 int true_test(expr* arg){
-    puts("I AM TRUE TESTING");
+    //puts("I AM TRUE TESTING");
     if(arg == NULL){
         //puts("I AM HERE");
         return 0;
