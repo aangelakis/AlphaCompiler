@@ -27,6 +27,7 @@ typedef struct quad {
     expr*       arg2;
     unsigned    label;
     unsigned    line;
+    unsigned    source_code_line;
 } quad;
 
 void print_quad(void*);

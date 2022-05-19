@@ -48,7 +48,7 @@ void print_quad(void* voidquad){
     //puts(opcode);
     char result[1024] = "nil", arg1[1024] = "nil", arg2[1024] = "nil";
 
-    int line = q->line, label = q->label;
+    int line = q->line, label = q->label, source_line = q->source_code_line;
     
     if(q->op==funcend || q->op==funcstart){
         sprintf(result, "%s", q->result->content.strConst);
@@ -148,8 +148,8 @@ void print_quad(void* voidquad){
     
     if (label == -1)
        // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
-       fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%s\n", line, opcode, result, arg1, arg2, "nil");
+       fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%-3s\t\t[line: %d]\n", line, opcode, result, arg1, arg2, "nil",source_line);
     else
-       fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
+       fprintf(quads_out, "%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%-3d\t\t[line: %d]\n", line, opcode, result, arg1, arg2, label, source_line);
        // printf("%d:\t\t\t%-12s\t\t\t%-4s\t\t\t%-4s\t\t%-4s\t\t%d\n", line, opcode, result, arg1, arg2, label);
 }

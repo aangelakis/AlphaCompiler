@@ -38,15 +38,14 @@ int formalarg_offset = 0;
 void push_function_local_offset(){
     int *tmp = malloc(sizeof(int));
     *tmp = functionlocal_offset;
-    stack_push(function_local_offset_stack, tmp);
+    stack_push(function_local_offset_stack,(void *) tmp);
     functionlocal_offset = 0;
 }
 
 void pop_function_local_offset(){
-    int *tmp = stack_pop(function_local_offset_stack);
-    int offset = *tmp;
+    int *tmp =(int*) stack_pop(function_local_offset_stack);
+    functionlocal_offset = *tmp;
     free(tmp);
-    functionlocal_offset = offset;
 }
 
 /*returns offset of currscopespace and proceeds to add 1 to it */
@@ -127,6 +126,7 @@ void emit(
     p->label    = label;
     p->line     = line;
     p->op       = op;
+    p->source_code_line = yylineno;
     vektor_set_element(quads, currQuad, (void*) p);
     currQuad++;
 }

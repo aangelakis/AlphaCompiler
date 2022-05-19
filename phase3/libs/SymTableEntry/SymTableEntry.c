@@ -41,9 +41,16 @@ void printSymTableEntry(void* entry)
     int type = symtab->type;
     
     if(IS_FUNCTION(symtab)){
+        
         printf("\"%s\" [%s]", symtab->value.funcVal->name,symTypes[type]);
         
-        printf(" (line %u) (scope %u)\n",  symtab->value.funcVal->line, symtab->value.funcVal->scope);
+        printf(" (line %u) (scope %u)",  symtab->value.funcVal->line, symtab->value.funcVal->scope);
+
+        if(type == USERFUNC){
+            printf(" (funcstart at %d)  (local vars %d)", symtab->value.funcVal->quadfuncStartIndex, symtab->value.funcVal->numOfLocalVars);
+        }
+        printf("\n");
+        
     }
     else{
         printf("\"%s\" [%s] (line %u) (scope %u)\n"\

@@ -343,7 +343,12 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
                                 $<symEntr>$->value.funcVal->quadfuncStartIndex = $3 + 1; // keep where funcstart is with M rule
                                 
                                 }
-                block          { //$$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
+                block          { 
+                                SymTableEntry* search =lookup_active_with_scope(&scpArr,scope,$2); //GIA KAPOIO LOGO EDW EINAI NULL TO
+                                search->value.funcVal->numOfLocalVars=functionlocal_offset;     //      $$->value.funcVal
+                                
+                                //$$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
+                                
                                 End_named_func($2); 
                                 patchlist($9->returnlist,nextquad()-1); 
                                 infunction--;
@@ -353,9 +358,9 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
         FUNCTION  M              {Init_Anonymous_func(); infunction++;} 
         "("idlist")"            {push_function_local_offset(); currscopespace = functionlocal;} 
         block                   {  $$ = Manage_funcdef_function($5);
-                                        //$$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
-                                        $$->value.funcVal->quadfuncStartIndex = $2+ 1;
-                                        
+                                        $$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
+                                        $$->value.funcVal->quadfuncStartIndex = $2+ 1;  // keep where funcstart is with M rule
+                                        printf("DES === LOCAL : %d , START : %d\n",$$->value.funcVal->numOfLocalVars,$$->value.funcVal->quadfuncStartIndex);
                                         patchlist($8->returnlist,nextquad()-1);
                                         infunction--; 
                                         pop_function_local_offset();
