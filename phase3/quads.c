@@ -53,6 +53,13 @@ void print_quad(void* voidquad){
     if(q->op==funcend || q->op==funcstart){
         sprintf(result, "%s", q->result->content.strConst);
     }
+    else if(q->op == param && q->result->type == conststring_e){
+        const_to_string(result, q->result, q->result->type);
+        char tmp[1024] = "\"";
+        strcat(tmp, result);
+        strcat(tmp, "\"");
+        strcpy(result, tmp);
+    }
     else if(q->op == param && q->result->type >= constdouble_e){
         const_to_string(result, q->result, q->result->type);
     }
