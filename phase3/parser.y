@@ -180,8 +180,8 @@ relopexpr:  expr GE expr  {    $$ = Manage_relopexpr($1,">=",$3);   }
         | expr NE expr    {    $$ = Manage_relopexpr($1,"!=",$3);   }
         ;
 
-boolexpr:   expr AND { true_test($1); } M expr   {   printf("M -> %d\n", $4); true_test($5); $$ = Manage_boolexpr($1, "and", $5, $4);     }
-        | expr OR { true_test($1); } M expr      {   printf("M -> %d\n", $4); true_test($5); $$ = Manage_boolexpr($1,"or",$5,$4);         }
+boolexpr:   expr AND { true_test($1); } M expr   {  true_test($5); $$ = Manage_boolexpr($1, "and", $5, $4);     }
+        | expr OR { true_test($1); } M expr      {  true_test($5); $$ = Manage_boolexpr($1,"or",$5,$4);         }
         ;
 
 expr:   assignexpr        {     Manage_expr_assignexpr();       }
@@ -363,7 +363,7 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
         block                   {  $$ = Manage_funcdef_function($5);
                                         $$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
                                         $$->value.funcVal->quadfuncStartIndex = $2+ 1;  // keep where funcstart is with M rule
-                                        printf("DES === LOCAL : %d , START : %d\n",$$->value.funcVal->numOfLocalVars,$$->value.funcVal->quadfuncStartIndex);
+                                        //printf("DES === LOCAL : %d , START : %d\n",$$->value.funcVal->numOfLocalVars,$$->value.funcVal->quadfuncStartIndex);
                                         patchlist($8->returnlist,nextquad()-1);
                                         infunction--; 
                                         pop_function_local_offset();
@@ -420,11 +420,11 @@ loopend:%empty  {--loopcounter;}
 
 loopstmt: loopstart stmt loopend { $$ =$2;}
 
-whilestart: WHILE {     printf("whilestart -> while\n");
+whilestart: WHILE {     //printf("whilestart -> while\n");
                         $$ = nextquad();
                   }
 
-whilecond: "(" expr ")" {       printf("whilecond -> (expr)\n");
+whilecond: "(" expr ")" {       //printf("whilecond -> (expr)\n");
                                 if($2->type == boolexpr_e){
                                         $2 = emit_ifbool($2);
                                 }

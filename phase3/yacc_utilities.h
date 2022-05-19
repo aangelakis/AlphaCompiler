@@ -171,7 +171,7 @@ int true_test(expr* arg){
 }
 
 expr* emit_ifbool(expr* e){
-    printf("inside emit if bool\n");
+    //printf("inside emit if bool\n");
     if(e->type == boolexpr_e || e->type == constbool_e){
         patchlist(e->truelist, nextquad());
         patchlist(e->falselist, nextquad()+2);
@@ -833,8 +833,8 @@ expr* Manage_term_notExpr(expr* notExpr){
     notExpr->falselist = tmp;
     
     fprintf(yacc_out,"term -> not expr\n");
-    printf("truelist%d\n", notExpr->truelist);
-    printf("falselist%d\n", notExpr->falselist);
+   // printf("truelist%d\n", notExpr->truelist);
+   // printf("falselist%d\n", notExpr->falselist);
     return notExpr;
 }
 
