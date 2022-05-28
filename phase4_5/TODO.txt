@@ -1,0 +1,86 @@
+DES GRAMMI 5O0 YACC UTILITIES . H
+function four(four){four=4;}
+SKAEI
+
+
+DONE :
+-loop_counter_stack gia ta break kai continue
+-functions swsto funcstart / funcend me stack gia ta unamed functions
+-dhmiourgia pinakwn (needs more testing!!!!)
+-kai sta amesa call twn anon function na pairnei to onoma apo to panw quad
+-se function return kai to 1o jump / me xrhsh list opws continue-break gia patch sto telos tu func
+-calls
+-check arithmetic (check const ?)
+-kathe while / for kanun stin arxi tou loop ++loopcounter kai sto telos tou loop --loopcounter
+  -kathe block otan anoigei kanei push to loopcounter se ena stack kai kanei reset to global 
+  -opote koitame gia break/continue koitame sto last added sto stack gia 0/1
+  -opote teleiwnei ena block kanei pop to loopcounter apo to stack kai epanaferei tin timi tou loopcounter
+  -ola ta break / continue mpainun se listes me head sto antistoixo epipedo tu stack etsi wste otan kleisei
+    i loop pu tis kalese na ta kanei backpatch
+
+LASTLY:
+-offsets, scopespaces, etc
+-change value to constant expressions (?)
+
+
+⠑⡄⠀⠀⠀⠀⠀⠀ ⠀ ⣀⣀⣤⣤⣤⣀⡀
+⠸⠿⡀⠀ ⠀ ⠀⣀⡴⢿⣿⣿⣿⣿⣿⣿⣿⣷⣦⡀
+⠀⠀⠀⠀⠑⢄⣠⠾⠁⣀⣄⡈⠙⣿⣿⣿⣿⣿⣿⣿⣿⣆
+⠀⠀⠀⠀⢀⡀⠁⠀⠀⠈⠙⠛⠂⠈⣿⣿⣿⣿⣿⠿⡿⢿⣆
+⠀⠀⠀⢀⡾⣁⣀⠀⠴⠂⠙⣗⡀⠀⢻⣿⣿⠭⢤⣴⣦⣤⣹⠀⠀⠀⢀⢴⣶⣆
+⠀⠀⢀⣾⣿⣿⣿⣷⣮⣽⣾⣿⣥⣴⣿⣿⡿⢂⠔⢚⡿⢿⣿⣦⣴⣾⠸⣼⡿
+⠀⢀⡞⠁⠙⠻⠿⠟⠉⠀⠛⢹⣿⣿⣿⣿⣿⣌⢤⣼⣿⣾⣿⡟⠉
+⠀⣾⣷⣶⠇⠀⠀⣤⣄⣀⡀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿                     
+⠀⠉⠈⠉⠀⠀⢦⡈⢻⣿⣿⣿⣶⣶⣶⣶⣤⣽⡹⣿⣿⣿⣿⡇
+⠀⠀⠀⠀⠀⠀⠀⠉⠲⣽⡻⢿⣿⣿⣿⣿⣿⣿⣷⣜⣿⣿⣿⡇
+⠀⠀ ⠀⠀⠀⠀⠀⢸⣿⣿⣷⣶⣮⣭⣽⣿⣿⣿⣿⣿⣿⣿⠇
+⠀⠀⠀⠀⠀⠀⣀⣀⣈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇
+⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+
+━━-╮
+╰┃ ┣▇━▇
+ ┃ ┃  ╰━▅╮
+ ╰┳╯ ╰━━┳╯E Z A F
+  ╰╮ ┳━━╯T Y 4 
+ ▕▔▋ ╰╮╭━╮ T U T O R I A L
+╱▔╲▋╰━┻┻╮╲╱▔▔▔╲
+▏  ▔▔▔▔▔▔▔  O O┃
+╲╱▔╲▂▂▂▂╱▔╲▂▂▂╱
+ ▏╳▕▇▇▕ ▏╳▕▇▇▕
+ ╲▂╱╲▂╱ ╲▂╱╲▂╱
+
+
+           _                         _
+       _==/          i     i          \==
+     /XX/            |\___/|            \XX\
+   /XXXX\            |XXXXX|            /XXXX\
+  |XXXXXX\_         _XXXXXXX_         _/XXXXXX|
+ XXXXXXXXXXXxxxxxxxXXXXXXXXXXXxxxxxxxXXXXXXXXXXX
+|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
+ XXXXXX/^^^^"\XXXXXXXXXXXXXXXXXXXXX/^^^^^\XXXXXX
+  |XXX|       \XXX/^^\XXXXX/^^\XXX/       |XXX|
+    \XX\       \X/    \XXX/    \X/       /XX/
+       "\       "      \X/      "       /"
+                        !
+
+         /"\
+        |\./|
+        |~--|
+        |.  |
+        |>=<|
+     /'\| ..|/'\
+ /'\|== |  .|== |
+|== | '.|   | ..|\
+| : |  .|.. |  .| \
+| *:  *:  *:  *:|>=)
+| ' . '   '  .'   /
+| .    . .      ./
+|   ~   .   .   /
+ \        ..   /
+  \    '      /
+   |--/'''\--|
+   | |--+= | |
+   |--\.../--|
+   |         |
