@@ -1,0 +1,15 @@
+void generate_ADD(quad*);
+void generate_SUB(quad*);
+void generate_MUL(quad*);
+void generate_DIV(quad*);
+void generate_MOD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
+void generate_ADD(quad*);
