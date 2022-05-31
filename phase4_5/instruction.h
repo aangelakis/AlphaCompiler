@@ -1,3 +1,14 @@
+#ifndef INSTRUCTION_HEADER
+#define INSTRUCTION_HEADER
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "libs/SymTableEntry/SymTableEntry.h"
+#include "instruction.h"
+#include "libs/Vektor/Vektor.h"
+#include "quads.h"
+#include "expression.h"
+
 void generate_ASSIGN(quad*);
 void generate_ADD(quad*);
 void generate_SUB(quad*);
@@ -26,21 +37,17 @@ void generate_TABLESETELEM(quad*);
 void generate_JUMP(quad*);
 void generate_NOP(quad*);
 
-struct userfunc{
+typedef struct userfunc{
     unsigned address;
     unsigned localSize;
-    char* id;
-};
-
+    const char* id;
+} userfunc;
 
 /* oi pinakes sta8eron gro8eeeeee */
-double*     numConsts;
-unsigned    totalNumConsts;
-char**      stringConsts;
-unsigned    totalStringConsts;
-char**      namedLibfuncs;
-userfunc*   userFuncs;
-unsigned    totalUserFuncs;
+Vektor*     numConsts;
+Vektor*     stringConsts;
+Vektor*     namedLibfuncs;
+Vektor*     userFuncs;
 
 
 
@@ -51,12 +58,12 @@ typedef enum vmopcode{
     not_v,          jeq_v,          jne_v,
     jle_v,          jge_v,          jlt_v,
     jgt_v,          call_v,         pusharg_v,
-    ret_v,          funcstart_v,    funcend_v,      
-    tablecreate_v,  tablegetelem_v, tablesetelem_v, 
-    jump_v,         nop_v 
+    ret_v,          getretval_v,    funcstart_v,    
+    funcend_v,      tablecreate_v,  tablegetelem_v, 
+    tablesetelem_v, jump_v,         nop_v 
 } vmopcode;
 
-enum vmarg_t{
+typedef enum vmarg_t{
     label_a     =0,
     global_a    =1,
     formal_a    =2,
@@ -68,7 +75,7 @@ enum vmarg_t{
     userfunc_a  =8,
     libfunc_a   =9,
     retval_a    =10
-};
+} vmarg_t;
 
 
 typedef struct vmarg{
@@ -86,47 +93,26 @@ typedef struct instruction{
 
 
 typedef void (*generator_func_t)(quad*);
+void quad_to_instruction(void* void_quad);
 void make_operand(expr*, vmarg*);
+void reset_operand(vmarg*);
 
+void print_instruction(void* void_inst);
 
-generator_func_t generators[] = {
-    generate_ASSIGN,
-    generate_ADD,
-    generate_SUB,
-    generate_MUL,
-    generate_DIV,
-    generate_MOD,
-    generate_UMINUS,
-    generate_AND,
-    generate_OR,
-    generate_NOT,
-    generate_IF_EQ,
-    generate_IF_NOTEQ,
-    generate_IF_LESSEQ,
-    generate_IF_GREATEREQ,
-    generate_IF_LESS,
-    generate_IF_GREATER,
-    generate_CALL,
-    generate_PARAM,
-    generate_RETURN,
-    generate_GETRETVAL,
-    generate_FUNCSTART,
-    generate_FUNCEND,
-    generate_TABLECREATE,
-    generate_TABLEGETELEM,
-    generate_TABLESETELEM,
-    generate_JUMP,
-    generate_NOP
-};
-
-struct incomplete_jump {
+/*
+typedef struct incomplete_jump {
     unsigned            instrNo; // The jump instruction number.
     unsigned            iaddress; // The i-code jump-target address
-    incomplete_jump*    next;
-};
+    struct incomplete_jump*    next;
+} incomplete_jump;
 
 incomplete_jump*    ij_head = NULL;
 unsigned            ij_total = 0;
+*/
 
 void add_incomplete_jump(unsigned instrNo, unsigned iaddress);
 void patch_incomplete_jumps();
+
+void emit_t(instruction* t);
+
+#endif

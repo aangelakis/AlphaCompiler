@@ -355,6 +355,9 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
                                 End_named_func($2); 
                                 patchlist($9->returnlist,nextquad()-1); 
                                 infunction--;
+                                //printf("Funcstart=%d\n", $<symEntr>$->value.funcVal->quadfuncStartIndex);    
+                                ((quad*) quads->data[$<symEntr>$->value.funcVal->quadfuncStartIndex])->result->sym = $<symEntr>$; 
+                                ((quad*) quads->data[$<symEntr>$->value.funcVal->quadfuncStartIndex])->result->type = programfunc_e; 
                                 }
                         
         | 
@@ -371,7 +374,6 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
                                         {
                                                 currscopespace = programvar;
                                         }
-                                        
                                 }
         ;
 
