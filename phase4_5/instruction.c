@@ -494,17 +494,17 @@ void print_instruction(void* void_inst) {
     if(res) {
         result_name = vmarg_type_names[res->type]; 
         result_val = res->val;
-        fprintf(instructions_out," (%s, %d)", result_name, result_val);
+        fprintf(instructions_out," result:(%s, %d)", result_name, result_val);
     }
     if(arg1) {
         arg1_name = vmarg_type_names[arg1->type]; 
         arg1_val = arg1->val;
-        fprintf(instructions_out," (%s, %d)", arg1_name, arg1_val);
+        fprintf(instructions_out," arg1:(%s, %d)", arg1_name, arg1_val);
     }
     if(arg2) {
         arg2_name = vmarg_type_names[arg2->type]; 
         arg2_val = arg2->val;
-        fprintf(instructions_out," (%s, %d)", arg2_name, arg2_val);
+        fprintf(instructions_out," arg2:(%s, %d)", arg2_name, arg2_val);
     }
     fprintf(instructions_out, "\n");
 
