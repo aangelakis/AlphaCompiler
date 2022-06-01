@@ -48,9 +48,9 @@ char instruction_opcode_names[27][15] = {
     "uminus_v",       "and_v",          "or_v",
     "not_v",          "jeq_v",          "jne_v",
     "jle_v",          "jge_v",          "jlt_v",
-    "jgt_v",          "call_v",         "pusharg_v",
-    "ret_v",          "getretval_v",      "funcstart_v",    
-    "funcend_v",      "tablecreate_v",  "tablegetelem_v", 
+    "jgt_v",          "callfunc_v",     "pusharg_v",
+    "ret_v",          "getretval_v",    "enterfunc_v",    
+    "exitfunc_v",     "tablecreate_v",  "tablegetelem_v", 
     "tablesetelem_v", "jump_v",         "nop_v" 
 };
 
@@ -195,6 +195,7 @@ void make_booloperand(vmarg* arg, unsigned val){
 
 void make_retvaloperand(vmarg* arg){
     arg->type = retval_a;
+    arg->val = -1;
 }
 
 void emit_t(instruction* t){
@@ -260,10 +261,10 @@ void generate_UMINUS(quad* q){
         t->arg1 = malloc(sizeof(vmarg));
         make_operand(q->arg1, t->arg1);
     }
-    if(q->arg2){
-        t->arg2 = malloc(sizeof(vmarg));
-        make_numberoperand(t->arg2, -1);
-    }
+
+    t->arg2 = malloc(sizeof(vmarg));
+    make_numberoperand(t->arg2, -1);
+    
     if(q->result){
         t->result = malloc(sizeof(vmarg));
         make_operand(q->result, t->result);
@@ -277,51 +278,7 @@ void generate_AND(quad* q){
 }
 
 void generate_OR(quad* q){
-    instruction* t = malloc(sizeof(instruction));
-
-    t->opcode = jeq_v;
-    t->srcLine = q->source_code_line;
-    t->arg1 = NULL;
-    t->arg2 = NULL;
-    t->result = NULL;
-
-    t->arg1 = malloc(sizeof(vmarg));
-    t->arg2 = malloc(sizeof(vmarg));
-    t->result = malloc(sizeof(vmarg));
-
-    if(q->arg1)
-        make_operand(q->arg1, t->arg1);
-
-    make_booloperand(t->arg2, 1);
-    t->result->type = label_a;
-    t->result->val = nextinstructionlabel() + 4;
-    emit_t(t);
-
-    if(q->arg2)
-        make_operand(q->arg2, t->arg1);
-    t->result->val = nextinstructionlabel() + 3;
-
-    t->opcode = assign_v;
-    make_booloperand(t->arg1, 0);
-    reset_operand(t->arg2);
-
-    if(q->result)
-        make_operand(q->result, t->result);
-    emit_t(t);
-
-    t->opcode = jump_v;
-    reset_operand(t->arg1);
-    reset_operand(t->arg2);
-    t->result->type = label_a;
-    t->result->val = nextinstructionlabel() + 2;
-    emit_t(t);
-
-    t->opcode = assign_v;
-    make_booloperand(t->arg1, 1);
-    reset_operand(t->arg2);
-    if(q->result)
-        make_operand(q->result, t->result);
-    emit_t(t);
+    return;
 }
 
 void generate_NOT(quad* q){
@@ -381,7 +338,7 @@ void generate_IF_GREATER(quad* q){
 
 void generate_CALL(quad* q){
     instruction* t = malloc(sizeof(instruction));
-    t->opcode = call_v;
+    t->opcode = callfunc_v;
     t->srcLine = q->source_code_line;
     t->arg1 = NULL;
     t->arg2 = NULL;
@@ -417,7 +374,6 @@ void generate_RETURN(quad* q){
 
     t->result = malloc(sizeof(vmarg));
     make_retvaloperand(t->result);
-    t->result->val = -1;
     if(q->result){
         t->arg1 = malloc(sizeof(vmarg));
         make_operand(q->result, t->arg1);
@@ -454,12 +410,12 @@ void generate_FUNCSTART(quad* q){
     //push(funcstack, f);
 
     instruction* t = malloc(sizeof(instruction));
-    t->opcode = funcstart_v;
+    t->opcode = enterfunc_v;
     t->srcLine = q->source_code_line;
     t->arg1 = NULL;
     t->arg2 = NULL;
     t->result = NULL;
-    printf("funcstart type of q->result: %d\n", q->result->type);
+    //printf("funcstart type of q->result: %d\n", q->result->type);
     if(q->result){
         t->result = malloc(sizeof(vmarg));
         make_operand(q->result, t->result);
@@ -472,13 +428,13 @@ void generate_FUNCEND(quad* q){
     //backpatch(f.returnList, nextinstructionlabel());
     //pop_funcstart_label();
     instruction* t = malloc(sizeof(instruction));
-    t->opcode = funcend_v;
+    t->opcode = exitfunc_v;
     t->srcLine = q->source_code_line;
     t->arg1 = NULL;
     t->arg2 = NULL;
     t->result = NULL;
     
-    printf("funcend type of q->result: %d\n", q->result->type);
+    //printf("funcend type of q->result: %d\n", q->result->type);
     if(q->result){
         t->result = malloc(sizeof(vmarg));
         t->result->type = userfunc_a;

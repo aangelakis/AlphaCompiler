@@ -57,9 +57,9 @@ typedef enum vmopcode{
     uminus_v,       and_v,          or_v,
     not_v,          jeq_v,          jne_v,
     jle_v,          jge_v,          jlt_v,
-    jgt_v,          call_v,         pusharg_v,
-    ret_v,          getretval_v,    funcstart_v,    
-    funcend_v,      tablecreate_v,  tablegetelem_v, 
+    jgt_v,          callfunc_v,     pusharg_v,
+    ret_v,          getretval_v,    enterfunc_v,    
+    exitfunc_v,     tablecreate_v,  tablegetelem_v, 
     tablesetelem_v, jump_v,         nop_v 
 } vmopcode;
 

@@ -50,7 +50,7 @@ char libraryFunctions[12][24]={
 
 void print_string(void * void_str, int i) {
     char* s = (char*) void_str;
-    fprintf(instructions_out, "%d: %s\n", i, s);
+    fprintf(instructions_out, "%d: \"%s\"\n", i, s);
 }
 
 void print_double(void* void_double, int i){
@@ -60,7 +60,7 @@ void print_double(void* void_double, int i){
 
 void print_userfunc(void* void_func, int i) {
     userfunc* uf = (userfunc*) void_func;
-    fprintf(instructions_out, "%d: address %d, local size %d, id \'%s\'\n", i, uf->address, uf->localSize, uf->id);
+    fprintf(instructions_out, "%d: address %d, local size %d, id \"%s\"\n", i, uf->address, uf->localSize, uf->id);
 }
 
 int main(int argc, char *argv[]){
