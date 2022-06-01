@@ -28,7 +28,7 @@ Vektor*     userFuncs;
 
 //gia offset
 alpha_stack* function_local_offset_stack;
-
+alpha_stack* funcstart_label_stack;
 
 
 scopeArray* globalScopeArr;
@@ -48,19 +48,19 @@ char libraryFunctions[12][24]={
     "sin"
 };
 
-void print_string(void * void_str) {
+void print_string(void * void_str, int i) {
     char* s = (char*) void_str;
-    fprintf(instructions_out, "%s\n", s);
+    fprintf(instructions_out, "%d: %s\n", i, s);
 }
 
-void print_double(void* void_double){
-    double* i = (double*) void_double;
-    fprintf(instructions_out, "%lf\n",*i);
+void print_double(void* void_double, int i){
+    double* num = (double*) void_double;
+    fprintf(instructions_out, "%d: %lf\n", i, *num);
 }
 
-void print_userfunc(void* void_func) {
+void print_userfunc(void* void_func, int i) {
     userfunc* uf = (userfunc*) void_func;
-    fprintf(instructions_out, "address %d, local size %d, id \'%s\'\n", uf->address, uf->localSize, uf->id);
+    fprintf(instructions_out, "%d: address %d, local size %d, id \'%s\'\n", i, uf->address, uf->localSize, uf->id);
 }
 
 int main(int argc, char *argv[]){
@@ -81,6 +81,7 @@ int main(int argc, char *argv[]){
     loopcounter_stack= alpha_stack_init();
     func_init_jump_stack = alpha_stack_init();
     function_local_offset_stack = alpha_stack_init();
+    funcstart_label_stack = alpha_stack_init();
     SymTableEntry* tmp;
     
     if (argc > 1)
@@ -132,20 +133,20 @@ int main(int argc, char *argv[]){
 
     fprintf(instructions_out, "*********** NUMCONSTS ***********\n");
     fprintf(instructions_out, "numConsts: %d\n", numConsts->cur_size);
-    vektor_apply(numConsts, print_double);
+    vektor_apply2(numConsts, print_double);
     fprintf(instructions_out, "*********** STRCONSTS ***********\n");
     fprintf(instructions_out, "stringConsts: %d\n", stringConsts->cur_size);
-    vektor_apply(stringConsts, print_string);
+    vektor_apply2(stringConsts, print_string);
     fprintf(instructions_out, "*********** LIBFUNCS ***********\n");
     fprintf(instructions_out, "namedLibFuncs: %d\n", namedLibfuncs->cur_size);
-    vektor_apply(namedLibfuncs, print_string);
+    vektor_apply2(namedLibfuncs, print_string);
     fprintf(instructions_out, "*********** USERFUNCS ***********\n");
     fprintf(instructions_out, "userFuncs: %d\n", userFuncs->cur_size);
-    vektor_apply(userFuncs, print_userfunc);
+    vektor_apply2(userFuncs, print_userfunc);
     fprintf(instructions_out, "*********************************\n\n");
 
     fprintf(instructions_out, "############### INSTRUCTIONS #################\n");
-    vektor_apply(instructions, print_instruction);
+    vektor_apply2(instructions, print_instruction);
 
     fclose(instructions_out);
 

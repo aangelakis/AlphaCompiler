@@ -1,3 +1,6 @@
+#ifndef ALPHA_STACK_HEADER
+#define ALPHA_STACK_HEADER
+
 typedef struct stack_node{
     void* value;
     struct stack_node* next;
@@ -35,3 +38,5 @@ void stack_apply(alpha_stack*, void (*apply)(void*));
 
 /* Clears the stack */
 void stack_clear(alpha_stack*);
+
+#endif

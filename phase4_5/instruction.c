@@ -8,6 +8,10 @@ extern Vektor*     namedLibfuncs;
 extern Vektor*     userFuncs;
 extern FILE*       instructions_out;
 
+
+/* to stack gia ta funcstart*/
+extern alpha_stack* funcstart_label_stack;
+
 generator_func_t generators[] = {
     generate_ASSIGN,
     generate_ADD,
@@ -57,6 +61,18 @@ char vmarg_type_names[11][15] = {
     "libfunc_a",    "retval_a"
 };
 
+void push_funcstart_label(){
+    int *tmp = malloc(sizeof(int));
+    *tmp = vektor_active_size(userFuncs) -1;
+    stack_push(funcstart_label_stack,(int*)tmp);
+}
+
+int pop_funcstart_label(){
+    int *tmp = (int*)stack_pop(funcstart_label_stack);
+    int ret = *tmp;
+    free(tmp);
+    return ret;
+}
 
 unsigned consts_newstring(char* s);
 unsigned consts_newnumber(double n);
@@ -90,6 +106,7 @@ unsigned userfuncs_newfunc(SymTableEntry* sym){
     f->localSize = sym->value.funcVal->numOfLocalVars;
     f->address = sym->value.funcVal->quadfuncStartIndex;
     vektor_add(userFuncs, f);
+    push_funcstart_label();
     return (vektor_active_size(userFuncs) - 1);
 }
 
@@ -182,7 +199,7 @@ void make_retvaloperand(vmarg* arg){
 
 void emit_t(instruction* t){
     assert(t);
-    printf("instruction's opcode-> %d\n", t->opcode);
+    //printf("instruction's opcode-> %d\n", t->opcode);
     vektor_set_element(instructions, currInstruction++, (void*) t);
 }
 
@@ -400,9 +417,9 @@ void generate_RETURN(quad* q){
 
     t->result = malloc(sizeof(vmarg));
     make_retvaloperand(t->result);
-    if(q->arg1){
-        t->arg1 = malloc(sizeof(vmarg));
-        make_operand(q->arg1, t->arg1);
+    if(q->result){
+        //t->arg1 = malloc(sizeof(vmarg));
+        make_operand(q->result, t->result);
     }
     emit_t(t);
 
@@ -452,32 +469,37 @@ void generate_FUNCSTART(quad* q){
 void generate_FUNCEND(quad* q){
     //SymTableEntry f = pop(funcstack);
     //backpatch(f.returnList, nextinstructionlabel());
-
+    //pop_funcstart_label();
     instruction* t = malloc(sizeof(instruction));
     t->opcode = funcend_v;
     t->srcLine = q->source_code_line;
     t->arg1 = NULL;
     t->arg2 = NULL;
     t->result = NULL;
+    
     printf("funcend type of q->result: %d\n", q->result->type);
     if(q->result){
         t->result = malloc(sizeof(vmarg));
-        make_operand(q->result, t->result);
+        t->result->type = userfunc_a;
+        t->result->val = pop_funcstart_label();
+        //make_operand(q->result, t->result);
     }
     emit_t(t);
 }
 
+int peos = 0;
 void quad_to_instruction(void* void_quad){
     if(void_quad == NULL){
         return;
     }
+    printf("peos:%d\n", ++peos);
     quad* q = (quad*) void_quad;
     //printf("opcode: %d\n", q->op);
     generators[q->op](q);
     return;
 }
 
-void print_instruction(void* void_inst) {
+void print_instruction(void* void_inst, int i) {
     if(void_inst == NULL) {
         //fprintf(instructions_out,"FOUND NULL\n"); 
         return;
@@ -489,8 +511,8 @@ void print_instruction(void* void_inst) {
     char* opcode = instruction_opcode_names[instr->opcode];
     char* result_name = NULL, *arg1_name = NULL, *arg2_name = NULL; 
     int result_val = -1, arg1_val = -1, arg2_val = -1;
-
-    fprintf(instructions_out,"instruction: %s", opcode);
+    
+    fprintf(instructions_out,"%d: instruction: %s", i, opcode);
     if(res) {
         result_name = vmarg_type_names[res->type]; 
         result_val = res->val;

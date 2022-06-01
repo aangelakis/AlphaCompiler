@@ -109,3 +109,10 @@ void vektor_apply(Vektor *vektor, void (*apply)(void*)){
 		apply(vektor->data[i]);
 	}
 }
+
+void vektor_apply2(Vektor *vektor, void (*apply)(void*, int)){
+	for (int i = 0; i < vektor->cur_size; i++)
+	{
+		apply(vektor->data[i], i);
+	}
+}

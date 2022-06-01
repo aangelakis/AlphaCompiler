@@ -1,10 +1,16 @@
-x = -10;
+function (){return 0;}
+/*
+x = 10;
 y = "hello";
-function f(x,y) { return x+y; }
+function f(x,y) { 
+    function f1(t,b){
+        return t;
+    }
+}
 z = "world";
 w = cos(3.1415);
 print(x,y,z,w);
-/*
+
 f(5,2);
 x > y;
 x < y;

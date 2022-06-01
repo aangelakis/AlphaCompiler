@@ -53,8 +53,8 @@ void printSymTableEntry(void* entry)
         
     }
     else{
-        printf("\"%s\" [%s] (line %u) (scope %u)\n"\
-        , symtab->value.varVal->name, symTypes[type] , symtab->value.varVal->line, symtab->value.varVal->scope );
+        printf("\"%s\" [%s] (line %u) (scope %u) (offset %u) \n"\
+        , symtab->value.varVal->name, symTypes[type] , symtab->value.varVal->line, symtab->value.varVal->scope, symtab->value.varVal->offset );
     }
 }
 

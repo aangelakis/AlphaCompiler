@@ -50,4 +50,7 @@ void vektor_expand(Vektor *vektor, int size);
 /* Applys function 'apply(void*)' to the content of each data of the vektor */
 void vektor_apply(Vektor *vektor, void (*apply)(void*));
 
+/* Applys function 'apply(void*, int)' to the content of each data of the vektor */
+void vektor_apply2(Vektor *vektor, void (*apply)(void*, int));
+
 #endif

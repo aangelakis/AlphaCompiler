@@ -35,6 +35,7 @@ int functionlocal_offset = 0;
 int formalarg_offset = 0;
 
 
+
 void push_function_local_offset(){
     int *tmp = malloc(sizeof(int));
     *tmp = functionlocal_offset;
@@ -311,7 +312,7 @@ SymTableEntry* new_temp(){
     // mporei mia temporary metabliti na einai typou VAR_FORMAL?
     if(sym == NULL){
             SymbolType type = (scope == 0) ? VAR_GLOBAL : VAR_LOCAL;
-            SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,type,currscopespace,(type==1)? get_offset():0); //create new entry
+            SymTableEntry* entry = makeSymTableEntry(name,NULL,scope,yylineno,type,currscopespace,get_offset()); //create new entry
             SymTable_put(symTable, name, entry); //put it inside the global symtable
             insert_to_scopeArr(&scpArr,scope,entry); //and inside the scope array
             return entry;

@@ -7,6 +7,7 @@
 #include "instruction.h"
 #include "libs/Vektor/Vektor.h"
 #include "quads.h"
+#include "libs/stack/stack.h"
 #include "expression.h"
 
 void generate_ASSIGN(quad*);
@@ -48,7 +49,6 @@ Vektor*     numConsts;
 Vektor*     stringConsts;
 Vektor*     namedLibfuncs;
 Vektor*     userFuncs;
-
 
 
 typedef enum vmopcode{
@@ -97,7 +97,7 @@ void quad_to_instruction(void* void_quad);
 void make_operand(expr*, vmarg*);
 void reset_operand(vmarg*);
 
-void print_instruction(void* void_inst);
+void print_instruction(void* void_inst, int);
 
 /*
 typedef struct incomplete_jump {
