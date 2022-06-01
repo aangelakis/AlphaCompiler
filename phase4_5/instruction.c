@@ -417,9 +417,10 @@ void generate_RETURN(quad* q){
 
     t->result = malloc(sizeof(vmarg));
     make_retvaloperand(t->result);
+    t->result->val = -1;
     if(q->result){
-        //t->arg1 = malloc(sizeof(vmarg));
-        make_operand(q->result, t->result);
+        t->arg1 = malloc(sizeof(vmarg));
+        make_operand(q->result, t->arg1);
     }
     emit_t(t);
 
@@ -487,12 +488,10 @@ void generate_FUNCEND(quad* q){
     emit_t(t);
 }
 
-int peos = 0;
 void quad_to_instruction(void* void_quad){
     if(void_quad == NULL){
         return;
     }
-    printf("peos:%d\n", ++peos);
     quad* q = (quad*) void_quad;
     //printf("opcode: %d\n", q->op);
     generators[q->op](q);

@@ -374,6 +374,9 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
                                         {
                                                 currscopespace = programvar;
                                         }
+                                        
+                                        ((quad*) quads->data[$$->value.funcVal->quadfuncStartIndex])->result->sym = $$; 
+                                        ((quad*) quads->data[$$->value.funcVal->quadfuncStartIndex])->result->type = programfunc_e;
                                 }
         ;
 

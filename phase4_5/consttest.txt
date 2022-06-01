@@ -1,11 +1,9 @@
 function (){return 0;}
-/*
+
 x = 10;
 y = "hello";
 function f(x,y) { 
-    function f1(t,b){
-        return t;
-    }
+    return x + y;
 }
 z = "world";
 w = cos(3.1415);
@@ -21,4 +19,3 @@ x != y;
 x or y;
 x and y;
 not x;
-*/
