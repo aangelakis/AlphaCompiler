@@ -479,7 +479,7 @@ void quad_to_instruction(void* void_quad){
 
 void print_instruction(void* void_inst) {
     if(void_inst == NULL) {
-        fprintf(instructions_out,"FOUND NULL\n"); 
+        //fprintf(instructions_out,"FOUND NULL\n"); 
         return;
     }
 
@@ -490,20 +490,23 @@ void print_instruction(void* void_inst) {
     char* result_name = NULL, *arg1_name = NULL, *arg2_name = NULL; 
     int result_val = -1, arg1_val = -1, arg2_val = -1;
 
+    fprintf(instructions_out,"instruction: %s", opcode);
     if(res) {
         result_name = vmarg_type_names[res->type]; 
         result_val = res->val;
+        fprintf(instructions_out," (%s, %d)", result_name, result_val);
     }
     if(arg1) {
         arg1_name = vmarg_type_names[arg1->type]; 
         arg1_val = arg1->val;
+        fprintf(instructions_out," (%s, %d)", arg1_name, arg1_val);
     }
     if(arg2) {
         arg2_name = vmarg_type_names[arg2->type]; 
         arg2_val = arg2->val;
+        fprintf(instructions_out," (%s, %d)", arg2_name, arg2_val);
     }
+    fprintf(instructions_out, "\n");
 
     unsigned srcLine = instr->srcLine;
-
-    fprintf(instructions_out,"opcode: %s\n", opcode);
 }

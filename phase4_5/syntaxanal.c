@@ -50,12 +50,17 @@ char libraryFunctions[12][24]={
 
 void print_string(void * void_str) {
     char* s = (char*) void_str;
-    puts(s);
+    fprintf(instructions_out, "%s\n", s);
 }
 
 void print_double(void* void_double){
     double* i = (double*) void_double;
-    printf("%lf\n",*i);
+    fprintf(instructions_out, "%lf\n",*i);
+}
+
+void print_userfunc(void* void_func) {
+    userfunc* uf = (userfunc*) void_func;
+    fprintf(instructions_out, "address %d, local size %d, id \'%s\'\n", uf->address, uf->localSize, uf->id);
 }
 
 int main(int argc, char *argv[]){
@@ -123,21 +128,23 @@ int main(int argc, char *argv[]){
     printf("totalQuads=%d\n", vektor_active_size(quads));
     printf("totalInsts=%d\n", vektor_active_size(instructions));
 
-    puts("**********************");
-    vektor_apply(numConsts, print_double);
-    puts("**********************");
-    vektor_apply(stringConsts, print_string);
-    puts("**********************");
-    vektor_apply(namedLibfuncs, print_string);
-    puts("**********************");
-    printf("numConsts: %d\n", numConsts->cur_size);
-    printf("stringConsts: %d\n", stringConsts->cur_size);
-    printf("namedLibFuncs: %d\n", namedLibfuncs->cur_size);
-    printf("userFuncs: %d\n", userFuncs->cur_size);
-    puts("**********************");
-
     instructions_out = fopen("instructions_output.txt", "w");
 
+    fprintf(instructions_out, "*********** NUMCONSTS ***********\n");
+    fprintf(instructions_out, "numConsts: %d\n", numConsts->cur_size);
+    vektor_apply(numConsts, print_double);
+    fprintf(instructions_out, "*********** STRCONSTS ***********\n");
+    fprintf(instructions_out, "stringConsts: %d\n", stringConsts->cur_size);
+    vektor_apply(stringConsts, print_string);
+    fprintf(instructions_out, "*********** LIBFUNCS ***********\n");
+    fprintf(instructions_out, "namedLibFuncs: %d\n", namedLibfuncs->cur_size);
+    vektor_apply(namedLibfuncs, print_string);
+    fprintf(instructions_out, "*********** USERFUNCS ***********\n");
+    fprintf(instructions_out, "userFuncs: %d\n", userFuncs->cur_size);
+    vektor_apply(userFuncs, print_userfunc);
+    fprintf(instructions_out, "*********************************\n\n");
+
+    fprintf(instructions_out, "############### INSTRUCTIONS #################\n");
     vektor_apply(instructions, print_instruction);
 
     fclose(instructions_out);

@@ -4,6 +4,7 @@ function f(x,y) { return x+y; }
 z = "world";
 w = cos(3.1415);
 print(x,y,z,w);
+/*
 f(5,2);
 x > y;
 x < y;
@@ -14,3 +15,4 @@ x != y;
 x or y;
 x and y;
 not x;
+*/
