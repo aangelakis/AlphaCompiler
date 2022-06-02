@@ -239,13 +239,19 @@ member: lvalue "." ID           {   $$ = Manage_member_lvalueID($1, $3);   }
 call: call "(" elist ")"                {       $$ = make_call($1, $3); 
                                                 Manage_call_callElist();        
                                         }
-      | lvalue callsuffix               {       $1 = emit_iftableitem($1);
+      | lvalue callsuffix               {       
+                                                $1 = emit_iftableitem($1);
                                                 if($2->method){
                                                         expr* t = $1;
                                                         $1 = emit_iftableitem(member_item(t, $2->name));
-                                                        $2->elist->prev = t;
-                                                        $2->elist->prev->next = $2->elist;
-                                                        $2->elist = $2->elist->prev;
+                                                        if($2->elist != NULL){
+                                                                $2->elist->prev = t;
+                                                                $2->elist->prev->next = $2->elist;
+                                                                $2->elist = $2->elist->prev;
+                                                        }else{
+                                                                $2->elist = t;
+                                                        }
+                                                        
                                                 }
                                                 $$ = make_call($1, $2->elist);
                                                 Manage_call_lvalueCallsuffix($1); 
