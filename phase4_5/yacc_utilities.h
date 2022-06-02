@@ -782,7 +782,7 @@ expr* Manage_assignexpr(expr* lvalue, expr* rvalue){
     if(lvalue->type==tableitem_e){
         emit(tablesetelem,lvalue,lvalue->index,rvalue,-1,currQuad);
         expr* e = emit_iftableitem(lvalue);
-        e->type= assignexpr_e;
+        e->type = var_e;
         return e;
     }
     expr* e  = rvalue;

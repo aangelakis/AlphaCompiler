@@ -1,0 +1,113 @@
+*********** NUMCONSTS ***********
+numConsts: 6
+0: 3.141628
+1: 0.000000
+2: 0.000000
+3: 0.000000
+4: 2.000000
+5: 5.000000
+*********** STRCONSTS ***********
+stringConsts: 20
+0: "
+"
+1: "pi"
+2: "r"
+3: "x"
+4: "y"
+5: "r"
+6: "r"
+7: "pi"
+8: "r"
+9: "r"
+10: "r"
+11: "x"
+12: "x"
+13: "y"
+14: "y"
+15: "
+"
+16: "pi (must be 3.141628}): "
+17: "circle Area (must be 78.540700000000001): "
+18: "
+
+"
+19: "circle Perimeter (must be 31.41628): "
+*********** LIBFUNCS ***********
+namedLibFuncs: 3
+0: "print"
+1: "print"
+2: "print"
+*********** USERFUNCS ***********
+userFuncs: 6
+0: address 13, local size 2, id "Area"
+1: address 22, local size 2, id "Perimeter"
+2: address 31, local size 3, id "InitCircle"
+3: address 31, local size 3, id "InitCircle"
+4: address 13, local size 2, id "Area"
+5: address 22, local size 2, id "Perimeter"
+*********************************
+
+############### INSTRUCTIONS #################
+1: instruction: assign_v result:(global_a, 0) arg1:(string_a, 0)
+2: instruction: assign_v result:(global_a, 1) arg1:(global_a, 0)
+3: instruction: assign_v result:(global_a, 3) arg1:(number_a, 0)
+4: instruction: assign_v result:(global_a, 1) arg1:(global_a, 3)
+5: instruction: tablecreate_v result:(global_a, 4)
+6: instruction: tablesetelem_v result:(global_a, 4) arg1:(string_a, 1) arg2:(global_a, 1)
+7: instruction: tablesetelem_v result:(global_a, 4) arg1:(string_a, 2) arg2:(number_a, 1)
+8: instruction: tablesetelem_v result:(global_a, 4) arg1:(string_a, 3) arg2:(number_a, 2)
+9: instruction: tablesetelem_v result:(global_a, 4) arg1:(string_a, 4) arg2:(number_a, 3)
+10: instruction: assign_v result:(global_a, 2) arg1:(global_a, 4)
+11: instruction: assign_v result:(global_a, 5) arg1:(global_a, 2)
+12: instruction: jump_v result:(label_a, 21)
+13: instruction: enterfunc_v result:(userfunc_a, 0)
+14: instruction: tablegetelem_v result:(local_a, 0) arg1:(formal_a, 0) arg2:(string_a, 5)
+15: instruction: mul_v result:(local_a, 0) arg1:(global_a, 3) arg2:(local_a, 0)
+16: instruction: tablegetelem_v result:(local_a, 1) arg1:(formal_a, 0) arg2:(string_a, 6)
+17: instruction: mul_v result:(local_a, 0) arg1:(local_a, 0) arg2:(local_a, 1)
+18: instruction: assign_v result:(retval_a, -1) arg1:(local_a, 0)
+19: instruction: jump_v result:(label_a, 20)
+20: instruction: exitfunc_v result:(userfunc_a, 0)
+21: instruction: jump_v result:(label_a, 30)
+22: instruction: enterfunc_v result:(userfunc_a, 1)
+23: instruction: tablegetelem_v result:(local_a, 0) arg1:(formal_a, 0) arg2:(string_a, 7)
+24: instruction: mul_v result:(local_a, 0) arg1:(number_a, 4) arg2:(local_a, 0)
+25: instruction: tablegetelem_v result:(local_a, 1) arg1:(formal_a, 0) arg2:(string_a, 8)
+26: instruction: mul_v result:(local_a, 0) arg1:(local_a, 0) arg2:(local_a, 1)
+27: instruction: assign_v result:(retval_a, -1) arg1:(local_a, 0)
+28: instruction: jump_v result:(label_a, 29)
+29: instruction: exitfunc_v result:(userfunc_a, 1)
+30: instruction: jump_v result:(label_a, 41)
+31: instruction: enterfunc_v result:(userfunc_a, 2)
+32: instruction: assign_v result:(local_a, 0) arg1:(number_a, 5)
+33: instruction: assign_v result:(local_a, 1) arg1:(local_a, 0)
+34: instruction: tablesetelem_v result:(global_a, 2) arg1:(string_a, 9) arg2:(local_a, 1)
+35: instruction: tablegetelem_v result:(local_a, 2) arg1:(global_a, 2) arg2:(string_a, 10)
+36: instruction: tablesetelem_v result:(global_a, 2) arg1:(string_a, 11) arg2:(local_a, 0)
+37: instruction: tablegetelem_v result:(local_a, 1) arg1:(global_a, 2) arg2:(string_a, 12)
+38: instruction: tablesetelem_v result:(global_a, 2) arg1:(string_a, 13) arg2:(local_a, 0)
+39: instruction: tablegetelem_v result:(local_a, 1) arg1:(global_a, 2) arg2:(string_a, 14)
+40: instruction: exitfunc_v result:(userfunc_a, 2)
+41: instruction: callfunc_v result:(userfunc_a, 3)
+42: instruction: assign_v result:(global_a, 1) arg1:(retval_a, -1)
+43: instruction: pusharg_v result:(string_a, 15)
+44: instruction: pusharg_v result:(global_a, 3)
+45: instruction: pusharg_v result:(string_a, 16)
+46: instruction: callfunc_v result:(libfunc_a, 0)
+47: instruction: assign_v result:(global_a, 1) arg1:(retval_a, -1)
+48: instruction: pusharg_v result:(global_a, 2)
+49: instruction: callfunc_v result:(userfunc_a, 4)
+50: instruction: assign_v result:(global_a, 1) arg1:(retval_a, -1)
+51: instruction: pusharg_v result:(global_a, 0)
+52: instruction: pusharg_v result:(global_a, 1)
+53: instruction: pusharg_v result:(string_a, 17)
+54: instruction: callfunc_v result:(libfunc_a, 1)
+55: instruction: assign_v result:(global_a, 4) arg1:(retval_a, -1)
+56: instruction: pusharg_v result:(global_a, 2)
+57: instruction: callfunc_v result:(userfunc_a, 5)
+58: instruction: assign_v result:(global_a, 1) arg1:(retval_a, -1)
+59: instruction: pusharg_v result:(string_a, 18)
+60: instruction: pusharg_v result:(global_a, 1)
+61: instruction: pusharg_v result:(string_a, 19)
+62: instruction: callfunc_v result:(libfunc_a, 2)
+63: instruction: assign_v result:(global_a, 4) arg1:(retval_a, -1)

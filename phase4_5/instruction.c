@@ -127,8 +127,10 @@ void make_operand(expr* e, vmarg* arg){
         case tableitem_e:
         case arithexpr_e:
         case boolexpr_e:
+        case assignexpr_e:
 
         case newtable_e: {
+            printf("Type=%d\n", e->type);
             assert(e->sym);
             arg->val = e->sym->value.varVal->offset;
 
@@ -179,7 +181,13 @@ void make_operand(expr* e, vmarg* arg){
             break;
         }
 
-        default: assert(0);
+        default: {
+            if(e->type == assignexpr_e)
+                puts("There is an assignment here");
+            else
+                printf("Type=%d", e->type);
+            assert(0);
+        }
     }
 }
 
@@ -198,6 +206,7 @@ void make_retvaloperand(vmarg* arg){
     arg->val = -1;
 }
 
+static int times_here = 1;
 void emit_t(instruction* t){
     assert(t);
     //printf("instruction's opcode-> %d\n", t->opcode);
@@ -448,6 +457,7 @@ void quad_to_instruction(void* void_quad){
     if(void_quad == NULL){
         return;
     }
+    printf("Times_here=%d\n", times_here++);
     quad* q = (quad*) void_quad;
     //printf("opcode: %d\n", q->op);
     generators[q->op](q);

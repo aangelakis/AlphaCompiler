@@ -126,8 +126,15 @@ int main(int argc, char *argv[]){
     fclose(quads_out);
 
     vektor_apply(quads, quad_to_instruction);
-    printf("totalQuads=%d\n", vektor_active_size(quads));
-    printf("totalInsts=%d\n", vektor_active_size(instructions));
+    printf("sizes:\n");
+    printf("%d\n", quads->max_size);
+    printf("%d\n",instructions->max_size);
+    printf("%d\n",numConsts->max_size);
+    printf("%d\n",stringConsts->max_size);
+    printf("%d\n",namedLibfuncs->max_size);
+    printf("%d\n",userFuncs->max_size);
+    printf("totalQuads=%d\n", quads->cur_size-1);
+    printf("totalInsts=%d\n", quads->cur_size-1);
 
     instructions_out = fopen("instructions_output.txt", "w");
 
@@ -150,8 +157,8 @@ int main(int argc, char *argv[]){
 
     fclose(instructions_out);
 
-    SymTable_free(symTable);
-    free_scopeArr(scpArr);
-    free_scopeArr(globalScopeArr);
+    //SymTable_free(symTable);
+    //free_scopeArr(scpArr);
+    //free_scopeArr(globalScopeArr);
     return 24;
 }
