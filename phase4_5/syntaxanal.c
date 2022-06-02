@@ -157,8 +157,8 @@ int main(int argc, char *argv[]){
 
     fclose(instructions_out);
 
-    //SymTable_free(symTable);
-    //free_scopeArr(scpArr);
-    //free_scopeArr(globalScopeArr);
+    SymTable_free(symTable);
+    free_scopeArr(scpArr);
+    free_scopeArr(globalScopeArr);
     return 24;
 }

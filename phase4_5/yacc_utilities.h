@@ -151,17 +151,21 @@ int true_test(expr* arg){
         //puts("I AM HERE");
         return 0;
     }
-    else if(arg->type == boolexpr_e) {
+    else if(arg->type == boolexpr_e ) {
         //puts("I AM HERE");
         return 0;
     }
     
-    
+    // DEN KSERW TI SPAEI TO UNCOMMENT TWN 2 KATW GRAMMWN ALLA STAMATISAN TA ASSERTION KAI TA QUAD EINAI SWSTA
     //arg->type = boolexpr_e;
-    //if(arg->type != constbool_e){
-        arg->type = boolexpr_e;
-    //}
-    
+    if(arg->type < 8 || arg->type > 11){ // <----------- ama einai const , paramenei const
+        arg->is_also_const = 0;
+        
+    } 
+    else {
+        arg->is_also_const = 1;
+    }
+    arg->type = boolexpr_e;
     emit(if_eq, NULL, arg, newexpr_constbool(1), 0, currQuad);
     emit(jump, NULL, NULL, NULL, 0, currQuad);
     // printf("%d\n", nextquad()-2);
@@ -172,14 +176,14 @@ int true_test(expr* arg){
 }
 
 expr* emit_ifbool(expr* e){
-    //printf("inside emit if bool\n");
+    // printf("inside emit if bool\n");
     if(e->type == boolexpr_e || e->type == constbool_e){
         patchlist(e->truelist, nextquad());
         patchlist(e->falselist, nextquad()+2);
 
         expr* tmp = newexpr(boolexpr_e);
         tmp->sym = new_temp();
-        
+        tmp->is_also_const = e->is_also_const;
         emit(assign, tmp, newexpr_constbool(1), NULL, -1, currQuad);
         emit(jump, NULL, NULL, NULL, nextquad() + 2 , currQuad);
         emit(assign, tmp, newexpr_constbool(0), NULL, -1, currQuad);
@@ -237,7 +241,8 @@ int print_custom_error(char* yaccProvideMessage,const char* yaccProvideName,cons
 
     return 0;
 }
-
+int last_soft_hide[1024] = {0};
+int last_soft_hide_index = 0;
 //if the the last who called this function is a block(0) and you are a block(0) => scope++
 //else if you are a function(1) => scope++
 //else if the last was a function and you are a block you change the flag
@@ -257,6 +262,9 @@ void ScopeUp(int callee){
         *tmp = invalid_funcname_number; //copy the name
         stack_push(invalid_funcname_number_stack, (void*)tmp); //put it in the stack
         invalid_funcname_number = 0; //reset the counter
+
+        //when we soft hide we push in the stack the last scope
+        last_soft_hide[last_soft_hide_index++] = scope;
 
         //inside one function we soft hide every other scope except the latest scope
         scope ++;
@@ -280,8 +288,12 @@ void ScopeDown(int callee){
     invalid_funcname_number = *tmp;  //copy the value to the global variable
     free(tmp); //free the variable used from the stack
     
-
-    unhide(&scpArr,scope);  //unhide the scope
+    // apo to scope pu eimaste ews tote pu egine to teleutaio soft hide kane unhide
+    for(int i = scope ; i > last_soft_hide[last_soft_hide_index] ; i--){
+        unhide(&scpArr,i);  //unhide the scope
+    }
+    last_soft_hide[last_soft_hide_index] = 0;
+    last_soft_hide_index--;
     
 }
 
@@ -690,6 +702,7 @@ void Manage_lvalue_id(SymTableEntry** new_entry, char* id, int scope, int line){
             {
                 sprintf(errmsg, "Cannot access local function declared in line %d with scope %d", entry->value.funcVal->line, entry->value.funcVal->scope);
             }else{
+                puts("THIS IS WHERE I FOUND THE ERROR");
                 sprintf(errmsg, "Cannot access local variable declared in line %d with scope %d", entry->value.varVal->line, entry->value.varVal->scope);
             }
             print_custom_error(errmsg , id, scope);
@@ -780,6 +793,9 @@ expr* Manage_assignexpr(expr* lvalue, expr* rvalue){
     }
 
     if(lvalue->type==tableitem_e){
+        if(rvalue->type== boolexpr_e){
+            rvalue = emit_ifbool(rvalue);
+        }
         emit(tablesetelem,lvalue,lvalue->index,rvalue,-1,currQuad);
         expr* e = emit_iftableitem(lvalue);
         e->type = var_e;

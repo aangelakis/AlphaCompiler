@@ -126,8 +126,7 @@ void make_operand(expr* e, vmarg* arg){
         case var_e:
         case tableitem_e:
         case arithexpr_e:
-        case boolexpr_e:
-        case assignexpr_e:
+        //case assignexpr_e:
 
         case newtable_e: {
             printf("Type=%d\n", e->type);
@@ -142,9 +141,29 @@ void make_operand(expr* e, vmarg* arg){
             }
             break;
         }
+        case boolexpr_e: {
+            if(!e->is_also_const){
+                printf("Type=%d\n", e->type);
+                printf("content is %d\n", e->content.boolConst);
+                assert(e->sym);
+                arg->val = e->sym->value.varVal->offset;
+
+                switch(e->sym->value.varVal->scopespace){
+                    case programvar:    arg->type = global_a;   break;
+                    case functionlocal: arg->type = local_a;    break;
+                    case formalarg:     arg->type = formal_a;   break;
+                    default: assert(0);
+                }
+                break; 
+            }
+        }
 
         case constbool_e: {
-            arg->val = e->content.boolConst;
+            if(e->content.boolConst == 0)
+                arg->val = 0;
+            else
+                arg->val = 1;
+            // arg->val = e->content.boolConst;
             arg->type = bool_a;
             break;
         }

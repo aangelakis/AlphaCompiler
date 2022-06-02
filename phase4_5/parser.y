@@ -311,7 +311,17 @@ objectdef:  "[" elist "]"      {        expr* t = newexpr(newtable_e);
         |   "[" indexed "]"     {       expr* t = newexpr(newtable_e);
                                         t->sym = new_temp();
                                         emit(tablecreate, t, NULL, NULL, -1, currQuad);
+                                        
+                                        //printf("type is %d\n", $2->index->type);
+                                        //printf("type is %d\n", $2->type);
+                                        //exit(-1); 
+
                                         while($2){
+                                                if($2->type == constbool_e){
+                                                        printf("type is %d\n", $2->type);
+                                                        printf("type is %d\n", $2->index->type);
+                                                        //exit(-1);
+                                                }
                                                 emit(tablesetelem, t, $2->index, $2, -1, currQuad);
                                                 $2 = $2->next;
                                         }
@@ -320,17 +330,29 @@ objectdef:  "[" elist "]"      {        expr* t = newexpr(newtable_e);
         ;
 
 indexed:  indexed "," indexedelem       {       
+                                                
                                                 while($1->next){  
                                                         $1 = $1->next;
                                                 }        
                                                 $1->next = $3; 
                                                 Manage_indexed_indexedIndexedelem(); 
+                                                
                                         }
-          | indexedelem             {   $$ = $1; Manage_indexed_indexedelem();        }
+          | indexedelem             {   $$ = $1; 
+                                        if($1->type == constbool_e){
+                                                printf("type is %d\n", $1->type);
+                                                printf("type is %d\n", $1->index->type);
+                                        }
+                                        Manage_indexed_indexedelem();        }
           ;
 
 indexedelem: "{" expr ":" expr "}"  {   $4->index = $2;
                                         $$ = $4;
+                                        if($$->type == constbool_e){
+                                                printf("type is %d\n", $4->type);
+                                                printf("type is %d\n", $2->type);
+                                                //exit(-1);
+                                        }
                                         Manage_indexedelem(); 
                                 }
 
