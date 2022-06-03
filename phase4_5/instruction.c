@@ -7,6 +7,7 @@ extern Vektor*     stringConsts;
 extern Vektor*     namedLibfuncs;
 extern Vektor*     userFuncs;
 extern FILE*       instructions_out;
+extern FILE*       binary;
 
 
 /* to stack gia ta funcstart*/
@@ -512,7 +513,43 @@ void print_instruction(void* void_inst, int i) {
         arg2_val = arg2->val;
         fprintf(instructions_out," arg2:(%s, %d)", arg2_name, arg2_val);
     }
+    unsigned srcLine = instr->srcLine;
+    fprintf(instructions_out, " [srcLine:%d]", srcLine);
     fprintf(instructions_out, "\n");
 
+}
+
+void instruction_to_binary(void* void_inst){
+    if(void_inst == NULL) {
+        //fprintf(instructions_out,"FOUND NULL\n"); 
+        return;
+    }
+
+    instruction* instr = (instruction*) void_inst;
+    vmarg* res = instr->result, *arg1 = instr->arg1, *arg2 = instr->arg2;
+
+    char opcode = instr->opcode;
+    char result_type = -1, arg1_type = -1, arg2_type = -1;
+    int result_val = -1, arg1_val = -1, arg2_val = -1;
+
+    fprintf(binary,"%d", opcode);
+    if(res) {
+        result_type = res->type; 
+        result_val = res->val;
+    }
+    if(arg1) {
+        arg1_type = arg1->type; 
+        arg1_val = arg1->val;
+    }
+    if(arg2) {
+        arg2_type = arg2->type; 
+        arg2_val = arg2->val;
+    }
     unsigned srcLine = instr->srcLine;
+
+    fprintf(binary, " %d %d", result_type, result_val);
+    fprintf(binary, " %d %d", arg1_type, arg1_val);
+    fprintf(binary, " %d %d", arg2_type, arg2_val);
+    fprintf(binary, " %d", srcLine);
+    fprintf(binary, "\n");
 }

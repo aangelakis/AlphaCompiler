@@ -98,6 +98,8 @@ void make_operand(expr*, vmarg*);
 void reset_operand(vmarg*);
 
 void print_instruction(void* void_inst, int);
+void instruction_to_binary(void* void_inst);
+
 
 /*
 typedef struct incomplete_jump {
