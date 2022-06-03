@@ -50,23 +50,33 @@ char libraryFunctions[12][24]={
 };
 
 void print_string(void * void_str, int i) {
-    char* s = (char*) void_str;
+    char* s = (char*) void_str, nl = '\n';
     fprintf(instructions_out, "%d: \"%s\"\n", i, s);
-    fprintf(binary, "\"%s\"", s);
-    fputc('\0', binary);
-    fputc('\n', binary);
+    fwrite(s, sizeof(char), strlen(s)+1, binary);
+    //fwrite(&nl, sizeof(char), 1, binary);
+    //fprintf(binary, "\"%s\"", s);
+    //fputc('\0', binary);
+    //fputc('\n', binary);
 }
 
 void print_double(void* void_double, int i){
     double* num = (double*) void_double;
-    fprintf(instructions_out, "%d: %lf\n", i, *num);
-    fprintf(binary, "%lf\n", *num);
+    char nl = '\n';
+    fwrite(num, sizeof(double), 1, binary);
+    //fwrite(&nl, sizeof(char), 1, binary);
+    //fprintf(instructions_out, "%d: %lf\n", i, *num);
+    //fprintf(binary, "%lf\n", *num);
 }
 
 void print_userfunc(void* void_func, int i) {
     userfunc* uf = (userfunc*) void_func;
+    char nl = '\n';
     fprintf(instructions_out, "%d: address %d, local size %d, id \"%s\"\n", i, uf->address, uf->localSize, uf->id);
-    fprintf(binary, "%d %d \"%s\"\n", uf->address, uf->localSize, uf->id);
+    //fprintf(binary, "%d %d \"%s\"\n", uf->address, uf->localSize, uf->id);
+    fwrite(&uf->address, sizeof(unsigned), 1, binary);
+    fwrite(&uf->localSize, sizeof(unsigned), 1, binary);
+    fwrite(uf->id, sizeof(char), strlen(uf->id)+1, binary);
+    //fwrite(&nl, sizeof(char), 1, binary);
 }
 
 int main(int argc, char *argv[]){
@@ -145,33 +155,41 @@ int main(int argc, char *argv[]){
     instructions_out = fopen("instructions_output.txt", "w");
     binary = fopen("binary.abc", "w");
     fprintf(instructions_out, "magicnumber: %ld\n", (long int) 133780085); // magicnumber
-    fprintf(binary, "%ld\n", (long int) 133780085); // magicnumber
+    //fprintf(binary, "%ld\n", (long int) 133780085); // magicnumber
+    long int magic_number = 133780085;
+    fwrite(&magic_number, sizeof(long int), 1, binary);
 
     fprintf(instructions_out, "*********** NUMCONSTS ***********\n");
     fprintf(instructions_out, "numConsts: %d\n", numConsts->cur_size);
-    fprintf(binary, "%d\n", numConsts->cur_size);
+    //fprintf(binary, "%d\n", numConsts->cur_size);
+    fwrite(&numConsts->cur_size, sizeof(int), 1, binary);
     vektor_apply2(numConsts, print_double);
     
     fprintf(instructions_out, "*********** STRCONSTS ***********\n");
     fprintf(instructions_out, "stringConsts: %d\n", stringConsts->cur_size);
-    fprintf(binary, "%d\n", stringConsts->cur_size);
+    //fprintf(binary, "%d\n", stringConsts->cur_size);
+    fwrite(&stringConsts->cur_size, sizeof(int), 1, binary);
     vektor_apply2(stringConsts, print_string);
     
     fprintf(instructions_out, "*********** LIBFUNCS ***********\n");
     fprintf(instructions_out, "namedLibFuncs: %d\n", namedLibfuncs->cur_size);
-    fprintf(binary, "%d\n", namedLibfuncs->cur_size);
+    //fprintf(binary, "%d\n", namedLibfuncs->cur_size);
+    fwrite(&namedLibfuncs->cur_size, sizeof(int), 1, binary);
     vektor_apply2(namedLibfuncs, print_string);
     
     fprintf(instructions_out, "*********** USERFUNCS ***********\n");
     fprintf(instructions_out, "userFuncs: %d\n", userFuncs->cur_size);
-    fprintf(binary, "%d\n", userFuncs->cur_size);
+    //fprintf(binary, "%d\n", userFuncs->cur_size);
+    fwrite(&userFuncs->cur_size, sizeof(int), 1, binary);
     vektor_apply2(userFuncs, print_userfunc);
     fprintf(instructions_out, "*********************************\n\n");
 
     fprintf(instructions_out, "############### INSTRUCTIONS #################\n");
     fprintf(instructions_out, "totalInsts=%d\n", instructions->cur_size-1);
     vektor_apply2(instructions, print_instruction);
-    fprintf(binary, "%d\n", instructions->cur_size-1);
+    //fprintf(binary, "%d\n", instructions->cur_size-1);
+    int tmp_tmp = instructions->cur_size-1;
+    fwrite(&tmp_tmp, sizeof(int), 1, binary);
     vektor_apply(instructions, instruction_to_binary);
 
     fclose(instructions_out);

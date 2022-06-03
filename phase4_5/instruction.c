@@ -528,11 +528,11 @@ void instruction_to_binary(void* void_inst){
     instruction* instr = (instruction*) void_inst;
     vmarg* res = instr->result, *arg1 = instr->arg1, *arg2 = instr->arg2;
 
-    char opcode = instr->opcode;
-    char result_type = -1, arg1_type = -1, arg2_type = -1;
+    int opcode = instr->opcode;
+    int result_type = -1, arg1_type = -1, arg2_type = -1;
     int result_val = -1, arg1_val = -1, arg2_val = -1;
 
-    fprintf(binary,"%d", opcode);
+    //fprintf(binary,"%d", opcode);
     if(res) {
         result_type = res->type; 
         result_val = res->val;
@@ -545,11 +545,19 @@ void instruction_to_binary(void* void_inst){
         arg2_type = arg2->type; 
         arg2_val = arg2->val;
     }
-    unsigned srcLine = instr->srcLine;
+    int srcLine = instr->srcLine;
 
-    fprintf(binary, " %d %d", result_type, result_val);
-    fprintf(binary, " %d %d", arg1_type, arg1_val);
-    fprintf(binary, " %d %d", arg2_type, arg2_val);
-    fprintf(binary, " %d", srcLine);
-    fprintf(binary, "\n");
+    fwrite(&opcode, sizeof(int), 1, binary);
+    fwrite(&result_type, sizeof(int), 1, binary);
+    fwrite(&result_val, sizeof(int), 1, binary);
+    fwrite(&arg1_type, sizeof(int), 1, binary);
+    fwrite(&arg1_val, sizeof(int), 1, binary);
+    fwrite(&arg2_type, sizeof(int), 1, binary);
+    fwrite(&arg2_val, sizeof(int), 1, binary);
+    fwrite(&srcLine, sizeof(int), 1, binary);
+    //fprintf(binary, " %d %d", result_type, result_val);
+    //fprintf(binary, " %d %d", arg1_type, arg1_val);
+    //fprintf(binary, " %d %d", arg2_type, arg2_val);
+    //fprintf(binary, " %d", srcline);
+    //fprintf(binary, "\n");
 }
