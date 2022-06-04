@@ -66,11 +66,13 @@ void push_funcstart_label(){
     int *tmp = malloc(sizeof(int));
     *tmp = vektor_active_size(userFuncs) -1;
     stack_push(funcstart_label_stack,(int*)tmp);
+    printf("funcstart:%d\n", *tmp);
 }
 
 int pop_funcstart_label(){
     int *tmp = (int*)stack_pop(funcstart_label_stack);
     int ret = *tmp;
+    printf("funcend:%d\n", *tmp);
     free(tmp);
     return ret;
 }
@@ -107,7 +109,7 @@ unsigned userfuncs_newfunc(SymTableEntry* sym){
     f->localSize = sym->value.funcVal->numOfLocalVars;
     f->address = sym->value.funcVal->quadfuncStartIndex;
     vektor_add(userFuncs, f);
-    push_funcstart_label();
+    
     return (vektor_active_size(userFuncs) - 1);
 }
 
@@ -431,13 +433,13 @@ void generate_GETRETVAL(quad* q){
 }
 
 void generate_FUNCSTART(quad* q){
-
+    assert(q->result->sym);
     SymTableEntry* f = q->result->sym;
     
     //userfuncs_newfunc(f);
 
     //push(funcstack, f);
-
+    
     instruction* t = malloc(sizeof(instruction));
     t->opcode = enterfunc_v;
     t->srcLine = q->source_code_line;
@@ -448,6 +450,7 @@ void generate_FUNCSTART(quad* q){
     if(q->result){
         t->result = malloc(sizeof(vmarg));
         make_operand(q->result, t->result);
+        push_funcstart_label();
     }
     emit_t(t);
 }
@@ -477,7 +480,7 @@ void quad_to_instruction(void* void_quad){
     if(void_quad == NULL){
         return;
     }
-    printf("Times_here=%d\n", times_here++);
+    //printf("Times_here=%d\n", times_here++);
     quad* q = (quad*) void_quad;
     //printf("opcode: %d\n", q->op);
     generators[q->op](q);
