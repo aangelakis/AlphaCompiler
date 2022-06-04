@@ -1,6 +1,4 @@
 #include "avm.h"
-#define AVM_STACKENV_SIZE   4
-
 
 unsigned char   executionFinished = 0;
 unsigned        pc = 0;
@@ -9,8 +7,6 @@ unsigned        codeSize = 0;
 instruction*    code = NULL;
 unsigned totalActuals = 0;
 
-
-#define AVM_ENDING_PC   codeSize;
 
 avm_memcell ax, bx, cx;
 avm_memcell retval;
@@ -80,9 +76,9 @@ void avm_tabledestroy(avm_table* t){
 avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg){
     switch(arg->type){
 
-        case global_a:  return &stack[AVM_STACKSIZE - 1 - arg->val];
-        case local_a:   return &stack[topsp - arg->val];   
-        case formal_a:  return &stack[topsp + AVM_STACKENV_SIZE + 1 + arg->val];
+        case global_a:  return &avm_stack[AVM_STACKSIZE - 1 - arg->val];
+        case local_a:   return &avm_stack[topsp - arg->val];   
+        case formal_a:  return &avm_stack[topsp + AVM_STACKENV_SIZE + 1 + arg->val];
 
         case retval_a:  return &retval;
 
@@ -125,31 +121,6 @@ avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg){
     }
 }
 
-void execute_cycle(void){
-    if(executionFinished){
-        return;
-    }
-    else if(pc == AVM_ENDING_PC){
-        executionFinished = 1;
-        return;
-    }
-    else{
-        assert(pc < AVM_ENDING_PC);
-        instruction* instr = code[pc];
-        assert(
-            instr->opcode >= 0 &&
-            instr->opcode <= AVM_MAX_INSTRUCTIONS
-        );
-        if(instr->srcLine){
-            currLine = instr->srcLine;
-        }
-        unsigned oldPC = pc;
-        executeFuncs[instr->opcode](instr);
-        if(pc == oldPC){
-            ++pc;
-        }
-    }
-}
 
 void memclear_string(avm_memcell* m){
     assert(m->data.strVal);
@@ -171,75 +142,6 @@ void avm_memcellclear(avm_memcell* m){
     }
 }
 
-
-void execute_assign(instruction* instr){
-    avm_memcell* lv = avm_translate_operand(&instr->result, NULL);
-    avm_memcell* rv = avm_translate_operand(&instr->arg1, &ax);
-
-    assert(lv && (&stack[N-1] >= lv && lv > &stack[top] || lv == &retval));
-    assert(rv); // should do similar assertion tests here
-
-    avm_assign(lv, rv);
-}
-
-void avm_assign(avm_memcell* lv, avm_memcell* rv){
-
-    if(lv == rv)
-        return;
-    
-    if (lv->type == table_m &&
-        rv->type == table_m &&
-        lv->data.tableVal == rv->data.tableVal)
-        return;
-
-    if(rv->type == undef_m)
-        printf("kane edo to avm_warning!\n");
-    
-    avm_memcellclear(lv);
-
-    memcpy(lv, rv, sizeof(avm_memcell));
-
-    if(lv->type == string_m){
-        lv->data.strVal = strdup(rv->data.strVal);
-    }
-    else if(lv->type == table_m){
-        avm_tableincrefcounter(lv->data.tableVal);
-    }
-}
-
-void execute_call(instruction* instr){
-    avm_memcell* func = avm_translate_operand(&instr->result, &ax);
-    assert(func);
-    avm_callsaveenvironment();
-
-    switch(func->type){
-
-        case userfunc_m: {
-            pc = func->data.funcVal;
-            assert(pc < AVM_ENDING_PC);
-            assert(code[pc]->opcode == funcenter_v);
-            break;
-        }
-
-        case string_m:  {
-            avm_calllibfunc(func->data.strVal);
-            break;
-        }
-
-        case libfunc_m: {
-            avm_calllibfunc(func->data.libfuncVal);
-            break;
-        }
-
-        default: {
-            char* s = avm_tostring(func);
-            printf("kane edo to avm_error!\n");
-            free(s);
-            executionFinished = 1;
-        }
-    }
-}
-
 void avm_dec_top(void){
     if(!top){
         printf("kane edo to avm_error!\n");
@@ -251,8 +153,8 @@ void avm_dec_top(void){
 }
 
 void avm_push_envvalue(unsigned val){
-    stack[top].type         = number_m;
-    stack[top].data.numVal  = val;
+    avm_stack[top].type         = number_m;
+    avm_stack[top].data.numVal  = val;
     avm_dec_top();
 }
 
@@ -262,3 +164,4 @@ void avm_callsaveenvironment(void){
     avm_push_envvalue(top + totalActuals + 2);
     avm_push_envvalue(topsp);
 }
+
