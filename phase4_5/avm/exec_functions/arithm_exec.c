@@ -24,9 +24,9 @@ arithmetic_func_t arithmeticFuncs[] = {
 };
 
 void execute_arithmetic (instruction* instr) {
-    avm_memcell* lv =  avm_translate_operand(&instr->result, (avm_memcell*) 0);
-    avm_memcell* rv1 = avm_translate_operand(&instr->arg1, &ax);
-    avm_memcell* rv2 = avm_translate_operand(&instr->arg2, &bx);
+    avm_memcell* lv =  avm_translate_operand(instr->result, (avm_memcell*) 0);
+    avm_memcell* rv1 = avm_translate_operand(instr->arg1, &ax);
+    avm_memcell* rv2 = avm_translate_operand(instr->arg2, &bx);
 
     //assert(lv && (&stack[N-1] >= lv && lv lv > &stack[top] || lv==&retval));
     assert(rv1 && rv2);
@@ -43,3 +43,12 @@ void execute_arithmetic (instruction* instr) {
         lv->data.numVal     = (*op)(rv1->data.numVal, rv2->data.numVal);
     }
 }
+
+void execute_add (instruction* instr) { execute_arithmetic(instr); return; }
+void execute_sub (instruction* instr) { execute_arithmetic(instr); return; }
+void execute_mul (instruction* instr) { execute_arithmetic(instr); return; }
+void execute_div (instruction* instr) { execute_arithmetic(instr); return; }
+void execute_mod (instruction* instr) { execute_arithmetic(instr); return; }
+
+
+void execute_uminus (instruction* instr) { assert(0); return; }

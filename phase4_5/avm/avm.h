@@ -55,9 +55,10 @@ struct avm_table{
 
 avm_table*      avm_tablenew(void);
 void            avm_tabledestroy(avm_table* t);
-avm_memcell*    avm_tablegetelem(avm_memcell* key);
-void            avm_tablesetelem(avm_memcell* key, avm_memcell* value);
-
+//avm_memcell*    avm_tablegetelem(avm_memcell* key);
+//void            avm_tablesetelem(avm_memcell* key, avm_memcell* value);
+avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index);
+void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content);
 
 //GIA STACK
 #define AVM_STACKSIZE   4096
@@ -102,23 +103,10 @@ typedef void (*memclear_func_t) (avm_memcell*);
 
 extern memclear_func_t memclearFuncs[];
 
-// memclear_func_t memclearFuncs[] = {
-//     0,  /* number */
-//     memclear_string,
-//     0,  /* bool */
-//     memclear_table,
-//     0,  /* userfunc */
-//     0,  /* libfunc */
-//     0,  /* nil */
-//     0   /* undef */
-// };
-
 #define AVM_STACKENV_SIZE 4
 extern avm_memcell ax, bx, cx;
 extern avm_memcell retval;
 extern unsigned top, topsp;
-
-
 
 extern unsigned char   executionFinished;
 extern unsigned        pc ;
@@ -126,6 +114,25 @@ extern unsigned        currLine ;
 extern unsigned        codeSize ;
 extern instruction*    code ;
 extern unsigned totalActuals ;
+
+
+double  consts_getnumber(unsigned index);
+char*   consts_getstring(unsigned index);
+char*   libfuncs_getused(unsigned index);
+
+void avm_memcellclear(avm_memcell* m);
+void avm_assign(avm_memcell* lv, avm_memcell* rv);
+char* avm_tostring(avm_memcell*);
+void avm_calllibfunc(char* funcName);
+void avm_callsaveenvironment(void);
+
+void avm_tableincrefcounter(avm_table* t);
+void avm_tabledecrefcounter(avm_table* t);
+void avm_tablebucketsinit(avm_table_bucket** p);
+
+void avm_dec_top(void);
+void avm_push_envvalue(unsigned val);
+void avm_callsaveenvironment(void);
 
 
 extern char* typeStrings[];
@@ -137,4 +144,7 @@ void execute_cycle();
 avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg);
 
 void avm_calllibfunc(char* id);
+
+void avm_error(char*);
+void avm_warning(char*);
 #endif

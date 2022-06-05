@@ -26,10 +26,10 @@ void avm_assign(avm_memcell* lv, avm_memcell* rv){
 }
 
 void execute_assign(instruction* instr){
-    avm_memcell* lv = avm_translate_operand(&instr->result, NULL);
-    avm_memcell* rv = avm_translate_operand(&instr->arg1, &ax);
+    avm_memcell* lv = avm_translate_operand(instr->result, NULL);
+    avm_memcell* rv = avm_translate_operand(instr->arg1, &ax);
 
-    assert(lv && (&stack[N-1] >= lv && lv > &stack[top] || lv == &retval));
+    //assert(lv && (&stack[N-1] >= lv && lv > &stack[top] || lv == &retval));
     assert(rv); // should do similar assertion tests here
 
     avm_assign(lv, rv);

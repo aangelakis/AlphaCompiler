@@ -12,18 +12,6 @@ avm_memcell ax, bx, cx;
 avm_memcell retval;
 unsigned    top, topsp;
 
-double  consts_getnumber(unsigned index);
-char*   consts_getstring(unsigned index);
-char*   libfuncs_getused(unsigned index);
-
-void avm_memcellclear(avm_memcell* m);
-void avm_assign(avm_memcell* lv, avm_memcell* rv);
-char* avm_tostring(avm_memcell*);
-void avm_calllibfunc(char* funcName);
-void avm_callsaveenvironment(void);
-
-
-
 void avm_tableincrefcounter(avm_table* t){
     ++t->refCounter;
 }
@@ -121,7 +109,6 @@ avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg){
     }
 }
 
-
 void memclear_string(avm_memcell* m){
     assert(m->data.strVal);
     free(m->data.strVal);
@@ -131,6 +118,17 @@ void memclear_table(avm_memcell* m){
     assert(m->data.tableVal);
     avm_tabledecrefcounter(m->data.tableVal);
 }
+
+memclear_func_t memclearFuncs[] = {
+     0,  /* number */
+     memclear_string,
+     0,  /* bool */
+     memclear_table,
+     0,  /* userfunc */
+     0,  /* libfunc */
+     0,  /* nil */
+     0   /* undef */
+ };
 
 void avm_memcellclear(avm_memcell* m){
     if(m->type != undef_m){
@@ -165,3 +163,11 @@ void avm_callsaveenvironment(void){
     avm_push_envvalue(topsp);
 }
 
+
+void avm_error(char* error){
+    fprintf(stderr, "%s\n", error);
+}
+
+void avm_warning(char* warning){
+    fprintf(stderr, "%s\n", warning);
+}

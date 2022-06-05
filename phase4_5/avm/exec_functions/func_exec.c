@@ -1,7 +1,7 @@
 #include"../avm.h"
 
 void execute_call(instruction* instr){
-    avm_memcell* func = avm_translate_operand(&instr->result, &ax);
+    avm_memcell* func = avm_translate_operand(instr->result, &ax);
     assert(func);
     avm_callsaveenvironment();
 
@@ -36,7 +36,7 @@ void execute_call(instruction* instr){
 extern userfunc* avm_getfuncinfo(unsigned address); // TODO
 
 void execute_funcenter(instruction* instr){
-    avm_memcell* func = avm_translate_operand(&instr->result, &ax);
+    avm_memcell* func = avm_translate_operand(instr->result, &ax);
     assert(func);
     assert(pc == func->data.funcVal);
 
@@ -70,7 +70,9 @@ library_func_t avm_getlibraryfunc(char* id);
 void avm_calllibfunc(char* id){
     library_func_t f = avm_getlibraryfunc(id);
     if(!f){
-        avm_error("unsupported lib func '%s' called!",id);
+        char tmp[1024];
+        sprintf(tmp, "unsupported lib func '%s' called!", id);
+        avm_error(tmp);
         executionFinished = 1;
     }
     else{
@@ -95,9 +97,9 @@ avm_memcell* avm_getactual(unsigned i){
 void avm_registerlibfunc(char* id, library_func_t addr);
 
 void execute_pusharg(instruction* instr){
-    avm_memcell* arg = avm_translate_operand(&instr->arg1, &ax);
+    avm_memcell* arg = avm_translate_operand(instr->arg1, &ax);
     assert(arg);
-    acm_assign(&avm_stack[top],arg);
+    avm_assign(&avm_stack[top],arg);
     ++totalActuals;
     avm_dec_top();
 }
@@ -116,7 +118,9 @@ void libfunc_print(void){
 void libfunc_typeof(void){
     unsigned n = avm_totalactuals();
     if(n != 1){
-        avm_error("one argument (not %d) expected in 'typeof'!",n);
+        char tmp[1024];
+        sprintf(tmp, "one argument (not %d) expected in 'typeof'!", n);
+        avm_error(tmp);
     }else{
         avm_memcellclear(&retval);
         retval.type = string_m;

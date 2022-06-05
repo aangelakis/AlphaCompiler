@@ -119,6 +119,7 @@ instruction * get_instructions(int size){
         fread(&instructions[i].srcLine, sizeof(int), 1, binary);
         DEBUG_PRINT("%d\n", instructions[i].srcLine);
     }
+    return instructions;
 }
 
 //reads binary and inits the globals needed to save it
