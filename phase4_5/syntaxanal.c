@@ -31,6 +31,7 @@ Vektor*     userFuncs;
 alpha_stack* function_local_offset_stack;
 alpha_stack* funcstart_label_stack;
 
+extern int programvar_offset;
 
 scopeArray* globalScopeArr;
 
@@ -158,6 +159,8 @@ int main(int argc, char *argv[]){
     //fprintf(binary, "%ld\n", (long int) 133780085); // magicnumber
     long int magic_number = 133780085;
     fwrite(&magic_number, sizeof(long int), 1, binary);
+    fwrite(&programvar_offset, sizeof(int), 1, binary);
+    // printf("PROGRAM_VAR_OFFSET:%d\n", programvar_offset);
 
     fprintf(instructions_out, "*********** NUMCONSTS ***********\n");
     fprintf(instructions_out, "numConsts: %d\n", numConsts->cur_size);

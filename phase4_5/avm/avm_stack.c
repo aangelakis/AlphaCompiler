@@ -1,7 +1,7 @@
 #include"avm.h"
 
 //UNCOMMENT THIS TO RUN THE TEST MAIN FUNCTION
-#define TEST_MAIN
+//#define TEST_MAIN
 #ifdef TEST_MAIN
 #define TEST_MAIN_START int main(void)
 #else
@@ -32,7 +32,7 @@ void avm_stack_push(avm_memcell item){
   avm_stack[++curr_index] = item;
 }
 
-static void avm_initstack(void){
+void avm_initstack(void){
     for(unsigned i = 0; i < AVM_STACKSIZE; ++i){
         AVM_WIPEOUT(avm_stack[i]);
         avm_stack[i].type = undef_m;

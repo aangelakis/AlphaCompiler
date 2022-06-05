@@ -2,158 +2,40 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "../instruction.h"
+#include "read_binary/read_binary.h"
+#include "avm.h"
 
 
-//UNCOMMENT THIS TO SEE DEBUG PRINTS
-//#define DEBUG_PRINTS_ON
-#ifdef DEBUG_PRINTS_ON
-#define DEBUG_PRINT(fmt, ...) fprintf(stderr, fmt, __VA_ARGS__)
-#else
-#define DEBUG_PRINT(fmt, ...) do {} while (0)
-#endif
-
-
-#define MAGIC_NUMBER_OFFSET 133780085
 FILE* binary;
 
-//reads the next string from the file inbetween the quotes
-char* make_string() { 
-    char tmp[1024];
-    char* new_string = (char*) 0; 
-    char c = fgetc(binary);
-    if(c == '\n')
-        c = fgetc(binary);
-    
-    int i = 0;
-    for(; c; ++i) {
-        //putchar(c);
-        tmp[i] = c;
-        c = fgetc(binary);
-    }
-    tmp[i] = (char) 0; 
+//GLOBALS
+int total_global_var;
+double * number_consts;
+char ** string_consts;
+char ** libfuncs;
+userfunc * userfuncs;
+instruction * code;
+unsigned codeSize;
 
-    new_string = malloc(i);
 
-    int j = 0;
-    for( ;tmp[j]; ++j)
-        new_string[j] = tmp[j];
-    new_string[j] = tmp[j];
-    assert(i == j);
-    return new_string;
+
+void avm_initialize(void) {
+    avm_initstack();
+
+    //avm_registerlibfunc("print", libfunc_print);
+    //avm_registerlibfunc("typeof", libfunc_typeof);
+
+    topsp = AVM_STACKSIZE-1;
+    top   = AVM_STACKSIZE-1-total_global_var;
 }
 
-//reads the magic number and checks it
-long int get_magic_number(){
-    long int magic_number;
-    fread(&magic_number, sizeof(long int), 1, binary);
-    DEBUG_PRINT("Magic number: %ld\n", magic_number);
-    assert(magic_number == MAGIC_NUMBER_OFFSET);
-    return magic_number;
-}
-
-//reads the number of constants
-int get_size_of_consts(){
-    int num;
-    fread(&num, sizeof(int), 1, binary);
-    DEBUG_PRINT("numConsts: %d\n", num);
-    return num;
-}
-
-//reads the whole number constant table
-double * get_number_consts(int size){
-    if(size == 0){return NULL;}
-    double * consts = malloc(sizeof(double) * size);
-    for(int i = 0; i < size; i++){
-        fread(&consts[i], sizeof(double), 1, binary);
-        DEBUG_PRINT("%lf\n", consts[i]);
-    }
-    return consts;
-}
-
-//reads the whole string constant table (strings/libfuncs/userfuncs)
-char ** get_string_consts(int size){
-    if(size == 0){return NULL;}
-
-    char ** consts = malloc(sizeof(char*)*size);
-    for(int i = 0; i < size; i++){
-        consts[i] = make_string();
-        DEBUG_PRINT("%s\n", consts[i]);
-    }
-    return consts;
-
-}
-
-//reads the userfunc consts
-userfunc * get_userfunc_consts(int size){
-    if(size==0){return NULL;}
-
-    userfunc* consts = calloc(size ,sizeof(userfunc));
-    for(int i = 0; i < size; i++){
-        fread(&consts[i].address, sizeof(unsigned), 1, binary);
-        DEBUG_PRINT("%u ", consts[i].address);
-        fread(&consts[i].localSize, sizeof(unsigned), 1, binary);
-        DEBUG_PRINT("%u ", consts[i].localSize);
-        consts[i].id = make_string();
-        DEBUG_PRINT("%s\n",  consts[i].id);
-    }
-
-    return consts;
-}
-
-//reads the instructions
-instruction * get_instructions(int size){
-    instruction * instructions = calloc(size, sizeof(instruction));
-    for(int i = 0 ; i < size ; i++){
-        instructions[i].result = calloc(1, sizeof(vmarg));
-        instructions[i].arg1 = calloc(1, sizeof(vmarg));
-        instructions[i].arg2 = calloc(1, sizeof(vmarg));
-
-        fread(&instructions[i].opcode, sizeof(int), 1, binary);
-        DEBUG_PRINT("%d ", instructions[i].opcode);
-
-        fread(&instructions[i].result->type, sizeof(int), 1, binary);
-        fread(&instructions[i].result->val, sizeof(int), 1, binary);
-        DEBUG_PRINT("%d %d ", instructions[i].result->type, instructions[i].result->val);
-
-        fread(&instructions[i].arg1->type, sizeof(int), 1, binary);
-        fread(&instructions[i].arg1->val, sizeof(int), 1, binary);
-        DEBUG_PRINT("%d %d ", instructions[i].arg1->type, instructions[i].arg1->val);
-
-        fread(&instructions[i].arg2->type, sizeof(int), 1, binary);
-        fread(&instructions[i].arg2->val, sizeof(int), 1, binary);
-        DEBUG_PRINT("%d %d ", instructions[i].arg2->type, instructions[i].arg2->val);
-
-        fread(&instructions[i].srcLine, sizeof(int), 1, binary);
-        DEBUG_PRINT("%d\n", instructions[i].srcLine);
-    }
-}
 
 int main(void) {
-    binary = fopen("../binary.abc", "r");
-    //get the magic number assertion check inside the get function
-    long int magic_number = get_magic_number();
+    read_binary();
+    avm_initialize();
+  
+    while(executionFinished == 0)
+        execute_cycle();
 
-    //get the size of the array for constants for the numbers and also the array 
-    int double_constsNum = get_size_of_consts();
-    double * double_consts = get_number_consts(double_constsNum);
-
-    //get the number of strings and the array of strings
-    int string_constsNum = get_size_of_consts();
-    char ** string_consts = get_string_consts(string_constsNum);
-    
-    //get the number of libfunctions and the array of libfunctions
-    int libfuncsNum = get_size_of_consts();
-    char ** libfuncs = get_string_consts(libfuncsNum);
-
-    //get the number of user functions and the array of user functions
-    int userfuncsNum = get_size_of_consts();
-    userfunc * userfuncs = get_userfunc_consts(userfuncsNum);
-
-    //get the number of instructions
-    int instructionsNum = get_size_of_consts();
-    instruction * instructions = get_instructions(instructionsNum);
-
-    fclose(binary);
     return 24;
 }
-

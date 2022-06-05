@@ -130,4 +130,11 @@ extern unsigned totalActuals ;
 
 extern char* typeStrings[];
 
+void avm_initstack(void);
+
+void execute_cycle();
+
+avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg);
+
+void avm_calllibfunc(char* id);
 #endif

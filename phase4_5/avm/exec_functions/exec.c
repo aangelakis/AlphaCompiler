@@ -1,4 +1,4 @@
-#include"avm.h"
+#include"../avm.h"
 
 execute_func_t executeFuncs[] = {
     execute_assign,
