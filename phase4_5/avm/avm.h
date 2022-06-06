@@ -134,6 +134,7 @@ void avm_dec_top(void);
 void avm_push_envvalue(unsigned val);
 void avm_callsaveenvironment(void);
 
+userfunc* avm_getfuncinfo(unsigned adress);
 
 extern char* typeStrings[];
 

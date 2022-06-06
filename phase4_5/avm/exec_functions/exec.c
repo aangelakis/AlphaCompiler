@@ -40,6 +40,7 @@ void execute_cycle(void){
     }
     else{
         assert(pc < AVM_ENDING_PC);
+        puts("I AM HERE1");
         instruction* instr = &code[pc]; // NA DW GIATI KANW &
         assert(
             instr->opcode >= 0 &&
@@ -49,7 +50,10 @@ void execute_cycle(void){
             currLine = instr->srcLine;
         }
         unsigned oldPC = pc;
+        puts("I AM HERE2");
+        printf("instr opcode = %d\n", instr->opcode);
         executeFuncs[instr->opcode](instr);
+        puts("I AM HERE3");
         if(pc == oldPC){
             ++pc;
         }

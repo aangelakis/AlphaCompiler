@@ -63,9 +63,9 @@ void print_string(void * void_str, int i) {
 void print_double(void* void_double, int i){
     double* num = (double*) void_double;
     char nl = '\n';
+    fprintf(instructions_out, "%d: %lf\n", i, *num);
     fwrite(num, sizeof(double), 1, binary);
     //fwrite(&nl, sizeof(char), 1, binary);
-    //fprintf(instructions_out, "%d: %lf\n", i, *num);
     //fprintf(binary, "%lf\n", *num);
 }
 

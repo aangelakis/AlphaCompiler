@@ -10,7 +10,7 @@ void execute_newtable(instruction* instr){
 
 }
 
-// avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index) { return NULL; }
+avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index) { return NULL; } // TODO
 
 void execute_tablegetelem(instruction * instr){
   avm_memcell *lv = avm_translate_operand(instr->result, (avm_memcell*) 0);
@@ -44,7 +44,7 @@ void execute_tablegetelem(instruction * instr){
   }
 }
 
-// void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content) { return; }
+void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content) { return; } // TODO
 
 void execute_tablesetelem(instruction* instr) {
     avm_memcell* t = avm_translate_operand(instr->result, (avm_memcell*) 0);

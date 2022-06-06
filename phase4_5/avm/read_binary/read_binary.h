@@ -12,9 +12,13 @@
 //GLOBALS
 extern FILE* binary;
 extern int total_global_var;
+extern int number_constsNum;
 extern double * number_consts;
+extern int string_constsNum;
 extern char ** string_consts;
+extern int libfuncsNum;
 extern char ** libfuncs;
+extern int userfuncsNum;
 extern userfunc * userfuncs;
 extern instruction * code;
 extern unsigned codeSize;

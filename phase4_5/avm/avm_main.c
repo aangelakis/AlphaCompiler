@@ -9,13 +9,17 @@
 FILE* binary;
 
 //GLOBALS
-int total_global_var;
-double * number_consts;
-char ** string_consts;
-char ** libfuncs;
-userfunc * userfuncs;
-instruction * code;
-unsigned codeSize;
+int total_global_var; //total global variables
+int number_constsNum; //total number of number consts
+double * number_consts; //array of number consts
+int string_constsNum; //total number of string consts
+char ** string_consts; //array of string consts
+int libfuncsNum; //total number of libfuncs
+char ** libfuncs; //array of libfuncs
+int userfuncsNum; //total number of userfuncs
+userfunc * userfuncs; //array of userfuncs
+instruction * code; //array of instructions
+unsigned codeSize; //total number of instructions
 
 
 

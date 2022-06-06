@@ -134,22 +134,22 @@ void read_binary(){
 
     //get the size of the array for constants for the numbers and also the array
     DEBUG_PRINT("%s","Total number consts : "); 
-    int number_constsNum = get_size_of_consts();
+    number_constsNum = get_size_of_consts();
     number_consts = get_number_consts(number_constsNum);
 
     //get the number of strings and the array of strings
     DEBUG_PRINT("%s","Total string consts : "); 
-    int string_constsNum = get_size_of_consts();
+    string_constsNum = get_size_of_consts();
     string_consts = get_string_consts(string_constsNum);
     
     //get the number of libfunctions and the array of libfunctions
     DEBUG_PRINT("%s","Total libfunctions consts : ");
-    int libfuncsNum = get_size_of_consts();
+    libfuncsNum = get_size_of_consts();
     libfuncs = get_string_consts(libfuncsNum);
 
     //get the number of user functions and the array of user functions
     DEBUG_PRINT("%s","Total user functions consts : ");
-    int userfuncsNum = get_size_of_consts();
+    userfuncsNum = get_size_of_consts();
     userfuncs = get_userfunc_consts(userfuncsNum);
 
     //get the number of instructions

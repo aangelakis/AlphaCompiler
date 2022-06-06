@@ -33,8 +33,6 @@ void execute_call(instruction* instr){
     }
 }
 
-extern userfunc* avm_getfuncinfo(unsigned address); // TODO
-
 void execute_funcenter(instruction* instr){
     avm_memcell* func = avm_translate_operand(instr->result, &ax);
     assert(func);
@@ -65,7 +63,9 @@ void execute_funcexit(instruction* unused){
 }
 
 typedef void (*library_func_t)(void);
-library_func_t avm_getlibraryfunc(char* id);
+library_func_t avm_getlibraryfunc(char* id) {
+    return NULL;
+}
 
 void avm_calllibfunc(char* id){
     library_func_t f = avm_getlibraryfunc(id);

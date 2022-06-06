@@ -1,4 +1,5 @@
 #include "avm.h"
+#include "read_binary/read_binary.h"
 
 unsigned char   executionFinished = 0;
 unsigned        pc = 0;
@@ -11,6 +12,26 @@ unsigned totalActuals = 0;
 avm_memcell ax, bx, cx;
 avm_memcell retval;
 unsigned    top, topsp;
+
+
+double  consts_getnumber(unsigned index) {
+    return number_consts[index];
+}
+char*   consts_getstring(unsigned index) {
+    return string_consts[index];
+}
+char*   libfuncs_getused(unsigned index){
+    return libfuncs[index];
+}
+
+userfunc* avm_getfuncinfo(unsigned address) {
+    for(int i = 0; i < userfuncsNum; ++i){
+        if(userfuncs[i].address == address)
+            return &userfuncs[i];
+    }
+    // if you got here it means that there does not exist a function with that address
+    return NULL;
+}
 
 void avm_tableincrefcounter(avm_table* t){
     ++t->refCounter;
@@ -170,4 +191,41 @@ void avm_error(char* error){
 
 void avm_warning(char* warning){
     fprintf(stderr, "%s\n", warning);
+}
+
+char* avm_tostring(avm_memcell* cell) {
+    assert(cell);
+    char *str = NULL;
+    switch (cell->type) {
+        case number_m:
+            str = (char*)malloc(sizeof(char) * 32);
+            sprintf(str, "%f", cell->data.numVal);
+            return str;
+        case string_m:
+            str = strdup(cell->data.strVal);
+            return str;
+        case bool_m:
+            str = strdup(cell->data.boolVal ? "true" : "false");
+            return str;
+        case table_m:
+            str = strdup("table"); //TODO na dume ti tha epistrefume
+            return str;
+        case userfunc_m:
+            str = strdup(userfuncs[cell->data.funcVal].id);
+            return str;
+        case libfunc_m:
+            str = strdup(cell->data.libfuncVal);
+            return str;
+        case nil_m:
+            str = strdup("nil");
+            return str;
+        case undef_m:
+            str = strdup("undef");
+            return str;
+        default:
+            avm_warning("avm_tostring: unknown type");
+            str = strdup("avm_tostring: unknown type");
+            //exit(-1);
+            return str;
+    }
 }

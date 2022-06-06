@@ -24,7 +24,7 @@ gcc:
 	gcc scanner.c parser.c syntaxanal.c instruction.c libs/scopelist/scopelists.c libs/zarkList/zarkList.c libs/symtable/symtablehash.c libs/SymTableEntry/SymTableEntry.c quads.c expression.c libs/Vektor/Vektor.c libs/stack/stack.c
 
 avm:
-	gcc avm/avm.c avm/avm_stack.c avm/avm_main.c avm/read_binary/read_binary.c avm/exec_functions/arithm_exec.c avm/exec_functions/assign_exec.c avm/exec_functions/exec.c avm/exec_functions/func_exec.c avm/exec_functions/relat_exec.c avm/exec_functions/table_exec.c
+	gcc avm/avm.c avm/avm_stack.c avm/avm_main.c avm/read_binary/read_binary.c avm/exec_functions/arithm_exec.c avm/exec_functions/assign_exec.c avm/exec_functions/exec.c avm/exec_functions/func_exec.c avm/exec_functions/relat_exec.c avm/exec_functions/table_exec.c -o avm.out
 
 
 clean:
