@@ -1,33 +1,33 @@
 #include"../avm.h"
 
 execute_func_t executeFuncs[] = {
-    execute_assign,
-    execute_add,
-    execute_sub,
-    execute_mul,
-    execute_div,
-    execute_mod,
-    execute_uminus,
-    execute_and,
-    execute_or,
-    execute_not,
-    execute_jeq,
-    execute_jne,
-    execute_jle,
-    execute_jge,
-    execute_jlt,
-    execute_jgt,
-    execute_call,
-    execute_pusharg,
-    execute_return,
-    execute_getretval,
-    execute_funcenter,
-    execute_funcexit,
-    execute_newtable,
-    execute_tablegetelem,
-    execute_tablesetelem,
-    execute_jump,
-    execute_nop
+    execute_assign,         //0
+    execute_add,            //1
+    execute_sub,            //2
+    execute_mul,            //3
+    execute_div,            //4
+    execute_mod,            //5
+    execute_uminus,         //6
+    execute_and,            //7
+    execute_or,             //8
+    execute_not,            //9
+    execute_jeq,            //10
+    execute_jne,            //11
+    execute_jle,            //12
+    execute_jge,            //13
+    execute_jlt,            //14
+    execute_jgt,            //15
+    execute_call,           //16
+    execute_pusharg,        //17
+    execute_return,         //18
+    execute_getretval,      //19
+    execute_funcenter,      //20
+    execute_funcexit,       //21
+    execute_newtable,       //22
+    execute_tablegetelem,   //23
+    execute_tablesetelem,   //24
+    execute_jump,           //25
+    execute_nop             //26
 };
 
 void execute_cycle(void){
@@ -40,7 +40,6 @@ void execute_cycle(void){
     }
     else{
         assert(pc < AVM_ENDING_PC);
-        puts("I AM HERE1");
         instruction* instr = &code[pc]; // NA DW GIATI KANW &
         assert(
             instr->opcode >= 0 &&
@@ -50,10 +49,10 @@ void execute_cycle(void){
             currLine = instr->srcLine;
         }
         unsigned oldPC = pc;
-        puts("I AM HERE2");
         printf("instr opcode = %d\n", instr->opcode);
+        printf("top : %d , topsp : %d\n",top,topsp);
+        CHECK_TOP_STACK //checks for stack over flow or under flow
         executeFuncs[instr->opcode](instr);
-        puts("I AM HERE3");
         if(pc == oldPC){
             ++pc;
         }

@@ -118,6 +118,17 @@ instruction * get_instructions(int size){
 
         fread(&instructions[i].srcLine, sizeof(int), 1, binary);
         DEBUG_PRINT("%d\n", instructions[i].srcLine);
+
+        //ean opoiodipote kommati einai userfunc bazw tin thesi pu antistoixei apo ton pinaka ws val    
+        if(instructions[i].result->type == userfunc_a ){
+            instructions[i].result->val = userfuncs[instructions[i].result->val].address;
+        }
+        if(instructions[i].arg1->type == userfunc_a ){
+            instructions[i].arg1->val = userfuncs[instructions[i].arg1->val].address;
+        }
+        if(instructions[i].arg2->type == userfunc_a ){
+            instructions[i].arg2->val = userfuncs[instructions[i].arg2->val].address;
+        }
     }
     return instructions;
 }
@@ -154,7 +165,7 @@ void read_binary(){
 
     //get the number of instructions
     DEBUG_PRINT("%s","Total instructions : ");
-    codeSize = get_size_of_consts();
+    codeSize = get_size_of_consts() ;
     code = get_instructions(codeSize);
 
     fclose(binary);

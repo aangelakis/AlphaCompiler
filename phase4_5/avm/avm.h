@@ -15,7 +15,7 @@ typedef enum avm_memcell_t {
 } avm_memcell_t;
 
 #define AVM_TABLE_HASHSIZE  211
-#define AVM_ENDING_PC   codeSize
+#define AVM_ENDING_PC   codeSize+1
 #define AVM_STACKENV_SIZE   4
 #define AVM_NUMACTUALS_OFFSET +4
 #define AVM_SAVEDPC_OFFSET +3
@@ -68,6 +68,13 @@ extern avm_memcell avm_stack[AVM_STACKSIZE];
 typedef void (*execute_func_t) (instruction*);
 
 #define AVM_MAX_INSTRUCTIONS (unsigned) nop_v
+#define CHECK_TOP_STACK if(top < 0) { \
+    avm_error("Stack overflow!"); \
+    exit(1); \
+}else if(top > AVM_STACKSIZE) { \
+    avm_error("Stack underflow!"); \
+    exit(1); \
+}
 
 void execute_assign(instruction*);
 void execute_add(instruction*);
@@ -106,7 +113,7 @@ extern memclear_func_t memclearFuncs[];
 #define AVM_STACKENV_SIZE 4
 extern avm_memcell ax, bx, cx;
 extern avm_memcell retval;
-extern unsigned top, topsp;
+extern int top, topsp;
 
 extern unsigned char   executionFinished;
 extern unsigned        pc ;
@@ -143,8 +150,17 @@ void avm_initstack(void);
 void execute_cycle();
 
 avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg);
-
+avm_memcell* avm_getactual(unsigned i);
+typedef void (*library_func_t)(void);
 void avm_calllibfunc(char* id);
+void avm_init_libfuncs_hash(void);
+library_func_t avm_getlibraryfunc(char* libfuncName);
+void avm_registerlibfunc(char*, library_func_t);
+
+
+void libfunc_print(void);
+void libfunc_typeof(void);
+void libfunc_totalarguments(void);
 
 void avm_error(char*);
 void avm_warning(char*);

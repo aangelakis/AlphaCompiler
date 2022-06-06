@@ -25,12 +25,15 @@ unsigned codeSize; //total number of instructions
 
 void avm_initialize(void) {
     avm_initstack();
+    avm_init_libfuncs_hash();
 
-    //avm_registerlibfunc("print", libfunc_print);
-    //avm_registerlibfunc("typeof", libfunc_typeof);
+    avm_registerlibfunc("print", libfunc_print);
+    avm_registerlibfunc("typeof", libfunc_typeof);
+    avm_registerlibfunc("totalarguments", libfunc_totalarguments);
 
     topsp = AVM_STACKSIZE-1;
     top   = AVM_STACKSIZE-1-total_global_var;
+    pc = 1;
 }
 
 
@@ -40,6 +43,6 @@ int main(void) {
   
     while(executionFinished == 0)
         execute_cycle();
-
+    
     return 24;
 }

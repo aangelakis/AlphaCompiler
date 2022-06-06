@@ -1,7 +1,7 @@
 #include"../avm.h"
 
 void avm_assign(avm_memcell* lv, avm_memcell* rv){
-
+    
     if(lv == rv)
         return;
     
@@ -23,6 +23,7 @@ void avm_assign(avm_memcell* lv, avm_memcell* rv){
     else if(lv->type == table_m){
         avm_tableincrefcounter(lv->data.tableVal);
     }
+    
 }
 
 void execute_assign(instruction* instr){

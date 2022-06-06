@@ -11,7 +11,7 @@ unsigned totalActuals = 0;
 
 avm_memcell ax, bx, cx;
 avm_memcell retval;
-unsigned    top, topsp;
+int    top, topsp;
 
 
 double  consts_getnumber(unsigned index) {
@@ -83,10 +83,15 @@ void avm_tabledestroy(avm_table* t){
 
 
 avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg){
+    assert(arg);
+    printf("arg type = %d\n", arg->type);
     switch(arg->type){
-
-        case global_a:  return &avm_stack[AVM_STACKSIZE - 1 - arg->val];
-        case local_a:   return &avm_stack[topsp - arg->val];   
+        case global_a:{
+            return &avm_stack[AVM_STACKSIZE - 1 - arg->val];
+        } 
+        case local_a: {
+            return &avm_stack[topsp - arg->val];   
+        }  
         case formal_a:  return &avm_stack[topsp + AVM_STACKENV_SIZE + 1 + arg->val];
 
         case retval_a:  return &retval;
@@ -163,7 +168,7 @@ void avm_memcellclear(avm_memcell* m){
 
 void avm_dec_top(void){
     if(!top){
-        printf("kane edo to avm_error!\n");
+        printf("kane edo to avm_error!top = %d, topsp = %d\n",top,topsp);
         executionFinished = 1;
     }
     else{

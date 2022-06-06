@@ -1,4 +1,5 @@
 #include"../avm.h"
+#include"../read_binary/read_binary.h"
 
 void execute_call(instruction* instr){
     avm_memcell* func = avm_translate_operand(instr->result, &ax);
@@ -8,8 +9,9 @@ void execute_call(instruction* instr){
     switch(func->type){
 
         case userfunc_m: {
-            pc = func->data.funcVal;
+            pc = func->data.funcVal; // sto funcVal apothikeuoume pu prepei na ginei to jump
             assert(pc < AVM_ENDING_PC);
+            printf("pc = %d\n", pc);
             assert(code[pc].opcode == enterfunc_v);
             break;
         }
@@ -26,7 +28,7 @@ void execute_call(instruction* instr){
 
         default: {
             char* s = avm_tostring(func);
-            printf("kane edo to avm_error!\n");
+            printf("kane edo to avm_error!top = %d, topsp = %d\n",top,topsp);
             free(s);
             executionFinished = 1;
         }
@@ -62,10 +64,8 @@ void execute_funcexit(instruction* unused){
     }
 }
 
-typedef void (*library_func_t)(void);
-library_func_t avm_getlibraryfunc(char* id) {
-    return NULL;
-}
+
+
 
 void avm_calllibfunc(char* id){
     library_func_t f = avm_getlibraryfunc(id);
@@ -97,22 +97,25 @@ avm_memcell* avm_getactual(unsigned i){
 void avm_registerlibfunc(char* id, library_func_t addr);
 
 void execute_pusharg(instruction* instr){
-    avm_memcell* arg = avm_translate_operand(instr->arg1, &ax);
+    avm_memcell* arg = avm_translate_operand(instr->result, &ax);
     assert(arg);
+    //assert(top > 0);
+    //avm_stack_push(&avm_stack[top],arg);
     avm_assign(&avm_stack[top],arg);
     ++totalActuals;
     avm_dec_top();
 }
 
+//libfuncs
 
-// lib funcs
 void libfunc_print(void){
     unsigned n = avm_totalactuals();
     for(unsigned i = 0; i < n ; i++){
         char* s = avm_tostring(avm_getactual(i));
-        puts(s);
+        printf("%s", s);
         free(s);
     }
+    printf("\n");
 }
 
 void libfunc_typeof(void){
