@@ -68,6 +68,8 @@ extern avm_memcell avm_stack[AVM_STACKSIZE];
 typedef void (*execute_func_t) (instruction*);
 
 #define AVM_MAX_INSTRUCTIONS (unsigned) nop_v
+
+
 #define CHECK_TOP_STACK if(top < 0) { \
     avm_error("Stack overflow!"); \
     exit(1); \
@@ -157,10 +159,16 @@ void avm_init_libfuncs_hash(void);
 library_func_t avm_getlibraryfunc(char* libfuncName);
 void avm_registerlibfunc(char*, library_func_t);
 
-
+//lib funcs
 void libfunc_print(void);
 void libfunc_typeof(void);
 void libfunc_totalarguments(void);
+void libfunc_sqrt(void);
+void libfunc_cos(void);
+void libfunc_sin(void);
+void libfunc_strtonum(void);
+void libfunc_input(void);
+void libfunc_argument(void);
 
 void avm_error(char*);
 void avm_warning(char*);

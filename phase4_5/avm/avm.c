@@ -84,7 +84,7 @@ void avm_tabledestroy(avm_table* t){
 
 avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg){
     assert(arg);
-    printf("arg type = %d\n", arg->type);
+    //printf("arg type = %d\n", arg->type);
     switch(arg->type){
         case global_a:{
             return &avm_stack[AVM_STACKSIZE - 1 - arg->val];
@@ -191,11 +191,11 @@ void avm_callsaveenvironment(void){
 
 
 void avm_error(char* error){
-    fprintf(stderr, "%s\n", error);
+    fprintf(stderr, "\033[1;31mERROR:\033[0;31m %s\n\033[0m", error);
 }
 
 void avm_warning(char* warning){
-    fprintf(stderr, "%s\n", warning);
+    fprintf(stderr, "\033[1;33mWARNING: \033[0;33m%s\n\033[0m", warning);
 }
 
 char* avm_tostring(avm_memcell* cell) {

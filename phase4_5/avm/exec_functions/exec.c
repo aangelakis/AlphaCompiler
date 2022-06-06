@@ -49,8 +49,8 @@ void execute_cycle(void){
             currLine = instr->srcLine;
         }
         unsigned oldPC = pc;
-        printf("instr opcode = %d\n", instr->opcode);
-        printf("top : %d , topsp : %d\n",top,topsp);
+        //printf("instr opcode = %d\n", instr->opcode);
+        //printf("top : %d , topsp : %d\n",top,topsp);
         CHECK_TOP_STACK //checks for stack over flow or under flow
         executeFuncs[instr->opcode](instr);
         if(pc == oldPC){

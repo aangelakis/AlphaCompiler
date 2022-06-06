@@ -30,6 +30,13 @@ void avm_initialize(void) {
     avm_registerlibfunc("print", libfunc_print);
     avm_registerlibfunc("typeof", libfunc_typeof);
     avm_registerlibfunc("totalarguments", libfunc_totalarguments);
+    avm_registerlibfunc("sqrt", libfunc_sqrt);
+    avm_registerlibfunc("cos", libfunc_cos);
+    avm_registerlibfunc("sin", libfunc_sin);
+    avm_registerlibfunc("strtonum", libfunc_strtonum);
+    avm_registerlibfunc("input", libfunc_input);
+    avm_registerlibfunc("argument", libfunc_argument);
+
 
     topsp = AVM_STACKSIZE-1;
     top   = AVM_STACKSIZE-1-total_global_var;

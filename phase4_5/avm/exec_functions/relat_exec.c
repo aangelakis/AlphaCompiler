@@ -59,6 +59,7 @@ char* typeStrings[] = {
     "string",
     "bool",
     "table",
+    "userfunc", // userfunc PROSTETHIKE
     "libfunc",
     "nil",
     "undef"
