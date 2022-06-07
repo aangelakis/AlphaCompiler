@@ -130,8 +130,11 @@ void libfunc_print(void){
             case number_m:
                 printf("%.3f", arg->data.numVal);
                 break;
-            default:
+            case string_m:
                 printf("\"%s\"", s);
+                break;
+            default:
+                printf("%s", s);
                 break;
         }
         
@@ -187,9 +190,6 @@ void libfunc_sqrt(void){
         retval.data.numVal = sqrt(tmp);
     }
 }
-
-
-
 
 #define PI 3.14159265358979323846
 void libfunc_cos(void){
@@ -324,8 +324,6 @@ void libfunc_input(void){
     
 }
 
-
-// DOESNT WORK
 void libfunc_argument(void){
     unsigned n = avm_totalactuals();
     unsigned p_topsp = avm_get_envvalue(topsp + AVM_SAVEDTOPSP_OFFSET);

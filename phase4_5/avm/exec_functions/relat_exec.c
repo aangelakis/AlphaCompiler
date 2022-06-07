@@ -227,7 +227,7 @@ void execute_jlt (instruction* instr) {
     }
     else
     if (rv1->type == bool_m || rv2->type == bool_m)
-        result = (avm_tobool(rv1) <= avm_tobool(rv2));
+        result = (avm_tobool(rv1) < avm_tobool(rv2));
     else
     if(rv1->type != rv2->type){
         char tmp[1024];
@@ -235,7 +235,7 @@ void execute_jlt (instruction* instr) {
         avm_error(tmp);
     }
     else {
-        result = (avm_toarithm(rv1) <= avm_toarithm(rv2));
+        result = (avm_toarithm(rv1) < avm_toarithm(rv2));
     }
 
     if(!executionFinished && result)

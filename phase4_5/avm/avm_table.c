@@ -119,23 +119,6 @@ static avm_table_bucket** get_from_type_table(avm_table* table, int type, int in
     } 
 }
 
-void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content) { 
-    assert(table);
-    assert(index);
-    unsigned num_ind = avm_tablehash(index);
-    avm_table_bucket **iter = get_from_type_table(table, index->type, num_ind), *new_bucket;
-
-    new_bucket = malloc(sizeof(avm_table_bucket));
-    new_bucket->key = *index;       // in C structs are copied automatically
-    new_bucket->value = *content;   // the only "expensive" operation C supports built-in
-
-    new_bucket->next = *iter;
-    *iter = new_bucket;
-    table->total++;
-
-    return;
-}
-
 static int compare_from_type_table(avm_table* table, int type, avm_memcell* b1, avm_memcell* b2) {
     switch (type)
     {
@@ -159,6 +142,36 @@ static int compare_from_type_table(avm_table* table, int type, avm_memcell* b1, 
         assert(0);
         break;
     } 
+}
+
+void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content) { 
+    assert(table);
+    assert(index);
+    unsigned num_ind = avm_tablehash(index);
+    avm_table_bucket **table_bucket = get_from_type_table(table, index->type, num_ind), *iter, *new_bucket;
+    
+    iter = *table_bucket;
+    
+    while(iter) {
+        if(compare_from_type_table(table, index->type, &iter->key, index))
+            break;
+        iter = iter->next;
+    }
+
+    if(iter){
+        iter->value = *content;
+    }
+    else {
+        new_bucket = malloc(sizeof(avm_table_bucket));
+        new_bucket->key = *index;       // in C structs are copied automatically
+        new_bucket->value = *content;   // the only "expensive" operation C supports built-in
+
+        new_bucket->next = *table_bucket;
+        *table_bucket = new_bucket;
+        table->total++;
+    }
+
+    return;
 }
 
 avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index) {
