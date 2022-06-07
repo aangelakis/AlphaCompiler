@@ -33,55 +33,6 @@ userfunc* avm_getfuncinfo(unsigned address) {
     return NULL;
 }
 
-void avm_tableincrefcounter(avm_table* t){
-    ++t->refCounter;
-}
-
-void avm_tabledecrefcounter(avm_table* t){
-    assert(t->refCounter > 0);
-    if(!--t->refCounter){
-        avm_tabledestroy(t);
-    }
-}
-
-void avm_tablebucketsinit(avm_table_bucket** p){
-    for(unsigned i = 0; i < AVM_TABLE_HASHSIZE; ++i){
-        p[i] = NULL;
-    }
-}
-
-avm_table* avm_tablenew(void){
-    avm_table* t = malloc(sizeof(avm_table));
-    AVM_WIPEOUT(*t);
-
-    t->refCounter = t->total = 0;
-    avm_tablebucketsinit(t->numIndexed);
-    avm_tablebucketsinit(t->strIndexed);
-
-    return t;
-}
-
-
-void avm_tablebucketsdestroy(avm_table_bucket** p){
-    for(unsigned i = 0; i < AVM_TABLE_HASHSIZE; ++i, ++p){
-        for(avm_table_bucket* b = *p; b;){
-            avm_table_bucket* del = b;
-            b = b->next;
-            avm_memcellclear(&del->key);
-            avm_memcellclear(&del->value);
-            free(del);
-        }
-        p[i] = NULL;
-    }
-}
-
-void avm_tabledestroy(avm_table* t){
-    avm_tablebucketsdestroy(t->strIndexed);
-    avm_tablebucketsdestroy(t->numIndexed);
-    free(t);
-}
-
-
 avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg){
     assert(arg);
     //printf("arg type = %d\n", arg->type);

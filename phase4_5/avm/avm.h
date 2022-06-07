@@ -1,64 +1,15 @@
 #ifndef AVM_HEADER
 #define AVM_HEADER
 #include <stdio.h>
+#include "avm_table.h"
 #include "../instruction.h"
 
-typedef enum avm_memcell_t {
-    number_m    = 0,
-    string_m    = 1,
-    bool_m      = 2,
-    table_m     = 3,
-    userfunc_m  = 4,
-    libfunc_m   = 5,
-    nil_m       = 6,
-    undef_m     = 7
-} avm_memcell_t;
-
-#define AVM_TABLE_HASHSIZE  211
 #define AVM_ENDING_PC   codeSize+1
 #define AVM_STACKENV_SIZE   4
 #define AVM_NUMACTUALS_OFFSET +4
 #define AVM_SAVEDPC_OFFSET +3
 #define AVM_SAVEDTOP_OFFSET +2
 #define AVM_SAVEDTOPSP_OFFSET +1
-
-/*  For simplicity, we only show support for numeric and
-    string keys. Bonus for teams implementing keys
-    for user functions, library functions and booleans.
-*/
-typedef struct avm_table avm_table;
-
-typedef struct avm_memcell {
-    avm_memcell_t type;
-    union {
-        double          numVal;
-        char*           strVal;
-        unsigned char   boolVal;
-        avm_table*      tableVal;
-        unsigned        funcVal;
-        char*           libfuncVal;
-    } data;
-} avm_memcell;
-
-typedef struct avm_table_bucket {
-    avm_memcell         key;
-    avm_memcell         value;
-    struct avm_table_bucket*   next;
-} avm_table_bucket;
-
-struct avm_table{
-    unsigned refCounter;
-    avm_table_bucket*   strIndexed[AVM_TABLE_HASHSIZE];
-    avm_table_bucket*   numIndexed[AVM_TABLE_HASHSIZE];
-    unsigned            total;
-};
-
-avm_table*      avm_tablenew(void);
-void            avm_tabledestroy(avm_table* t);
-//avm_memcell*    avm_tablegetelem(avm_memcell* key);
-//void            avm_tablesetelem(avm_memcell* key, avm_memcell* value);
-avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index);
-void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content);
 
 //GIA STACK
 #define AVM_STACKSIZE   4096
@@ -134,10 +85,6 @@ void avm_assign(avm_memcell* lv, avm_memcell* rv);
 char* avm_tostring(avm_memcell*);
 void avm_calllibfunc(char* funcName);
 void avm_callsaveenvironment(void);
-
-void avm_tableincrefcounter(avm_table* t);
-void avm_tabledecrefcounter(avm_table* t);
-void avm_tablebucketsinit(avm_table_bucket** p);
 
 void avm_dec_top(void);
 void avm_push_envvalue(unsigned val);

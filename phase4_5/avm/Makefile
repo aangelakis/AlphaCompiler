@@ -6,7 +6,7 @@
 ###################################################
 
 avm:
-	gcc avm.c avm_stack.c avm_main.c associative_array.c read_binary/*c exec_functions/*c  avm_libfuncs.c ../libs/symtable/symtablehash.c -lm -o avm.out
+	gcc avm.c avm_stack.c avm_main.c avm_table.c read_binary/*c exec_functions/*c  avm_libfuncs.c ../libs/symtable/symtablehash.c -lm -o avm.out
 
 clean:
 	rm -rf avm.out
