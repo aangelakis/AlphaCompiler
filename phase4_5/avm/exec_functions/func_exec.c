@@ -124,7 +124,7 @@ void libfunc_print(void){
                 printf("library function: %s",s);
                 break;
             case table_m:
-                printf("tables not yet supported");  //TODO na ektipwnw ta content tu
+                printf("tables not yet supported"); //TODO na ektipwnw ta content tu
                 break;
             case number_m:
                 printf("%.3f", arg->data.numVal);
@@ -339,21 +339,24 @@ void libfunc_argument(void){
         retval.type=nil_m;
     }
     else{
-        //avm_memcell* test = avm_getactual(0);
-        //printf("%f\n", test->data.numVal);
-        
-        unsigned arg = avm_getactual(0)->data.numVal;
-        if(avm_get_envvalue(top + AVM_SAVEDTOP_OFFSET) - arg > p_topsp){
+        unsigned offset = avm_getactual(0)->data.numVal;
+        if(avm_get_envvalue(top + AVM_SAVEDTOP_OFFSET) - offset > p_topsp){
             avm_error("library function argument error: argument out of range!");
             retval.type=nil_m;
             return;
         }
-        avm_memcell* test1 = &avm_stack[p_topsp + AVM_STACKENV_SIZE + arg];
-        
+
+        avm_memcell* arg = &avm_stack[p_topsp + AVM_STACKENV_SIZE + offset + 1];
         avm_memcellclear(&retval);
+
         
-        retval = *test1;
-        //retval.data.numVal = avm_get_envvalue(p_topsp + AVM_STACKENV_SIZE + arg);
-        
+        if(arg->type == string_m){
+            retval.data.strVal = strdup(arg->data.strVal);
+        }
+        else{
+            retval.data = arg->data;
+        }
+        retval.type = arg->type;        
     }
+
 }
