@@ -330,7 +330,7 @@ void libfunc_argument(void){
     unsigned n = avm_totalactuals();
     unsigned p_topsp = avm_get_envvalue(topsp + AVM_SAVEDTOPSP_OFFSET);
     unsigned p_actuals = avm_get_envvalue(p_topsp + AVM_NUMACTUALS_OFFSET);
-    
+    //printf("%d <---- p_actuals\n", p_actuals);
     if(n != 1){
         char tmp[1024];
         sprintf(tmp, "one argument (not %d) expected in 'argument'!", n);
@@ -343,7 +343,8 @@ void libfunc_argument(void){
     }
     else{
         unsigned offset = avm_getactual(0)->data.numVal;
-        if(offset > p_actuals){ // se periptwseis arnitiku kanei wrap around
+        //printf("%d <---- offset\n", offset);
+        if(offset > p_actuals-1){ // se periptwseis arnitiku kanei wrap around
             avm_error("library function argument error: argument out of range!");
             retval.type=nil_m;
             return;
