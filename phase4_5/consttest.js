@@ -1,7 +1,11 @@
-function f(x,y){
-  print(argument(0));
-  print(argument(1));
-  print(argument(2));
-}
+vec3 = ["inside table"];
+print(vec3[0]);  //works
 
-f("1","2","test");
+vec3[0] = 55;
+print(vec3[0]); //works
+
+vec3[0] = nil;
+print(vec3[0]); //works
+
+vec3 = nil;   //crashes
+print(vec3);
