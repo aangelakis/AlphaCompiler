@@ -119,7 +119,7 @@ void avm_memcellclear(avm_memcell* m){
 
 void avm_dec_top(void){
     if(!top){
-        printf("kane edo to avm_error!top = %d, topsp = %d\n",top,topsp);
+        avm_error("stack overflow");
         executionFinished = 1;
     }
     else{

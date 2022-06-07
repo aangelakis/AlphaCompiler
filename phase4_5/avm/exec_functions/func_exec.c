@@ -31,7 +31,8 @@ void execute_call(instruction* instr){
 
         default: {
             char* s = avm_tostring(func);
-            printf("kane edo to avm_error!top = %d, topsp = %d\n",top,topsp);
+            char tmp[1024];
+            sprintf(tmp, "call: cannot bind '%s' to function!", s);
             free(s);
             executionFinished = 1;
         }
@@ -130,7 +131,7 @@ void libfunc_print(void){
                 printf("%.3f", arg->data.numVal);
                 break;
             default:
-                printf("%s", s);
+                printf("\"%s\"", s);
                 break;
         }
         
@@ -328,6 +329,8 @@ void libfunc_input(void){
 void libfunc_argument(void){
     unsigned n = avm_totalactuals();
     unsigned p_topsp = avm_get_envvalue(topsp + AVM_SAVEDTOPSP_OFFSET);
+    unsigned p_actuals = avm_get_envvalue(p_topsp + AVM_NUMACTUALS_OFFSET);
+    //printf("%d <---- p_actuals\n", p_actuals);
     if(n != 1){
         char tmp[1024];
         sprintf(tmp, "one argument (not %d) expected in 'argument'!", n);
@@ -340,7 +343,8 @@ void libfunc_argument(void){
     }
     else{
         unsigned offset = avm_getactual(0)->data.numVal;
-        if(avm_get_envvalue(top + AVM_SAVEDTOP_OFFSET) - offset > p_topsp){
+        //printf("%d <---- offset\n", offset);
+        if(offset > p_actuals-1){ // se periptwseis arnitiku kanei wrap around
             avm_error("library function argument error: argument out of range!");
             retval.type=nil_m;
             return;
@@ -356,7 +360,8 @@ void libfunc_argument(void){
         else{
             retval.data = arg->data;
         }
-        retval.type = arg->type;        
+        retval.type = arg->type;   
+             
     }
 
 }
