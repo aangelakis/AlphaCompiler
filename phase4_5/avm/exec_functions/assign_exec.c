@@ -13,7 +13,7 @@ void avm_assign(avm_memcell* lv, avm_memcell* rv){
     if(rv->type == undef_m)
         avm_warning("assign rv->type == undef");
     
-    avm_memcellclear(lv);
+    avm_memcellclear(lv); 
 
     memcpy(lv, rv, sizeof(avm_memcell));
 

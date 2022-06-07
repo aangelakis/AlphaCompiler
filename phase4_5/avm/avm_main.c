@@ -18,8 +18,7 @@ int libfuncsNum; //total number of libfuncs
 char ** libfuncs; //array of libfuncs
 int userfuncsNum; //total number of userfuncs
 userfunc * userfuncs; //array of userfuncs
-instruction * code; //array of instructions
-unsigned codeSize; //total number of instructions
+
 
 
 
@@ -51,5 +50,9 @@ int main(void) {
     while(executionFinished == 0)
         execute_cycle();
     
+    avm_memcellclear(&ax);
+    avm_memcellclear(&bx);
+    avm_memcellclear(&cx);
+    avm_memcellclear(&retval);
     return 24;
 }

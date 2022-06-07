@@ -36,12 +36,11 @@ char* make_string(){
 }
 
 //reads the magic number and checks it
-long int get_magic_number(){
+void get_magic_number(){
     long int magic_number;
     fread(&magic_number, sizeof(long int), 1, binary);
     DEBUG_PRINT("Magic number: %ld\n", magic_number);
     assert(magic_number == MAGIC_NUMBER_OFFSET);
-    return magic_number;
 }
 
 //reads the number of constants
@@ -137,7 +136,7 @@ instruction * get_instructions(int size){
 void read_binary(){
     binary = fopen("../binary.abc", "r");
     //get the magic number assertion check inside the get function
-    long int magic_number = get_magic_number();
+    get_magic_number();
 
     //get the size of the global variables
     DEBUG_PRINT("%s","Total global variables : ");

@@ -35,6 +35,8 @@ userfunc* avm_getfuncinfo(unsigned address) {
 
 avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg){
     assert(arg);
+    if(reg)
+        avm_memcellclear(reg);
     //printf("arg type = %d\n", arg->type);
     switch(arg->type){
         case global_a:{

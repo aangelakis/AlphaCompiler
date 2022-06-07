@@ -1,4 +1,5 @@
-#include"avm.h"
+#include "avm.h"
+#include "read_binary/read_binary.h"
 
 void avm_tableincrefcounter(avm_table* t){
     ++t->refCounter;
@@ -32,8 +33,10 @@ avm_table* avm_tablenew(void){
 }
 
 void avm_tablebucketsdestroy(avm_table_bucket** p, unsigned size){
-    for(unsigned i = 0; i < size; ++i, ++p){
-        for(avm_table_bucket* b = *p; b;){
+    for(unsigned i = 0; i < size; ++i){
+        avm_table_bucket* b = p[i];
+        while(b){
+            //puts("edw");
             avm_table_bucket* del = b;
             b = b->next;
             avm_memcellclear(&del->key);
@@ -50,6 +53,7 @@ void avm_tabledestroy(avm_table* t){
     avm_tablebucketsdestroy(t->userfuncIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsdestroy(t->libfuncIndexed, 12);
     avm_tablebucketsdestroy(t->boolIndexed, 2);
+    assert(t);
     free(t);
 }
 
@@ -81,7 +85,7 @@ static unsigned avm_tablehash(void* void_key) {
     case table_m:
         avm_error("Cannot use table as key to associative array");
     case userfunc_m:
-        return ((unsigned) key->data.funcVal*HASH_MULTIPLIER) % size;
+        return ((unsigned) userfuncs[key->data.funcVal].address*HASH_MULTIPLIER) % size;
     case libfunc_m:
         return hash_string(key->data.libfuncVal);
     case nil_m:
@@ -144,6 +148,41 @@ static int compare_from_type_table(avm_table* table, int type, avm_memcell* b1, 
     } 
 }
 
+static void transfer_memcell_data(int type, avm_memcell* b1, avm_memcell* b2) {
+    switch (type)
+    {
+    case number_m:
+        b1->data.numVal = b2->data.numVal;
+        break;
+    case string_m:
+        b1->data.strVal = strdup(b2->data.strVal);
+        break;
+    case bool_m:
+        b1->data.boolVal = b2->data.boolVal;
+        break;
+    case table_m:
+        b1->data.tableVal = b2->data.tableVal;
+        break;
+    case userfunc_m:
+        b1->data.funcVal = b2->data.funcVal;
+        break;
+    case libfunc_m:
+        b1->data.libfuncVal = strdup(b2->data.libfuncVal);
+        break;
+    case nil_m:
+        avm_error("Cannot assign nil to associative array cell");
+        // delete cell
+        break;
+    case undef_m:
+        break;
+    default:
+        assert(0);
+        break;
+    } 
+
+    return;
+}
+
 void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content) { 
     assert(table);
     assert(index);
@@ -159,15 +198,26 @@ void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content
     }
 
     if(iter){
-        iter->value = *content;
+        avm_memcellclear(&iter->value);
+        //iter->value = *content;
+        iter->value.type = content->type;
+        transfer_memcell_data(content->type, &iter->value, content);
     }
     else {
         new_bucket = malloc(sizeof(avm_table_bucket));
-        new_bucket->key = *index;       // in C structs are copied automatically
-        new_bucket->value = *content;   // the only "expensive" operation C supports built-in
+        new_bucket->key.type = index->type;
+        //puts("I AM HERE1");
+        //printf("type = %d\n", index->type);
+        transfer_memcell_data(index->type, &new_bucket->key, index);
+        //puts("I AM HERE2");
+        new_bucket->value.type = content->type;
+        transfer_memcell_data(content->type, &new_bucket->value, content);
+        //puts("I AM HERE3");
 
         new_bucket->next = *table_bucket;
         *table_bucket = new_bucket;
+        assert(table_bucket == get_from_type_table(table, index->type, num_ind));
+        //printf("I AM HERE WITH TYPE = %d\n", index->type);
         table->total++;
     }
 

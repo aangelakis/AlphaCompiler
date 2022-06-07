@@ -57,4 +57,5 @@ void execute_tablesetelem(instruction* instr) {
     }
     else
         avm_tablesetelem(t->data.tableVal, i, c);
+
 }

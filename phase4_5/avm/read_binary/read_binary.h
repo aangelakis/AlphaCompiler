@@ -20,8 +20,6 @@ extern int libfuncsNum;
 extern char ** libfuncs;
 extern int userfuncsNum;
 extern userfunc * userfuncs;
-extern instruction * code;
-extern unsigned codeSize;
 
 
 void read_binary();
