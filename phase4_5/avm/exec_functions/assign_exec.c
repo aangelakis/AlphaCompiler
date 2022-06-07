@@ -11,7 +11,7 @@ void avm_assign(avm_memcell* lv, avm_memcell* rv){
         return;
 
     if(rv->type == undef_m)
-        printf("kane edo to avm_warning!\n");
+        avm_warning("assign rv->type == undef");
     
     avm_memcellclear(lv);
 

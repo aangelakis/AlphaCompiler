@@ -31,7 +31,8 @@ void execute_call(instruction* instr){
 
         default: {
             char* s = avm_tostring(func);
-            printf("kane edo to avm_error!top = %d, topsp = %d\n",top,topsp);
+            char tmp[1024];
+            sprintf(tmp, "call: cannot bind '%s' to function!", s);
             free(s);
             executionFinished = 1;
         }
@@ -348,7 +349,7 @@ void libfunc_argument(void){
             return;
         }
 
-        avm_memcell* arg = &avm_stack[p_topsp + AVM_STACKENV_SIZE + offset ];
+        avm_memcell* arg = &avm_stack[p_topsp + AVM_STACKENV_SIZE + offset + 1];
         avm_memcellclear(&retval);
 
         
