@@ -87,6 +87,9 @@ void execute_jeq (instruction* instr) {
         sprintf(tmp, "%s == %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
         avm_error(tmp);
     }
+    else if(rv1->type == string_m && rv2->type == string_m){
+        result = !strcmp(rv1->data.strVal, rv2->data.strVal);
+    }
     else {
         result = (avm_toarithm(rv1) == avm_toarithm(rv2));
     }

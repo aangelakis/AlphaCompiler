@@ -124,7 +124,7 @@ void libfunc_print(void){
                 printf("library function: %s",s);
                 break;
             case table_m:
-                printf("tables not yet supported");
+                printf("tables not yet supported");  //TODO na ektipwnw ta content tu
                 break;
             case number_m:
                 printf("%.3f", arg->data.numVal);
@@ -298,6 +298,11 @@ void libfunc_input(void){
             break;
         }
         i++;
+    }
+    if(i == 1024){
+        avm_error("input error: string is too long!");
+        retval.type=nil_m;
+        return;
     }
     avm_memcellclear(&retval);
     if(strcmp(s, "true")==0){
