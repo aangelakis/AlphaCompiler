@@ -328,6 +328,8 @@ void libfunc_input(void){
 void libfunc_argument(void){
     unsigned n = avm_totalactuals();
     unsigned p_topsp = avm_get_envvalue(topsp + AVM_SAVEDTOPSP_OFFSET);
+    unsigned p_actuals = avm_get_envvalue(p_topsp + AVM_NUMACTUALS_OFFSET);
+    
     if(n != 1){
         char tmp[1024];
         sprintf(tmp, "one argument (not %d) expected in 'argument'!", n);
@@ -340,13 +342,13 @@ void libfunc_argument(void){
     }
     else{
         unsigned offset = avm_getactual(0)->data.numVal;
-        if(avm_get_envvalue(top + AVM_SAVEDTOP_OFFSET) - offset > p_topsp){
+        if(offset > p_actuals){ // se periptwseis arnitiku kanei wrap around
             avm_error("library function argument error: argument out of range!");
             retval.type=nil_m;
             return;
         }
 
-        avm_memcell* arg = &avm_stack[p_topsp + AVM_STACKENV_SIZE + offset + 1];
+        avm_memcell* arg = &avm_stack[p_topsp + AVM_STACKENV_SIZE + offset ];
         avm_memcellclear(&retval);
 
         
@@ -356,7 +358,8 @@ void libfunc_argument(void){
         else{
             retval.data = arg->data;
         }
-        retval.type = arg->type;        
+        retval.type = arg->type;   
+             
     }
 
 }
