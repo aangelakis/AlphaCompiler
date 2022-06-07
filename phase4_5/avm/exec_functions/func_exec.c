@@ -131,7 +131,7 @@ void libfunc_print(void){
                 printf("%.3f", arg->data.numVal);
                 break;
             default:
-                printf("%s", s);
+                printf("\"%s\"", s);
                 break;
         }
         
