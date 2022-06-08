@@ -129,15 +129,17 @@ static int compare_from_type_table(avm_table* table, int type, avm_memcell* b1, 
     case number_m:
         return b1->data.numVal == b2->data.numVal;
     case string_m:
-        return !strcmp(b1->data.strVal, b2->data.strVal);
+        puts(b1->data.strVal);
+        puts(b2->data.strVal);
+        return (strcmp(b1->data.strVal, b2->data.strVal) == 0);
     case bool_m:
         return b1->data.boolVal == b2->data.boolVal;
     case table_m:
         avm_error("Cannot use table as key to associative array", &code[pc]);
     case userfunc_m:
-        return b1->data.funcVal == b2->data.funcVal;
+        return userfuncs[b1->data.funcVal].address == userfuncs[b2->data.funcVal].address;
     case libfunc_m:
-        return !strcmp(b1->data.libfuncVal, b2->data.libfuncVal);
+        return (strcmp(b1->data.libfuncVal, b2->data.libfuncVal) == 0);
     case nil_m:
         avm_error("Cannot use nil as key to associative array", &code[pc]);
     case undef_m:
@@ -239,4 +241,8 @@ avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index) {
     }
 
     return NULL;
+}
+
+avm_memcell* avm_tableremoveelem(avm_table* table, avm_memcell* index){
+
 }

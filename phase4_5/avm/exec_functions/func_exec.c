@@ -509,3 +509,33 @@ void libfunc_objectmemberkeys(void){
         retval.data.tableVal = new_table;
     }
 }
+
+static void avm_tablemembercopy(avm_table_bucket** p, avm_table* new_table, unsigned size){
+    for(unsigned i = 0; i < size; ++i){
+        avm_table_bucket* b = p[i];
+        while(b){
+            avm_tablesetelem(new_table, &b->key, &b->value);
+            b = b->next;
+        }
+    }
+}
+
+void libfunc_objectcopy(void){
+    unsigned n = avm_totalactuals();
+    //printf("%d <---- p_actuals\n", p_actuals);
+
+    if(n != 1){
+        char tmp[1024];
+        sprintf(tmp, "one argument (not %d) expected in 'objectmemberkeys'!", n);
+        avm_error(tmp, &code[pc]);
+        retval.type=nil_m;
+    }
+    else if (avm_getactual(0)->type != table_m){
+        avm_error("library function 'objectmemberkeys' accepts only tables as parameter!", &code[pc]);
+        retval.type=nil_m;
+    } 
+    else {
+        avm_table *t = avm_getactual(0)->data.tableVal;
+        avm_table *new_table = malloc(sizeof(avm_table));
+    }
+}
