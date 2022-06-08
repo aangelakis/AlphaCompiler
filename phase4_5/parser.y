@@ -134,7 +134,6 @@
 %type<labelVal> whilecond
 %type<labelVal> M
 %type<labelVal> N 
-%type<labelVal> Temp_name
 %type<statement> ifstmt
 %type<statement> whilestmt
 %type<statement> forstmt
@@ -307,21 +306,15 @@ elist:  %empty            {     $$ = NULL;  Manage_elist_empty();           }
                         }      
         ;
 
-objectdef: Temp_name "[" elist "]"      {
-                                        if(--inside_indexed !=0)
-                                                temp_counter = $1;        
-                                        expr* t = newexpr(newtable_e);
+objectdef:  "[" elist "]"      {        expr* t = newexpr(newtable_e);
                                         t->sym = new_temp();
                                         emit(tablecreate, t, NULL, NULL, -1, currQuad);
-                                        for(int i = 0; $3; $3 = $3->next)
-                                                emit(tablesetelem, t, newexpr_constint(i++), $3, -1, currQuad);
+                                        for(int i = 0; $2; $2 = $2->next)
+                                                emit(tablesetelem, t, newexpr_constint(i++), $2, -1, currQuad);
                                         $$ = t;
                                         Manage_objectdef_elist();   
                                 }
-        | Temp_name  "[" indexed "]"     {
-                                        if(--inside_indexed !=0)
-                                                temp_counter = $1;
-                                        expr* t = newexpr(newtable_e);
+        |   "[" indexed "]"     {       expr* t = newexpr(newtable_e);
                                         t->sym = new_temp();
                                         emit(tablecreate, t, NULL, NULL, -1, currQuad);
                                         
@@ -329,14 +322,14 @@ objectdef: Temp_name "[" elist "]"      {
                                         //printf("type is %d\n", $2->type);
                                         //exit(-1); 
 
-                                        while($3){
-                                                if($3->type == constbool_e){
-                                                        printf("type is %d\n", $3->type);
-                                                        printf("type is %d\n", $3->index->type);
+                                        while($2){
+                                                if($2->type == constbool_e){
+                                                        printf("type is %d\n", $2->type);
+                                                        printf("type is %d\n", $2->index->type);
                                                         //exit(-1);
                                                 }
-                                                emit(tablesetelem, t, $3->index, $3, -1, currQuad);
-                                                $3 = $3->next;
+                                                emit(tablesetelem, t, $2->index, $2, -1, currQuad);
+                                                $2 = $2->next;
                                         }
                                         $$ = t;
                                         Manage_objectdef_indexed(); }
@@ -359,8 +352,7 @@ indexed:  indexed "," indexedelem       {
                                         Manage_indexed_indexedelem();        }
           ;
 
-indexedelem: "{" expr ":" expr "}"  {   
-                                        $4->index = $2;
+indexedelem: "{" expr ":" expr "}"  {   $4->index = $2;
                                         $$ = $4;
                                         if($$->type == constbool_e){
                                                 printf("type is %d\n", $4->type);
@@ -369,8 +361,6 @@ indexedelem: "{" expr ":" expr "}"  {
                                         }
                                         Manage_indexedelem(); 
                                 }
-
-Temp_name : %empty {$$ = temp_counter; inside_indexed++;}
 
 block: "{" {ScopeUp(0);} liststmt "}" {ScopeDown(0);} { $$=$3;  Manage_block_liststmt();    }
         |  "{" {ScopeUp(0);} "}" {ScopeDown(0);}       { $$=make_stmt();  Manage_block_emptyblock();   }
