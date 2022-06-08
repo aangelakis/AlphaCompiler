@@ -537,5 +537,17 @@ void libfunc_objectcopy(void){
     else {
         avm_table *t = avm_getactual(0)->data.tableVal;
         avm_table *new_table = malloc(sizeof(avm_table));
+        
+        avm_tablemembercopy(t->numIndexed, new_table, AVM_TABLE_HASHSIZE);
+        avm_tablemembercopy(t->strIndexed, new_table, AVM_TABLE_HASHSIZE);
+        avm_tablemembercopy(t->userfuncIndexed, new_table, AVM_TABLE_HASHSIZE);
+        avm_tablemembercopy(t->libfuncIndexed, new_table, AVM_TABLE_HASHSIZE);
+        avm_tablemembercopy(t->boolIndexed, new_table, 2);
+
+        new_table->total = t->total;
+        avm_tableincrefcounter(new_table);
+
+        retval.type = table_m;
+        retval.data.tableVal = new_table;
     }
 }

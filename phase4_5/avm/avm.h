@@ -118,6 +118,7 @@ void libfunc_input(void);
 void libfunc_argument(void);
 void libfunc_objecttotalmembers(void);
 void libfunc_objectmemberkeys(void);
+void libfunc_objectcopy(void);
 
 
 void avm_error(char*, instruction*);

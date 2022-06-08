@@ -1,20 +1,26 @@
-table = [{
-  "table1": [{ 1: (function(x) { print("table1_1 ", x); }) },
-      { 2: (function(x) { print("table1_2 ", x); }) },
-      { 3: (function(x) { print("table1_3 ", x); }) }
-  ]
-},
-{
-  "table2": [{ 1: (function(x) { print("table2_1 ", x); }) },
-      { 2: (function(x) { print("table2_2 ", x); }) },
-      { 3: (function(x) { print("table2_3 ", x); }) }
-  ]
-}
-];
+vec1 = [1, 2, 3];
 
-// table.table1[2]("ok1\n");
-// table.table2[3]("ok2\n");
+t = [{"e" : "fae skata aleks"}, {"f" : 69}, {"peos":vec1}];
 
-table["table1"][1](" == table 1_1\n");
-table["table2"][1](" == table 2_1\n");
-print(table);
+print(objecttotalmembers(t));
+print("\n");
+
+print(typeof(t));
+print("\n");
+print(t);
+print("\n");
+
+t2 = objectcopy(t);
+
+print(t2);
+print("\n");
+
+t["e"] = nil;
+t2["f"] = nil;
+t2["peos"][0] = nil;
+t2["peos"][1] = nil;
+
+print(t);
+print("\n");
+print(t2);
+print("\n");

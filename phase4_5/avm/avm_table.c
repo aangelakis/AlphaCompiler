@@ -129,8 +129,6 @@ static int compare_from_type_table(avm_table* table, int type, avm_memcell* b1, 
     case number_m:
         return b1->data.numVal == b2->data.numVal;
     case string_m:
-        puts(b1->data.strVal);
-        puts(b2->data.strVal);
         return (strcmp(b1->data.strVal, b2->data.strVal) == 0);
     case bool_m:
         return b1->data.boolVal == b2->data.boolVal;
@@ -185,6 +183,8 @@ static void transfer_memcell_data(int type, avm_memcell* b1, avm_memcell* b2) {
     return;
 }
 
+void avm_tableremoveelem(avm_table* table, avm_memcell* index);
+
 void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content) { 
     assert(table);
     assert(index);
@@ -200,12 +200,17 @@ void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content
     }
 
     if(iter){
-        avm_memcellclear(&iter->value);
-        //iter->value = *content;
-        iter->value.type = content->type;
-        transfer_memcell_data(content->type, &iter->value, content);
+        if(content->type == nil_m){
+            avm_tableremoveelem(table, index);
+        }
+        else{
+            avm_memcellclear(&iter->value);
+            //iter->value = *content;
+            iter->value.type = content->type;
+            transfer_memcell_data(content->type, &iter->value, content);
+        }
     }
-    else {
+    else if(content->type != nil_m){
         new_bucket = malloc(sizeof(avm_table_bucket));
         new_bucket->key.type = index->type;
         //puts("I AM HERE1");
@@ -224,8 +229,13 @@ void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content
         if(content->type == table_m)
             avm_tableincrefcounter(content->data.tableVal);
     }
-
-    return;
+    else {
+        char tmp[1024];
+        char *tmp_s = avm_tostring(index);
+        sprintf(tmp, "Cannot create table cell with nil contents. Table cell with key: \'%s\' will not be created", tmp_s);
+        avm_warning(tmp, &code[pc]);
+        free(tmp_s);
+    }
 }
 
 avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index) {
@@ -243,6 +253,36 @@ avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index) {
     return NULL;
 }
 
-avm_memcell* avm_tableremoveelem(avm_table* table, avm_memcell* index){
+void avm_tableremoveelem(avm_table* table, avm_memcell* index){
+    assert(table);
+    assert(index);
+    unsigned num_ind = avm_tablehash(index);
+    avm_table_bucket **table_bucket = get_from_type_table(table, index->type, num_ind), *iter, *prev = NULL;
 
+    iter = *table_bucket;
+
+    while(iter) {
+        if(compare_from_type_table(table, index->type, &iter->key, index))
+            break;
+        prev = iter;
+        iter = iter->next;
+    } 
+
+    assert(iter);
+
+
+    if(prev == NULL){
+        assert(table_bucket == get_from_type_table(table, index->type, num_ind));
+        assert(*table_bucket == iter);
+        (*table_bucket) = iter->next;
+        iter->next = NULL;
+        avm_memcellclear(&iter->key);
+        avm_memcellclear(&iter->value);
+    }
+    else {
+        prev->next = iter->next;
+        iter->next = NULL;
+        avm_memcellclear(&iter->key);
+        avm_memcellclear(&iter->value);
+    }
 }

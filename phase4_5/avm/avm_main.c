@@ -37,6 +37,7 @@ void avm_initialize(void) {
     avm_registerlibfunc("argument", libfunc_argument);
     avm_registerlibfunc("objecttotalmembers",libfunc_objecttotalmembers);
     avm_registerlibfunc("objectmemberkeys",libfunc_objectmemberkeys);
+    avm_registerlibfunc("objectcopy",libfunc_objectcopy);
 
 
     topsp = AVM_STACKSIZE-1;
