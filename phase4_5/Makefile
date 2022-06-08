@@ -21,7 +21,7 @@ flex:
 	flex --outfile=scanner.c scanner.l
 
 gcc:
-	gcc scanner.c parser.c syntaxanal.c instruction.c libs/scopelist/scopelists.c libs/zarkList/zarkList.c libs/symtable/symtablehash.c libs/SymTableEntry/SymTableEntry.c quads.c expression.c libs/Vektor/Vektor.c libs/stack/stack.c
+	gcc -g scanner.c parser.c syntaxanal.c instruction.c libs/scopelist/scopelists.c libs/zarkList/zarkList.c libs/symtable/symtablehash.c libs/SymTableEntry/SymTableEntry.c quads.c expression.c libs/Vektor/Vektor.c libs/stack/stack.c  -rdynamic
 
 clean:
 	rm -rf a.out parser.c parser.h scanner.c scanner.h lex_output.txt yacc_output.txt quads_output.txt instructions_output.txt out.out binary.abc

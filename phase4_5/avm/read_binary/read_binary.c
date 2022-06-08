@@ -14,8 +14,6 @@ char* make_string(){
     char tmp[1024];
     char* new_string = (char*) 0; 
     char c = fgetc(binary);
-    if(c == '\n')
-        c = fgetc(binary);
     
     int i = 0;
     for(; c; ++i) {

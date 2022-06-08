@@ -264,8 +264,8 @@ void ScopeUp(int callee){
         invalid_funcname_number = 0; //reset the counter
 
         //when we soft hide we push in the stack the last scope
-        last_soft_hide[last_soft_hide_index++] = scope;
-
+        last_soft_hide[last_soft_hide_index] = scope;
+        last_soft_hide_index++;
         //inside one function we soft hide every other scope except the latest scope
         scope ++;
         for (int i = 1; i < scope; i++)
@@ -281,20 +281,25 @@ void ScopeUp(int callee){
 }
 
 void ScopeDown(int callee){
-    //printf("%d\n",scope);
+    
     hard_hide(&scpArr,scope); //hide the current scope
     scope--;
     unsigned int *tmp = (unsigned int *)stack_pop(invalid_funcname_number_stack); //get the name from the stack
     invalid_funcname_number = *tmp;  //copy the value to the global variable
     free(tmp); //free the variable used from the stack
     
+    unhide(&scpArr,scope); //unhide the current scope
+    
+}
+
+void ScopeDownFunc(void){
     // apo to scope pu eimaste ews tote pu egine to teleutaio soft hide kane unhide
     for(int i = scope ; i > last_soft_hide[last_soft_hide_index] ; i--){
         unhide(&scpArr,i);  //unhide the scope
     }
     last_soft_hide[last_soft_hide_index] = 0;
+    assert(&last_soft_hide[last_soft_hide_index] != &programvar_offset);
     last_soft_hide_index--;
-    
 }
 
 /* Generates a invalid name for a function */

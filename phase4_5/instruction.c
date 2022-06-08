@@ -66,13 +66,13 @@ void push_funcstart_label(){
     int *tmp = malloc(sizeof(int));
     *tmp = vektor_active_size(userFuncs) -1;
     stack_push(funcstart_label_stack,(int*)tmp);
-    printf("funcstart:%d\n", *tmp);
+    //printf("funcstart:%d\n", *tmp);
 }
 
 int pop_funcstart_label(){
     int *tmp = (int*)stack_pop(funcstart_label_stack);
     int ret = *tmp;
-    printf("funcend:%d\n", *tmp);
+    //printf("funcend:%d\n", *tmp);
     free(tmp);
     return ret;
 }
@@ -132,7 +132,7 @@ void make_operand(expr* e, vmarg* arg){
         //case assignexpr_e:
 
         case newtable_e: {
-            printf("Type=%d\n", e->type);
+            //printf("Type=%d\n", e->type);
             assert(e->sym);
             arg->val = e->sym->value.varVal->offset;
 
@@ -146,8 +146,8 @@ void make_operand(expr* e, vmarg* arg){
         }
         case boolexpr_e: {
             if(!e->is_also_const){
-                printf("Type=%d\n", e->type);
-                printf("content is %d\n", e->content.boolConst);
+                //printf("Type=%d\n", e->type);
+                //printf("content is %d\n", e->content.boolConst);
                 assert(e->sym);
                 arg->val = e->sym->value.varVal->offset;
 

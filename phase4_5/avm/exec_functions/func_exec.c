@@ -205,11 +205,6 @@ void libfunc_print(void){
             case number_m:
                 printf("%.3f", arg->data.numVal);
                 break;
-            case string_m:
-                s = avm_tostring(arg);
-                printf("%s", s);
-                free(s);
-                break;
             default:
                 s = avm_tostring(arg);
                 printf("%s", s);
@@ -220,7 +215,7 @@ void libfunc_print(void){
         
     }
 
-    printf("\n");
+    
 }
 
 void libfunc_typeof(void){

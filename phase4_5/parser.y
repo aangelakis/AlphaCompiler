@@ -375,6 +375,7 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
                                 }
                                 }
                 block          { 
+                                ScopeDownFunc();
                                 SymTableEntry* search =lookup_active_with_scope(&scpArr,scope,$2); //GIA KAPOIO LOGO EDW EINAI NULL TO
                                 if(search != NULL){
                                         search->value.funcVal->numOfLocalVars=functionlocal_offset;     //      $$->value.funcVal
@@ -382,6 +383,7 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
                                 $$ = search;
                                 End_named_func($2); 
                                 patchlist($9->returnlist,nextquad()-1); 
+                                
                                 infunction--;
                                 //printf("Funcstart=%d\n", $<symEntr>$->value.funcVal->quadfuncStartIndex);    
                                 ((quad*) quads->data[$<symEntr>$->value.funcVal->quadfuncStartIndex])->result->sym = $<symEntr>$; 
@@ -391,11 +393,15 @@ funcdef: FUNCTION ID M          {Init_named_func($2);infunction++;}
         | 
         FUNCTION  M              {Init_Anonymous_func(); infunction++;} 
         "("idlist")"            {push_function_local_offset(); currscopespace = functionlocal;} 
-        block                   {  $$ = Manage_funcdef_function($5);
+        block                   {  
+                                        ScopeDownFunc();
+                                        $$ = Manage_funcdef_function($5);
+                                        //ScopeDownFunc();
                                         $$->value.funcVal->numOfLocalVars=functionlocal_offset; //to keep where the offset is
                                         $$->value.funcVal->quadfuncStartIndex = $2+ 1;  // keep where funcstart is with M rule
                                         //printf("DES === LOCAL : %d , START : %d\n",$$->value.funcVal->numOfLocalVars,$$->value.funcVal->quadfuncStartIndex);
                                         patchlist($8->returnlist,nextquad()-1);
+                                        
                                         infunction--; 
                                         pop_function_local_offset();
                                         if (infunction == 0)
@@ -466,6 +472,7 @@ whilecond: "(" expr ")" {       //printf("whilecond -> (expr)\n");
                                 emit(if_eq, NULL, $2, newexpr_constbool(1), nextquad() + 2, currQuad);
                                 $$ = nextquad();
                                 emit(jump, NULL, NULL, NULL, 0, currQuad);
+                                
                         }
 
 whilestmt: whilestart whilecond loopstmt     {      Manage_whilestmt();  
@@ -498,17 +505,17 @@ forprefix: FOR "(" elist ";" M expr ";" {
 }
 
 
-forstmt: forprefix N elist ")" N loopstmt N {   
-        patchlabel($1->enter, $5+1);
+forstmt: forprefix N elist ")"{reset_temp_counter();} N loopstmt N {   
+        patchlabel($1->enter, $6+1);
         patchlabel($2, nextquad());
-        patchlabel($5, $1->test);
-        patchlabel($7, $2 + 1);
+        patchlabel($6, $1->test);
+        patchlabel($8, $2 + 1);
         
         
 
-        patchlist($6->breaklist, nextquad());
-        patchlist($6->continuelist, $2+1);
-        $$ = $6;
+        patchlist($7->breaklist, nextquad());
+        patchlist($7->continuelist, $2+1);
+        $$ = $7;
         Manage_forstmt();
 };
 

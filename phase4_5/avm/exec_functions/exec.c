@@ -30,8 +30,7 @@ execute_func_t executeFuncs[] = {
     execute_nop             //26
 };
 
-void execute_cycle(void){
-    printf("%u\n",pc);
+void execute_cycle(void){   
     if(executionFinished){
         return;
     }
