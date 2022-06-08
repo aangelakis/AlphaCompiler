@@ -318,7 +318,11 @@ char* new_temp_name(){
     return temp_name;
 }
 
+int inside_indexed = 0;
+int closed_table_create = 0;
+
 void reset_temp_counter(){
+    fprintf(yacc_out,"reset temp counter\n");
     temp_counter = 0;
 }
 
