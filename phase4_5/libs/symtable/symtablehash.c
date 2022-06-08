@@ -103,7 +103,8 @@ static void expandTable(SymTable_T oSymTable){
 
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pcValue){
     unsigned int index = SymTable_hash(pcKey, oSymTable -> currentSizeIn); 
-    binding *iter = oSymTable -> hashtable[index], *newBinding;
+    //binding *iter = oSymTable -> hashtable[index], *newBinding;
+    binding *newBinding;
     assert(oSymTable);
     assert(pcKey);
 

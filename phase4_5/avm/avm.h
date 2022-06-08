@@ -22,10 +22,10 @@ typedef void (*execute_func_t) (instruction*);
 
 
 #define CHECK_TOP_STACK if(top < 0) { \
-    avm_error("Stack overflow!"); \
+    avm_error("Stack overflow!", &code[pc]); \
     exit(1); \
 }else if(top > AVM_STACKSIZE) { \
-    avm_error("Stack underflow!"); \
+    avm_error("Stack underflow!", &code[pc]); \
     exit(1); \
 }
 
@@ -116,7 +116,10 @@ void libfunc_sin(void);
 void libfunc_strtonum(void);
 void libfunc_input(void);
 void libfunc_argument(void);
+void libfunc_objecttotalmembers(void);
+void libfunc_objectmemberkeys(void);
 
-void avm_error(char*);
-void avm_warning(char*);
+
+void avm_error(char*, instruction*);
+void avm_warning(char*, instruction*);
 #endif

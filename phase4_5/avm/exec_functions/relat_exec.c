@@ -74,7 +74,7 @@ void execute_jeq (instruction* instr) {
     unsigned char result = 0;
 
     if (rv1->type == undef_m || rv2->type == undef_m)
-        avm_error("\'undef\' involved in equality");
+        avm_error("\'undef\' involved in equality", &code[pc]);
     else
     if (rv1->type == nil_m || rv2->type == nil_m)
         result = rv1->type == nil_m && rv2->type == nil_m;
@@ -85,7 +85,7 @@ void execute_jeq (instruction* instr) {
     if(rv1->type != rv2->type){
         char tmp[1024];
         sprintf(tmp, "%s == %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
-        avm_error(tmp);
+        avm_error(tmp, &code[pc]);
     }
     else if(rv1->type == string_m && rv2->type == string_m){
         result = !strcmp(rv1->data.strVal, rv2->data.strVal);
@@ -107,7 +107,7 @@ void execute_jge (instruction* instr) {
     unsigned char result = 0;
 
     if (rv1->type == undef_m || rv2->type == undef_m)
-        avm_error("\'undef\' involved in equality");
+        avm_error("\'undef\' involved in jge", &code[pc]);
     else
     if (rv1->type == nil_m || rv2->type == nil_m){
         if(rv1->type == nil_m && rv2->type == nil_m)
@@ -123,8 +123,8 @@ void execute_jge (instruction* instr) {
     else
     if(rv1->type != rv2->type){
         char tmp[1024];
-        sprintf(tmp, "%s == %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
-        avm_error(tmp);
+        sprintf(tmp, "%s >= %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
+        avm_error(tmp, &code[pc]);
     }
     else {
         result = (avm_toarithm(rv1) >= avm_toarithm(rv2));
@@ -143,7 +143,7 @@ void execute_jgt (instruction* instr) {
     unsigned char result = 0;
 
     if (rv1->type == undef_m || rv2->type == undef_m)
-        avm_error("\'undef\' involved in equality");
+        avm_error("\'undef\' involved in jgt", &code[pc]);
     else
     if (rv1->type == nil_m || rv2->type == nil_m){
         if(rv1->type == nil_m && rv2->type == nil_m)
@@ -159,8 +159,8 @@ void execute_jgt (instruction* instr) {
     else
     if(rv1->type != rv2->type){
         char tmp[1024];
-        sprintf(tmp, "%s == %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
-        avm_error(tmp);
+        sprintf(tmp, "%s > %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
+        avm_error(tmp, &code[pc]);
     }
     else {
         result = (avm_toarithm(rv1) > avm_toarithm(rv2));
@@ -179,7 +179,7 @@ void execute_jle (instruction* instr) {
     unsigned char result = 0;
 
     if (rv1->type == undef_m || rv2->type == undef_m)
-        avm_error("\'undef\' involved in equality");
+        avm_error("\'undef\' involved in jle", &code[pc]);
     else
     if (rv1->type == nil_m || rv2->type == nil_m){
         if(rv1->type == nil_m && rv2->type == nil_m)
@@ -195,8 +195,8 @@ void execute_jle (instruction* instr) {
     else
     if(rv1->type != rv2->type){
         char tmp[1024];
-        sprintf(tmp, "%s == %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
-        avm_error(tmp);
+        sprintf(tmp, "%s <= %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
+        avm_error(tmp, &code[pc]);
     }
     else {
         result = (avm_toarithm(rv1) <= avm_toarithm(rv2));
@@ -215,7 +215,7 @@ void execute_jlt (instruction* instr) {
     unsigned char result = 0;
 
     if (rv1->type == undef_m || rv2->type == undef_m)
-        avm_error("\'undef\' involved in equality");
+        avm_error("\'undef\' involved in jlt", &code[pc]);
     else
     if (rv1->type == nil_m || rv2->type == nil_m){
         if(rv1->type == nil_m && rv2->type == nil_m)
@@ -231,8 +231,8 @@ void execute_jlt (instruction* instr) {
     else
     if(rv1->type != rv2->type){
         char tmp[1024];
-        sprintf(tmp, "%s == %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
-        avm_error(tmp);
+        sprintf(tmp, "%s < %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
+        avm_error(tmp, &code[pc]);
     }
     else {
         result = (avm_toarithm(rv1) < avm_toarithm(rv2));
@@ -251,7 +251,7 @@ void execute_jne (instruction* instr) {
     unsigned char result = 0;
 
     if (rv1->type == undef_m || rv2->type == undef_m)
-        avm_error("\'undef\' involved in equality");
+        avm_error("\'undef\' involved in inequality",&code[pc]);
     else
     if (rv1->type == nil_m || rv2->type == nil_m){
         if(rv1->type == nil_m && rv2->type == nil_m)
@@ -265,8 +265,8 @@ void execute_jne (instruction* instr) {
     else
     if(rv1->type != rv2->type){
         char tmp[1024];
-        sprintf(tmp, "%s == %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
-        avm_error(tmp);
+        sprintf(tmp, "%s != %s is illegal!", typeStrings[rv1->type], typeStrings[rv2->type]);
+        avm_error(tmp,&code[pc]);
     }
     else {
         result = (avm_toarithm(rv1) != avm_toarithm(rv2));

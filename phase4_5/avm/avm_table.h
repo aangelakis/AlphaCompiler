@@ -37,7 +37,7 @@ struct avm_table{
     avm_table_bucket*   strIndexed[AVM_TABLE_HASHSIZE];
     avm_table_bucket*   numIndexed[AVM_TABLE_HASHSIZE];
     avm_table_bucket*   userfuncIndexed[AVM_TABLE_HASHSIZE];
-    avm_table_bucket*   libfuncIndexed[12];
+    avm_table_bucket*   libfuncIndexed[AVM_TABLE_HASHSIZE];
     avm_table_bucket*   boolIndexed[2];
     unsigned            total;
 };

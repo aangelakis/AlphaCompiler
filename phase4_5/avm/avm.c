@@ -121,7 +121,7 @@ void avm_memcellclear(avm_memcell* m){
 
 void avm_dec_top(void){
     if(!top){
-        avm_error("stack overflow");
+        avm_error("stack overflow", &code[pc]);
         executionFinished = 1;
     }
     else{
@@ -143,12 +143,12 @@ void avm_callsaveenvironment(void){
 }
 
 
-void avm_error(char* error){
-    fprintf(stderr, "\033[1;31mERROR:\033[0;31m %s\n\033[0m", error);
+void avm_error(char* error, instruction* code){
+    fprintf(stderr, "\033[1;31mERROR:\033[0;31m %s in line: %u\n\033[0m", error, code->srcLine);
 }
 
-void avm_warning(char* warning){
-    fprintf(stderr, "\033[1;33mWARNING: \033[0;33m%s\n\033[0m", warning);
+void avm_warning(char* warning, instruction* code){
+    fprintf(stderr, "\033[1;33mWARNING: \033[0;33m%s in line: %u\n\033[0m", warning, code->srcLine);
 }
 
 char* avm_tostring(avm_memcell* cell) {
@@ -181,7 +181,7 @@ char* avm_tostring(avm_memcell* cell) {
             str = strdup("undef");
             return str;
         default:
-            avm_warning("avm_tostring: unknown type");
+            avm_warning("avm_tostring: unknown type", &code[pc]);
             str = strdup("avm_tostring: unknown type");
             //exit(-1);
             return str;

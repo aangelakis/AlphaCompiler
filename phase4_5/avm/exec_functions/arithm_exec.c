@@ -32,7 +32,7 @@ void execute_arithmetic (instruction* instr) {
     assert(rv1 && rv2);
 
     if(rv1->type != number_m || rv2->type != number_m) {
-        avm_error("not a number in arithmetic");
+        avm_error("not a number in arithmetic", &code[pc]);
         executionFinished = 1;
     }
     else {

@@ -31,6 +31,7 @@ execute_func_t executeFuncs[] = {
 };
 
 void execute_cycle(void){
+    printf("%u\n",pc);
     if(executionFinished){
         return;
     }

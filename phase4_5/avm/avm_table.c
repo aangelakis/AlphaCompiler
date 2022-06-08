@@ -26,7 +26,7 @@ avm_table* avm_tablenew(void){
     avm_tablebucketsinit(t->numIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsinit(t->strIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsinit(t->userfuncIndexed, AVM_TABLE_HASHSIZE);
-    avm_tablebucketsinit(t->libfuncIndexed, 12);
+    avm_tablebucketsinit(t->libfuncIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsinit(t->boolIndexed, 2);
 
     return t;
@@ -51,7 +51,7 @@ void avm_tabledestroy(avm_table* t){
     avm_tablebucketsdestroy(t->strIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsdestroy(t->numIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsdestroy(t->userfuncIndexed, AVM_TABLE_HASHSIZE);
-    avm_tablebucketsdestroy(t->libfuncIndexed, 12);
+    avm_tablebucketsdestroy(t->libfuncIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsdestroy(t->boolIndexed, 2);
     assert(t);
     free(t);
@@ -83,15 +83,15 @@ static unsigned avm_tablehash(void* void_key) {
             return 0;
         break;
     case table_m:
-        avm_error("Cannot use table as key to associative array");
+        avm_error("Cannot use table as key to associative array", &code[pc]);
     case userfunc_m:
         return ((unsigned) userfuncs[key->data.funcVal].address*HASH_MULTIPLIER) % size;
     case libfunc_m:
         return hash_string(key->data.libfuncVal);
     case nil_m:
-        avm_error("Cannot use nil as key to associative array");
+        avm_error("Cannot use nil as key to associative array", &code[pc]);
     case undef_m:
-        avm_error("Cannot have undefined key to associative array");
+        avm_error("Cannot have undefined key to associative array", &code[pc]);
     default:
         assert(0);
         break;
@@ -108,15 +108,15 @@ static avm_table_bucket** get_from_type_table(avm_table* table, int type, int in
     case bool_m:
         return &table->boolIndexed[index];
     case table_m:
-        avm_error("Cannot use table as key to associative array");
+        avm_error("Cannot use table as key to associative array", &code[pc]);
     case userfunc_m:
         return &table->userfuncIndexed[index];
     case libfunc_m:
         return &table->libfuncIndexed[index];
     case nil_m:
-        avm_error("Cannot use nil as key to associative array");
+        avm_error("Cannot use nil as key to associative array", &code[pc]);
     case undef_m:
-        avm_error("Cannot have undefined key to associative array");
+        avm_error("Cannot have undefined key to associative array", &code[pc]);
     default:
         assert(0);
         break;
@@ -133,15 +133,15 @@ static int compare_from_type_table(avm_table* table, int type, avm_memcell* b1, 
     case bool_m:
         return b1->data.boolVal == b2->data.boolVal;
     case table_m:
-        avm_error("Cannot use table as key to associative array");
+        avm_error("Cannot use table as key to associative array", &code[pc]);
     case userfunc_m:
         return b1->data.funcVal == b2->data.funcVal;
     case libfunc_m:
         return !strcmp(b1->data.libfuncVal, b2->data.libfuncVal);
     case nil_m:
-        avm_error("Cannot use nil as key to associative array");
+        avm_error("Cannot use nil as key to associative array", &code[pc]);
     case undef_m:
-        avm_error("Cannot have undefined key to associative array");
+        avm_error("Cannot have undefined key to associative array", &code[pc]);
     default:
         assert(0);
         break;
@@ -170,7 +170,7 @@ static void transfer_memcell_data(int type, avm_memcell* b1, avm_memcell* b2) {
         b1->data.libfuncVal = strdup(b2->data.libfuncVal);
         break;
     case nil_m:
-        avm_error("Cannot assign nil to associative array cell");
+        avm_error("Cannot assign nil to associative array cell", &code[pc]);
         // delete cell
         break;
     case undef_m:
@@ -219,6 +219,8 @@ void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content
         assert(table_bucket == get_from_type_table(table, index->type, num_ind));
         //printf("I AM HERE WITH TYPE = %d\n", index->type);
         table->total++;
+        if(content->type == table_m)
+            avm_tableincrefcounter(content->data.tableVal);
     }
 
     return;
