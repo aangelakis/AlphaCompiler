@@ -442,7 +442,11 @@ void libfunc_input(void){
         return;
     }
     avm_memcellclear(&retval);
-    if(strcmp(s, "true")==0){
+    if(i == 0){
+        retval.type = string_m;
+        retval.data.strVal = strdup("");
+    
+    }else if(strcmp(s, "true")==0){
         retval.type = bool_m;
         retval.data.boolVal = 1;
     }else if(strcmp(s, "false")==0){
