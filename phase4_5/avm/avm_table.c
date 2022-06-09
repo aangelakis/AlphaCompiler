@@ -27,6 +27,7 @@ avm_table* avm_tablenew(void){
     avm_tablebucketsinit(t->strIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsinit(t->userfuncIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsinit(t->libfuncIndexed, AVM_TABLE_HASHSIZE);
+    avm_tablebucketsinit(t->tableIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsinit(t->boolIndexed, 2);
 
     return t;
@@ -52,6 +53,7 @@ void avm_tabledestroy(avm_table* t){
     avm_tablebucketsdestroy(t->numIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsdestroy(t->userfuncIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsdestroy(t->libfuncIndexed, AVM_TABLE_HASHSIZE);
+    avm_tablebucketsdestroy(t->tableIndexed, AVM_TABLE_HASHSIZE);
     avm_tablebucketsdestroy(t->boolIndexed, 2);
     assert(t);
     free(t);
@@ -83,7 +85,8 @@ static unsigned avm_tablehash(void* void_key) {
             return 0;
         break;
     case table_m:
-        avm_error("Cannot use table as key to associative array", &code[pc]);
+        return (((unsigned long) key->data.tableVal) * HASH_MULTIPLIER) % size;
+        //avm_error("Cannot use table as key to associative array", &code[pc]);
     case userfunc_m:
         return ((unsigned) userfuncs[key->data.funcVal].address*HASH_MULTIPLIER) % size;
     case libfunc_m:
@@ -108,7 +111,8 @@ static avm_table_bucket** get_from_type_table(avm_table* table, int type, int in
     case bool_m:
         return &table->boolIndexed[index];
     case table_m:
-        avm_error("Cannot use table as key to associative array", &code[pc]);
+        return &table->tableIndexed[index];
+        //avm_error("Cannot use table as key to associative array", &code[pc]);
     case userfunc_m:
         return &table->userfuncIndexed[index];
     case libfunc_m:
@@ -133,7 +137,8 @@ static int compare_from_type_table(avm_table* table, int type, avm_memcell* b1, 
     case bool_m:
         return b1->data.boolVal == b2->data.boolVal;
     case table_m:
-        avm_error("Cannot use table as key to associative array", &code[pc]);
+        return b1->data.tableVal == b2->data.tableVal;
+        //avm_error("Cannot use table as key to associative array", &code[pc]);
     case userfunc_m:
         return userfuncs[b1->data.funcVal].address == userfuncs[b2->data.funcVal].address;
     case libfunc_m:
@@ -208,6 +213,8 @@ void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content
             //iter->value = *content;
             iter->value.type = content->type;
             transfer_memcell_data(content->type, &iter->value, content);
+            if(content->type == table_m)
+                avm_tableincrefcounter(content->data.tableVal);
         }
     }
     else if(content->type != nil_m){
@@ -226,6 +233,8 @@ void avm_tablesetelem(avm_table* table, avm_memcell* index, avm_memcell* content
         assert(table_bucket == get_from_type_table(table, index->type, num_ind));
         //printf("I AM HERE WITH TYPE = %d\n", index->type);
         table->total++;
+        if(index->type == table_m)
+            avm_tableincrefcounter(index->data.tableVal);
         if(content->type == table_m)
             avm_tableincrefcounter(content->data.tableVal);
     }
