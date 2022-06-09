@@ -262,6 +262,8 @@ avm_memcell * avm_tablegetelem(avm_table* table , avm_memcell* index) {
     return NULL;
 }
 
+int disable_remove_warning = 0;
+
 void avm_tableremoveelem(avm_table* table, avm_memcell* index){
     assert(table);
     assert(index);
@@ -294,4 +296,7 @@ void avm_tableremoveelem(avm_table* table, avm_memcell* index){
         avm_memcellclear(&iter->key);
         avm_memcellclear(&iter->value);
     }
+
+    table->total--;
+    disable_remove_warning++;
 }

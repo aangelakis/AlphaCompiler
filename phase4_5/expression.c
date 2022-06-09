@@ -6,7 +6,7 @@ expr* newexpr(expr_t t){
     e->type = t;
     e->truelist = 0;
     e->falselist = 0;
-    e->is_also_const = 0;
+    
     return e;
 }
 
@@ -15,7 +15,7 @@ expr* newexpr_conststring(char* s){
     expr* e = newexpr(conststring_e);
     e->sym = NULL;
     e->content.strConst = strdup(s);
-    e->is_also_const = 1 ;
+    
     return e;
 }
 
@@ -24,14 +24,14 @@ expr* newexpr_constdouble(double i){
     expr* e = newexpr(constdouble_e);
     e->sym = NULL;
     e->content.doubleConst = i;
-    e->is_also_const = 1 ;
+    
     return e;
 }
 
 expr* newexpr_constnil(){
     expr* e = newexpr(nil_e);
     e->sym = NULL;
-    e->is_also_const = 1 ;
+    
     return e;
 }
 
@@ -39,7 +39,7 @@ expr* newexpr_constbool(unsigned char b){
     expr* e = newexpr(constbool_e);
     e->sym = NULL;
     e->content.boolConst = b;
-    e->is_also_const = 1 ;
+    
     return e;
 }
 
@@ -47,7 +47,7 @@ expr* newexpr_constint(int i){
     expr* e = newexpr(constint_e);
     e->sym = NULL;
     e->content.intConst = i;
-    e->is_also_const = 1 ;
+    
     return e;
 }
 

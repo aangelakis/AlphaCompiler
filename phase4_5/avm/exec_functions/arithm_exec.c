@@ -8,7 +8,7 @@ double mul_impl (double x, double y) { return x*y; }
 double div_impl (double x, double y) { assert(y); return x/y; }     // Maybe needs more errorchecking
 double mod_impl (double x, double y) { //Maybe needs more errorchecking
     assert(y);
-    assert(x > 0);
+    //assert(x > 0);
     assert(y > 0);
     return ((unsigned) x) % ((unsigned) y);
 

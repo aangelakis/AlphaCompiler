@@ -6,7 +6,7 @@
 void execute_call(instruction* instr){
     avm_memcell* func = avm_translate_operand(instr->result, &ax);
     assert(func);
-    avm_callsaveenvironment();
+    avm_callsaveenvironment(); 
 
     switch(func->type){
 
@@ -29,10 +29,50 @@ void execute_call(instruction* instr){
             break;
         }
 
+        case table_m:{
+            avm_memcell* t = func, *i = malloc(sizeof(avm_memcell));
+            i->type = string_m;
+            i->data.strVal = strdup("()");
+            func = avm_tablegetelem(t->data.tableVal, i); 
+            if(func){
+                switch(func->type) {
+                    case userfunc_m: {
+                        pc = userfuncs[func->data.funcVal].address;
+                        //pc = func->data.funcVal; // sto funcVal apothikeuoume pu prepei na ginei to jump
+                        assert(pc < AVM_ENDING_PC);
+                        //printf("pc = %d\n", pc);
+                        assert(code[pc].opcode == enterfunc_v);
+                        break;
+                    }
+                    case string_m:  {
+                        avm_calllibfunc(func->data.strVal);
+                        break;
+                    }
+                    case libfunc_m: {
+                        avm_calllibfunc(func->data.libfuncVal);
+                        break;
+                    } 
+                    default: {
+                        char* s = avm_tostring(func);
+                        char tmp[1024];
+                        sprintf(tmp, "call: cannot bind '%s' to function!", s);
+                        avm_error(tmp, &code[pc]);
+                        free(s);
+                        executionFinished = 1;
+                        break;
+                    } 
+                }
+            }
+            avm_memcellclear(i);
+            free(i);
+            break;
+        }
+
         default: {
             char* s = avm_tostring(func);
             char tmp[1024];
             sprintf(tmp, "call: cannot bind '%s' to function!", s);
+            avm_error(tmp, &code[pc]);
             free(s);
             executionFinished = 1;
         }
@@ -129,8 +169,13 @@ static void print_table(avm_table_bucket** p, unsigned size){
                     case bool_m:
                         printf("{%s: ", b->key.data.boolVal?"true":"false");
                         break;
+                    case table_m:
+                        printf("{");
+                        print_table_content(b->key.data.tableVal);
+                        //printf("{table_%lu: ", (unsigned long) &b->key.data.tableVal);
+                        break;
                     case userfunc_m:
-                        printf("{%d: ", b->key.data.funcVal);
+                        printf("{%s: ", userfuncs[b->key.data.funcVal].id);
                         break;
                     case libfunc_m:
                         printf("{%s: ", b->key.data.libfuncVal);
@@ -154,8 +199,13 @@ static void print_table(avm_table_bucket** p, unsigned size){
                     case bool_m:
                         printf("{%s: %s}", b->key.data.boolVal?"true":"false",s);
                         break;
+                    case table_m:
+                        printf("{");
+                        print_table_content(b->key.data.tableVal);
+                        printf(": %s}",  s);
+                        break;
                     case userfunc_m:
-                        printf("{%d: %s}", b->key.data.funcVal,s);
+                        printf("{%s: %s}",  userfuncs[b->key.data.funcVal].id,s);
                         break;
                     case libfunc_m:
                         printf("{%s: %s}", b->key.data.libfuncVal,s);
@@ -179,6 +229,7 @@ static void print_table_content(avm_table* t){
     print_table(t->strIndexed, AVM_TABLE_HASHSIZE);
     print_table(t->userfuncIndexed , AVM_TABLE_HASHSIZE);
     print_table(t->libfuncIndexed, AVM_TABLE_HASHSIZE);
+    print_table(t->tableIndexed, AVM_TABLE_HASHSIZE);
     print_table(t->boolIndexed, 2);
     printf("]");
 
@@ -325,7 +376,12 @@ void libfunc_strtonum(void){
         retval.type = number_m;
         char* tmp = avm_getactual(0)->data.strVal;
         int flag = 0;
+        int uminus_flag = 0;
         for(int i = 0 ; i < strlen(tmp) ; i++){
+            if(uminus_flag == 0 && tmp[0]=='-'){
+                uminus_flag = 1;
+                continue;
+            }
             if(tmp[i]=='.'){
                 flag ++;
             }else if(!isdigit(tmp[i])){
@@ -333,7 +389,7 @@ void libfunc_strtonum(void){
                 retval.type=nil_m;
                 return;
             }
-            if(flag==2){
+            if(flag>1){
                 avm_error("strtonum error found more than one '.' in the string!",&code[pc]);
                 retval.type=nil_m;
                 return;
@@ -345,13 +401,18 @@ void libfunc_strtonum(void){
 
 int is_number(char * str){
     int flag = 0;
+    int uminus_flag = 0;
     for(int i = 0 ; i < strlen(str) ; i++){
+        if(uminus_flag==0 && str[0]=='-'){
+            uminus_flag = 1;
+            continue;
+        }
         if(str[i]=='.'){
             flag ++;
         }else if(!isdigit(str[i])){
             return 0;
         }
-        if(flag==2){
+        if(flag>1){
             return 0;
         }
     }

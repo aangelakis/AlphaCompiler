@@ -45,7 +45,9 @@ avm_memcell* avm_translate_operand(vmarg* arg, avm_memcell* reg){
         case local_a: {
             return &avm_stack[topsp - arg->val];   
         }  
-        case formal_a:  return &avm_stack[topsp + AVM_STACKENV_SIZE + 1 + arg->val];
+        case formal_a:{
+            return &avm_stack[topsp + AVM_STACKENV_SIZE + 1 + arg->val];
+        }
 
         case retval_a:  return &retval;
 

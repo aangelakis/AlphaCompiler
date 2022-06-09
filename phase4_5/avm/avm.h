@@ -123,4 +123,7 @@ void libfunc_objectcopy(void);
 
 void avm_error(char*, instruction*);
 void avm_warning(char*, instruction*);
+
+
+extern int disable_remove_warning ;
 #endif

@@ -145,6 +145,29 @@ expr* emit_iftableitem(expr* e){
     }
 }
 
+expr* copy_expr(expr* arg){
+    expr* result = newexpr(arg->type);
+    result->sym = arg->sym;
+    switch (arg->type)
+    {
+    case constdouble_e:
+        result->content.doubleConst = arg->content.doubleConst;
+        break;
+    case constint_e:
+        result->content.intConst = arg->content.intConst;
+        break;
+    case conststring_e:
+        result->content.strConst = strdup(arg->content.strConst);
+        break;
+    case constbool_e:
+        result->content.boolConst = arg->content.boolConst;
+        break;
+    default:
+        break;
+    }
+    return result;
+}
+
 int true_test(expr* arg){
     //puts("I AM TRUE TESTING");
     if(arg == NULL){
@@ -156,20 +179,14 @@ int true_test(expr* arg){
         return 0;
     }
     
-    // DEN KSERW TI SPAEI TO UNCOMMENT TWN 2 KATW GRAMMWN ALLA STAMATISAN TA ASSERTION KAI TA QUAD EINAI SWSTA
-    //arg->type = boolexpr_e;
-    if(arg->type < 8 || arg->type > 11){ // <----------- ama einai const , paramenei const
-        arg->is_also_const = 0;
-        
-    } 
-    else {
-        arg->is_also_const = 1;
-    }
+    
+    
+    
+    emit(if_eq, NULL, copy_expr(arg), newexpr_constbool(1), 0, currQuad);
+
     arg->type = boolexpr_e;
-    emit(if_eq, NULL, arg, newexpr_constbool(1), 0, currQuad);
     emit(jump, NULL, NULL, NULL, 0, currQuad);
-    // printf("%d\n", nextquad()-2);
-    // printf("%d\n", nextquad()-1);
+
     arg->truelist = newlist(nextquad()-2);
     arg->falselist = newlist(nextquad()-1);
     return 1;
@@ -183,7 +200,7 @@ expr* emit_ifbool(expr* e){
 
         expr* tmp = newexpr(boolexpr_e);
         tmp->sym = new_temp();
-        tmp->is_also_const = e->is_also_const;
+        
         emit(assign, tmp, newexpr_constbool(1), NULL, -1, currQuad);
         emit(jump, NULL, NULL, NULL, nextquad() + 2 , currQuad);
         emit(assign, tmp, newexpr_constbool(0), NULL, -1, currQuad);

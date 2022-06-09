@@ -31,13 +31,17 @@ void execute_tablegetelem(instruction * instr){
     if(content){
       avm_assign(lv, content);
     }else{
-      char* ts = avm_tostring(t);
-      char* is = avm_tostring(i);
-      char tmp[1024];
-      sprintf(tmp, "%s[%s] not found!", ts, is);
-      avm_warning(tmp, &code[pc]);
-      free(ts);
-      free(is);
+      if(disable_remove_warning)
+        disable_remove_warning--;
+      else{
+        char* ts = avm_tostring(t);
+        char* is = avm_tostring(i);
+        char tmp[1024];
+        sprintf(tmp, "%s[%s] not found!", ts, is);
+        avm_warning(tmp, &code[pc]);
+        free(ts);
+        free(is);
+      }
     }
   }
 }

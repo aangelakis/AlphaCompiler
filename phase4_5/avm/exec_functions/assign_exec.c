@@ -4,6 +4,7 @@ void avm_assign(avm_memcell* lv, avm_memcell* rv){
     
     if(lv == rv)
         return;
+
     
     if (lv->type == table_m &&
         rv->type == table_m &&
@@ -29,6 +30,12 @@ void avm_assign(avm_memcell* lv, avm_memcell* rv){
 void execute_assign(instruction* instr){
     avm_memcell* lv = NULL;
     lv = avm_translate_operand(instr->result, NULL);
+    // case for empty return
+    if(lv == &retval && ((int) instr->arg1->type == -1)){
+        avm_memcellclear(lv);
+        //lv->type = nil_m;
+        return;
+    }
     avm_memcell* rv = avm_translate_operand(instr->arg1, &ax);
 
     //assert(lv && (&stack[N-1] >= lv && lv > &stack[top] || lv == &retval));

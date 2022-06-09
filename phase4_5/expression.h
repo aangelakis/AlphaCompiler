@@ -36,7 +36,7 @@ typedef struct expr {
     struct expr*    index;
     struct expr*    next;
     struct expr*    prev;
-    int is_also_const;
+    //int is_also_const;
     int truelist;
     int falselist;
 } expr;

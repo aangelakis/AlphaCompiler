@@ -45,11 +45,10 @@ void avm_initialize(void) {
     pc = 1;
 }
 
-
 int main(void) {
     read_binary();
     avm_initialize();
-  
+
     while(executionFinished == 0)
         execute_cycle();
     

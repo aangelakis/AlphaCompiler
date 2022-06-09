@@ -276,6 +276,7 @@ normcall:   "(" elist ")"   {
                                 call->name = NULL;
                                 $$ = call;
                                 Manage_normcall();
+                                
                             }         
 
 methodcall: DOUBLE_STOP ID "(" elist ")"        {       
@@ -293,7 +294,9 @@ elist:  %empty            {     $$ = NULL;  Manage_elist_empty();           }
                                                 $1 = $1->next;
                                         }
                                         if($3->type == boolexpr_e) {
+                                                
                                                 $3 = emit_ifbool($3);
+                                                
                                         }
                                         
                                         $1->next = $3; 
@@ -301,7 +304,9 @@ elist:  %empty            {     $$ = NULL;  Manage_elist_empty();           }
                                         Manage_elist_elistExpr();     
                                 }
         | expr          {               if($1->type == boolexpr_e) {
+                                                
                                                 $1 = emit_ifbool($1);
+                                                
                                         }  
                                         $$ = $1; Manage_elist_expr();            
                         }      
