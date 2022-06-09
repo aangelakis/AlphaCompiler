@@ -48,6 +48,8 @@ void avm_initialize(void) {
 int main(void) {
     read_binary();
     avm_initialize();
+    //printf("%ld %s\n", strlen(string_consts[18]), string_consts[18]);
+    //return 24;
 
     while(executionFinished == 0)
         execute_cycle();

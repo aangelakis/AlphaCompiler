@@ -337,10 +337,11 @@ char* new_temp_name(){
 
 int inside_indexed = 0;
 int closed_table_create = 0;
-
+int resets_of_temp = 0;
 void reset_temp_counter(){
     fprintf(yacc_out,"reset temp counter\n");
     temp_counter = 0;
+    resets_of_temp ++;
 }
 
 SymTableEntry* new_temp(){

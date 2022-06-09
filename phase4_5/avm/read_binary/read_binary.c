@@ -29,6 +29,7 @@ char* make_string(){
     for( ;tmp[j]; ++j)
         new_string[j] = tmp[j];
     new_string[j] = tmp[j];
+    assert(new_string[j] == '\0');
     assert(i == j);
     return new_string;
 }
@@ -65,12 +66,19 @@ char ** get_string_consts(int size){
     if(size == 0){return NULL;}
 
     char ** consts = malloc(sizeof(char*)*size);
+    int *finishes = malloc(sizeof(int)*size);
     for(int i = 0; i < size; i++){
         consts[i] = make_string();
+        finishes[i] = strlen(consts[i]);
         DEBUG_PRINT("%s\n", consts[i]);
     }
-    return consts;
 
+    // for some reason this needed to be done
+    for(int i = 0; i < size; i++){
+       consts[i][finishes[i]] = '\0'; 
+    }
+
+    return consts;
 }
 
 //reads the userfunc consts

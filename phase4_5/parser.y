@@ -313,8 +313,9 @@ elist:  %empty            {     $$ = NULL;  Manage_elist_empty();           }
         ;
 
 objectdef: Temp_name "[" elist "]"      {
-                                        if(inside_indexed+1){
-                                                temp_counter = closed_table_create;
+                                        if(resets_of_temp!=0 && inside_indexed+1){
+                                                temp_counter = closed_table_create + resets_of_temp;
+                                                resets_of_temp --;
                                                 inside_indexed --;
                                                 closed_table_create++;
                                         }
@@ -328,8 +329,9 @@ objectdef: Temp_name "[" elist "]"      {
                                         Manage_objectdef_elist();   
                                 }
         | Temp_name  "[" indexed "]"     {
-                                        if(inside_indexed+1){
-                                                temp_counter = closed_table_create;
+                                        if(resets_of_temp!=0 && inside_indexed+1){
+                                                temp_counter = closed_table_create + resets_of_temp;
+                                                resets_of_temp --;
                                                 inside_indexed --;
                                                 closed_table_create++;
                                         }

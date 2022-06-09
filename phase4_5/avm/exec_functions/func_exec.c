@@ -597,7 +597,7 @@ void libfunc_objectcopy(void){
     } 
     else {
         avm_table *t = avm_getactual(0)->data.tableVal;
-        avm_table *new_table = malloc(sizeof(avm_table));
+        avm_table *new_table = avm_tablenew();
         
         avm_tablemembercopy(t->numIndexed, new_table, AVM_TABLE_HASHSIZE);
         avm_tablemembercopy(t->strIndexed, new_table, AVM_TABLE_HASHSIZE);
