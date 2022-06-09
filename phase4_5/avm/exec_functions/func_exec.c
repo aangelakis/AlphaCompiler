@@ -552,14 +552,14 @@ void libfunc_objectmemberkeys(void){
     } 
     else {
         avm_table *t = avm_getactual(0)->data.tableVal;
-        avm_table *new_table = malloc(sizeof(avm_table));
+        avm_table *new_table = avm_tablenew();
         unsigned curr_index = 0;
 
         avm_tablememberkeys(t->numIndexed, new_table, AVM_TABLE_HASHSIZE, &curr_index);
         avm_tablememberkeys(t->strIndexed, new_table, AVM_TABLE_HASHSIZE, &curr_index);
         avm_tablememberkeys(t->userfuncIndexed, new_table, AVM_TABLE_HASHSIZE, &curr_index);
         avm_tablememberkeys(t->libfuncIndexed, new_table, AVM_TABLE_HASHSIZE, &curr_index);
-
+        avm_tablememberkeys(t->tableIndexed, new_table, AVM_TABLE_HASHSIZE, &curr_index);
         avm_tablememberkeys(t->boolIndexed, new_table, 2, &curr_index);
 
         //assert(t->total = curr_index);
@@ -603,6 +603,7 @@ void libfunc_objectcopy(void){
         avm_tablemembercopy(t->strIndexed, new_table, AVM_TABLE_HASHSIZE);
         avm_tablemembercopy(t->userfuncIndexed, new_table, AVM_TABLE_HASHSIZE);
         avm_tablemembercopy(t->libfuncIndexed, new_table, AVM_TABLE_HASHSIZE);
+        avm_tablemembercopy(t->tableIndexed, new_table, AVM_TABLE_HASHSIZE);
         avm_tablemembercopy(t->boolIndexed, new_table, 2);
 
         new_table->total = t->total;
