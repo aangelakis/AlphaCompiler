@@ -4,15 +4,15 @@
 
 ## 📁 Table of Contents
 
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Getting Started](#getting-started)
+- [🌟 Features](#-features)
+- [🛠️ Technologies Used](#-technologies-used)
+- [🚀 Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Contributors](#contributors)
-- [License](#license)
+- [🧩 Usage](#-usage)
+- [📄 Project Structure](#-project-structure)
+- [👥 Contributors](#-contributors)
+- [📜 License](#-license)
 
 ---
 
