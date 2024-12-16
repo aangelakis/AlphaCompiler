@@ -122,7 +122,7 @@ AlphaCompiler/
 
 ## 👥 Contributors
 
-- **Alexandros Angelakis, Christos Zarkos, Theodoros Chalkidis**
+- **Alexandros Angelakis, Christos Zarkos, Theodoros Chalkidis** (contributed equally)
 
 ---
 
